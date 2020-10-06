@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+    a(class='btn btn-success' href='/users/new')
+        span(class="glyphicon glyphicon-plus")
+        |  New User
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th Name
+                    th Email
+                    th Admin
+                    th GM
+
+            tbody
+                for user in users
+                    tr(class='clickable-row', data-click-object='user' data-click-id=user.id)
+                        td
+                            a(href='/user/' + user.id)= user.name
+                        td= user.email
+                        td= user.is_admin?'Yes':'No'
+                        td= user.is_gm?'Yes':'No'
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

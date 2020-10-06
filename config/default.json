@@ -1,0 +1,15 @@
+{
+    "app": {
+        "name": "Ritual Larp Backend",
+        "debug": false,
+        "dbURL": "postgres://ritual:ritual@localhost:5432/ritual",
+        "sessionType": "local",
+        "sessionSecret": "ritual",
+        "redisURL": false
+    },
+    "auth": {
+        "clientID": "clientID",
+        "clientSecret": "clientSecret",
+        "callbackURL": "http://localhost:3000/auth/google/callback"
+    }
+}

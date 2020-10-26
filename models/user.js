@@ -10,51 +10,41 @@ const models = {
 const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm'];
 
 
-exports.get = function(id, cb){
+exports.get = async function(id){
     const query = 'select * from users where id = $1';
-    database.query(query, [id], function(err, result){
-        if (err) { return cb(err); }
-        if (result.rows.length){
-            return cb(null, result.rows[0]);
-        }
-        return cb();
-    });
+    const result = await database.query(query, [id]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
 };
 
-exports.getByEmail = function(text, cb){
+exports.getByEmail = async function(text){
     const query = 'select * from users where email = $1';
-    database.query(query, [text], function(err, result){
-        if (err) { return cb(err); }
-        if (result.rows.length){
-            return cb(null, result.rows[0]);
-        }
-        return cb();
-    });
+    const result = await database.query(query, [text]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
 };
-exports.getByGoogleId = function(text, cb){
+exports.getByGoogleId = async function(text){
     const query = 'select * from users where google_id = $1';
-    database.query(query, [text], function(err, result){
-        if (err) { return cb(err); }
-        if (result.rows.length){
-            return cb(null, result.rows[0]);
-        }
-        return cb();
-    });
+    const result = await database.query(query, [text]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
 };
 
-exports.list = function(cb){
+exports.list = async function(){
     const query = 'select * from users order by name';
-    database.query(query, function(err, result){
-        if (err) { return cb(err); }
-        return cb(null, result.rows);
-    });
+    const result = await database.query(query);
+    return result.rows;
 };
 
-exports.create = function(data, cb){
+exports.create = async function(data, cb){
     if (! validate(data)){
-        return process.nextTick(function(){
-            cb('Invalid Data');
-        });
+        throw new Error('Invalid Data');
     }
     const queryFields = [];
     const queryData = [];
@@ -72,17 +62,14 @@ exports.create = function(data, cb){
     query += ') values (';
     query += queryValues.join (', ');
     query += ') returning id';
-    database.query(query, queryData, function(err, result){
-        if (err) { return cb(err); }
-        return cb(null, result.rows[0].id);
-    });
+
+    const result = await database.query(query, queryData);
+    return result.rows[0].id;
 };
 
-exports.update =  function(id, data, cb){
+exports.update = async function(id, data, cb){
     if (! validate(data)){
-        return process.nextTick(function(){
-            cb('Invalid Data');
-        });
+        throw new Error('Invalid Data');
     }
     const queryUpdates = [];
     const queryData = [id];
@@ -97,49 +84,43 @@ exports.update =  function(id, data, cb){
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
-    database.query(query, queryData, cb);
+    await database.query(query, queryData);
 };
 
-exports.delete =  function(id, cb){
+exports.delete = async  function(id, cb){
     const query = 'delete from users where id = $1';
-    database.query(query, [id], cb);
+    await database.query(query, [id]);
 };
 
-exports.findOrCreate = function(data, cb){
-    console.log(JSON.stringify(data, null, 2));
-    exports.getByGoogleId(data.google_id, function(err, user){
-        if (err) { return cb(err); }
+exports.findOrCreate = async function(data, cb){
+    let user = await exports.getByGoogleId(data.google_id);
+    if (user) {
+        for (const field in data){
+            if (_.has(user, field)){
+                user[field] = data[field];
+            }
+        }
+        await exports.update(user.id, user);
+        return await exports.get(user.id);
+
+    } else {
+        user = await exports.getByEmail(data.email);
+
         if (user) {
             for (const field in data){
                 if (_.has(user, field)){
                     user[field] = data[field];
                 }
             }
-            exports.update(user.id, user, function(err){
-                if (err) { return cb(err); }
-                exports.get(user.id, cb);
-            });
+            await exports.update(user.id, user);
+            return await exports.get(user.id);
+
         } else {
-            exports.getByEmail(data.email, function(err, user){
-                if (user) {
-                    for (const field in data){
-                        if (_.has(user, field)){
-                            user[field] = data[field];
-                        }
-                    }
-                    exports.update(user.id, user, function(err){
-                        if (err) { return cb(err); }
-                        exports.get(user.id, cb);
-                    });
-                } else {
-                    exports.create(data, function(err, id){
-                        if (err) { return cb(err); }
-                        exports.get(id, cb);
-                    });
-                }
-            });
+            const id = await exports.create(data);
+
+            return await exports.get(id, cb);
         }
-    });
+    }
 };
 
 

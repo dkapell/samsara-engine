@@ -4,19 +4,19 @@ const _ = require('underscore');
 const permission = require('../lib/permission');
 
 /* GET users listing. */
-function list(req, res, next){
+async function list(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
         ],
         current: 'Users'
     };
-
-    req.models.user.list(function(err, users){
-        if (err) { return next(err); }
-        res.locals.users = users;
+    try {
+        res.locals.users = await req.models.user.list();
         res.render('user/list', { pageTitle: 'Users' });
-    });
+    } catch (err){
+        next(err);
+    }
 }
 
 function showNew(req, res, next){
@@ -66,23 +66,23 @@ function showEdit(req, res, next){
     });
 }
 
-function create(req, res, next){
+async function create(req, res, next){
     const user = req.body.user;
 
     req.session.userData = user;
 
-    req.models.user.create(user, function(err, newUserId){
-        if (err) {
-            req.flash('error', err.toString());
-            return res.redirect('/user/new');
-        }
+    try{
+        await req.models.user.create(user);
         delete req.session.userData;
         req.flash('success', 'Created User ' + user.name);
         res.redirect('/user');
-    });
+    } catch (err) {
+        req.flash('error', err.toString());
+        return res.redirect('/user/new');
+    }
 }
 
-function update(req, res, next){
+async function update(req, res, next){
     const id = req.params.id;
     const user = req.body.user;
     req.session.userData = user;
@@ -93,28 +93,29 @@ function update(req, res, next){
         user.is_gm = false;
     }
 
-    req.models.user.get(id, function(err, current){
-        if (err) { return next(err); }
+    try {
+        const current = await req.models.user.get(id);
 
-        req.models.user.update(id, user, function(err){
-            if (err){
-                req.flash('error', err.toString());
-                return (res.redirect('/user/'+id));
-            }
-            delete req.session.userData;
-            req.flash('success', 'Updated User ' + user.name);
-            res.redirect('/user');
-        });
-    });
+        await req.models.user.update(id, user);
+        delete req.session.userData;
+        req.flash('success', 'Updated User ' + user.name);
+        res.redirect('/user');
+    } catch(err) {
+        req.flash('error', err.toString());
+        return (res.redirect('/user/'+id));
+
+    }
 }
 
-function remove(req, res, next){
+async function remove(req, res, next){
     const id = req.params.id;
-    req.models.user.delete(id, function(err){
-        if (err) { return next(err); }
+    try {
+        await req.models.user.delete(id);
         req.flash('success', 'Removed User');
         res.redirect('/user');
-    });
+    } catch(err) {
+        return next(err);
+    }
 }
 
 const router = express.Router();

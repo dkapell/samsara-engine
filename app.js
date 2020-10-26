@@ -92,10 +92,14 @@ passport.serializeUser(function(user, cb) {
     cb(null, user.id);
 });
 
-passport.deserializeUser(function(id, cb) {
-    models.user.get(id, function(err, user) {
-        cb(err, user);
-    });
+passport.deserializeUser(async function(id, cb) {
+    try{
+        const user = await models.user.get(id);
+        console.log(user);
+        cb(null, user);
+    } catch (err){
+        cb(err);
+    }
 });
 
 passport.use(new GoogleStrategy({
@@ -103,12 +107,18 @@ passport.use(new GoogleStrategy({
     clientSecret: config.get('auth.clientSecret'),
     callbackURL: config.get('auth.callbackURL')
 },
-function(accessToken, refreshToken, profile, cb) {
-    models.user.findOrCreate({
-        name: profile.displayName,
-        google_id: profile.id,
-        email: profile.emails[0].value
-    }, cb);
+async function(accessToken, refreshToken, profile, cb) {
+    try{
+        const user = await models.user.findOrCreate({
+            name: profile.displayName,
+            google_id: profile.id,
+            email: profile.emails[0].value
+        });
+        console.log(user);
+        cb(null, user);
+    } catch (err) {
+        cb(err);
+    }
 })
 );
 
@@ -128,6 +138,7 @@ app.use(function(req, res, next){
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     next(createError(404));

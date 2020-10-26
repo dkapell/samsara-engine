@@ -4,9 +4,8 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport",content="width=device-width, initial-scale=1 shrink-to-fit=no")
-        meta(name="description",content="Furniture request system for intercode2-based conventions")
+        meta(name="description",content="Samsara Larp")
         meta(name="author",content="Dave Kapell")
-        link(rel="icon",href="/images/neilSquare.png")
         title= title
         block styles
             link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css")
@@ -38,8 +37,8 @@ html(lang="en")
                                     aria-haspopup="true"
                                     aria-expanded="false") GM Stuff
                                 .dropdown-menu(aria-labelledby="gmDropdown")
-                                    a.dropdown-item(href='/props') Props List
-                                    a.dropdown-item(href='/ritual') Ritual Generator
+                                    a.dropdown-item(href='/room') Rooms List
+                                    a,dropdown-item(href='/player') Players List
 
                         - if (checkPermission('admin'))
                             li.nav-item.dropdown(class= siteSection==='admin'?"active":null)

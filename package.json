@@ -1,5 +1,5 @@
 {
-  "name": "ritual-larp",
+  "name": "samsara-larp",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
   "dependencies": {
     "async": "^3.2.0",
     "config": "^3.3.2",
+    "connect-redis": "^5.0.0",
     "cookie-parser": "~1.4.4",
     "csurf": "^1.11.0",
     "debug": "~2.6.9",
@@ -22,8 +23,9 @@
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "pg": "^8.3.3",
-    "pug": "2.0.0-beta11",
+    "pug": "^3.0.0",
     "redis": "^3.0.2",
-    "underscore": "^1.11.0"
+    "underscore": "^1.11.0",
+    "validator": "^13.1.17"
   }
 }

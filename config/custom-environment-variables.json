@@ -3,7 +3,8 @@
         "dbURL": "DATABASE_URL",
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",
-        "redisURL": "REDISTOGO_URL"
+        "redisURL": "REDISTOGO_URL",
+        "secureOnly": "SECURE_ONLY"
     },
     "auth": {
         "clientID": "GOOGLE_CLIENT_ID",

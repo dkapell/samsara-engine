@@ -23,6 +23,17 @@ const authRouter = require('./routes/auth');
 
 const app = express();
 
+// if running in SSL Only mode, redirect to SSL version
+if (config.get('app.secureOnly')){
+    app.all('*', function(req, res, next){
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            res.redirect('https://' + req.headers.host + req.url);
+        } else {
+            next();
+        }
+    });
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');

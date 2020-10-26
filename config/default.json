@@ -5,7 +5,8 @@
         "dbURL": "postgres://ritual:ritual@localhost:5432/ritual",
         "sessionType": "local",
         "sessionSecret": "ritual",
-        "redisURL": false
+        "redisURL": false,
+        "secureOnly": false
     },
     "auth": {
         "clientID": "clientID",

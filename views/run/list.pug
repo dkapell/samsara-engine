@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/run/new')
+        span(class="fa fa-plus")
+        |  New Run
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th(style="max-width:50px") ID
+                    th Name
+            tbody
+                for run in runs
+                    tr(class='clickable-row', data-click-object='run' data-click-id=run.id)
+                        th(scope="row")= run.id
+                        td
+                            a(href='/run/' + run.id)= run.name
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

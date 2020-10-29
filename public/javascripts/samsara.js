@@ -9,7 +9,7 @@ $(function(){
         if (!data.success){
             $('#code-entry').addClass('is-invalid');
             if (!data.retry){
-                console.log('clear')
+                console.log('clear');
                 $('#code-entry').val('');
             }
             $('#code-feedback').text(data.error);

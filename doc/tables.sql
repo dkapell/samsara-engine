@@ -19,3 +19,23 @@ create table rooms (
     active      boolean default true,
     primary key (id)
 );
+
+create table runs (
+    id          serial,
+    name        varchar(80) not null unique,
+    primary key(id)
+);
+
+create table players (
+    id          serial,
+    user_id     int,
+    run_id      int,
+    game_state   varchar(80),
+    primary key (id),
+    CONSTRAINT players_user_fk FOREIGN KEY (user_id)
+        REFERENCES "users" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT players_run_fk FOREIGN KEY (run_id)
+        REFERENCES "runs" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);

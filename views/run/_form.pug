@@ -1,0 +1,10 @@
+.form-group
+    label.control-label(for="run_name") Name
+    input.form-control(type="text",placeholder="Name",name="run[name]",value=run.name,id='run_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    button.btn.btn-primary(type="submit")= run.id?'Update':'Create'
+    a.btn.btn-link(href="/run") Cancel
+
+

@@ -38,7 +38,7 @@ html(lang="en")
                                     aria-expanded="false") GM Stuff
                                 .dropdown-menu(aria-labelledby="gmDropdown")
                                     a.dropdown-item(href='/room') Rooms List
-                                    //a.dropdown-item(href='/player') Players List
+                                    a.dropdown-item(href='/player') Players List
 
                         - if (checkPermission('admin'))
                             li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
@@ -50,6 +50,7 @@ html(lang="en")
                                     aria-expanded="false") Admin
                                 .dropdown-menu(aria-labelledby="adminDropdown")
                                     a.dropdown-item(href='/user') Users
+                                    a.dropdown-item(href='/run') Runs
 
                     ul.navbar-nav.float-right
                         - if (activeUser)

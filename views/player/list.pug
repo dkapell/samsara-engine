@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th Name
+                    th Email
+                    th Game State
+            tbody
+                for user in users
+                    tr
+                        td= user.name
+                        td= user.email
+                        td Coming Soon

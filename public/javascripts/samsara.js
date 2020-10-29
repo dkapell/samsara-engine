@@ -6,7 +6,6 @@ $(function(){
         const code = $('#code-entry').val();
         const response = await fetch('/code/'+ code);
         const data = await response.json();
-        console.log(data);
         if (!data.success){
             $('#code-entry').addClass('is-invalid');
             if (!data.retry){
@@ -18,7 +17,6 @@ $(function(){
 
         } else {
             window.open(data.url, '_blank');
-            window.focus();
             $('#code-entry').removeClass('is-invalid');
             $('#code-entry').val('');
         }

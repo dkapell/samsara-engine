@@ -43,7 +43,7 @@ function showNew(req, res, next){
     res.render('user/new');
 }
 
-function showEdit(req, res, next){
+async function showEdit(req, res, next){
     const id = req.params.id;
     res.locals.csrfToken = req.csrfToken();
 

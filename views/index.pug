@@ -1,8 +1,16 @@
 extends layout
 
-append content
+block content
     .container
         h1= title
-        p Welcome to #{title}
+        .lead Welcome to #{title}.  Please enter a room code below.
 
-    h1 Dave
+        .row.my-3
+            .col
+                form#code-form
+                    input.form-control.code-search(type="search", placeholder="Code", id="code-entry")
+                    .invalid-feedback#code-feedback
+
+
+append scripts
+    script(src='/javascripts/samsara.js')

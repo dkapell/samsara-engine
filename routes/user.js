@@ -24,7 +24,8 @@ function showNew(req, res, next){
         name: null,
         email: null,
         is_admin: false,
-        is_gm: false
+        is_gm: false,
+        is_player: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -46,9 +47,8 @@ function showEdit(req, res, next){
     const id = req.params.id;
     res.locals.csrfToken = req.csrfToken();
 
-
-    req.models.user.get(id, function(err, user){
-        if (err) { return next(err); }
+    try{
+        const user = req.models.user.get(id);
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.furniture = req.session.userData;
@@ -63,7 +63,9 @@ function showEdit(req, res, next){
         };
 
         res.render('user/edit');
-    });
+    } catch(err){
+        next(err);
+    }
 }
 
 async function create(req, res, next){
@@ -91,6 +93,9 @@ async function update(req, res, next){
     }
     if (!_.has(user, 'is_gm')){
         user.is_gm = false;
+    }
+    if (!_.has(user, 'is_player')){
+        user.is_player = false;
     }
 
     try {

@@ -1,10 +1,10 @@
 {
     "app": {
-        "name": "Ritual Larp Backend",
+        "name": "Club Samsara",
         "debug": false,
-        "dbURL": "postgres://ritual:ritual@localhost:5432/ritual",
+        "dbURL": "postgres://samsara:samsara@localhost:5432/samsara",
         "sessionType": "local",
-        "sessionSecret": "ritual",
+        "sessionSecret": "samsara",
         "redisURL": false,
         "secureOnly": false
     },

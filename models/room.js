@@ -7,11 +7,11 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm', 'is_player'];
+const tableFields = ['name', 'code', 'description', 'url', 'gm', 'active'];
 
 
 exports.get = async function(id){
-    const query = 'select * from users where id = $1';
+    const query = 'select * from rooms where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -19,17 +19,9 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByEmail = async function(text){
-    const query = 'select * from users where email = $1';
-    const result = await database.query(query, [text]);
-    if (result.rows.length){
-        return result.rows[0];
-    }
-    return;
-};
-exports.getByGoogleId = async function(text){
-    const query = 'select * from users where google_id = $1';
-    const result = await database.query(query, [text]);
+exports.getByCode = async function(code){
+    const query = 'select * from rooms where code = $1';
+    const result = await database.query(query, [code]);
     if (result.rows.length){
         return result.rows[0];
     }
@@ -37,7 +29,7 @@ exports.getByGoogleId = async function(text){
 };
 
 exports.list = async function(){
-    const query = 'select * from users order by name';
+    const query = 'select * from rooms order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -57,7 +49,7 @@ exports.create = async function(data, cb){
         }
     }
 
-    let query = 'insert into users (';
+    let query = 'insert into rooms (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -80,7 +72,7 @@ exports.update = async function(id, data, cb){
         }
     }
 
-    let query = 'update users set ';
+    let query = 'update rooms set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -88,48 +80,22 @@ exports.update = async function(id, data, cb){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from users where id = $1';
+    const query = 'delete from rooms where id = $1';
     await database.query(query, [id]);
 };
 
-exports.findOrCreate = async function(data, cb){
-    let user = await exports.getByGoogleId(data.google_id);
-    if (user) {
-        for (const field in data){
-            if (_.has(user, field)){
-                user[field] = data[field];
-            }
-        }
-        await exports.update(user.id, user);
-        return await exports.get(user.id);
-
-    } else {
-        user = await exports.getByEmail(data.email);
-
-        if (user) {
-            for (const field in data){
-                if (_.has(user, field)){
-                    user[field] = data[field];
-                }
-            }
-            await exports.update(user.id, user);
-            return await exports.get(user.id);
-
-        } else {
-            const id = await exports.create(data);
-
-            return await exports.get(id, cb);
-        }
-    }
-};
 
 
 function validate(data){
-    if (! validator.isLength(data.name, 2, 255)){
+    if (! validator.isLength(data.name, 2, 80)){
         return false;
     }
-    if (! validator.isLength(data.email, 3, 100)){
+    if (! validator.isLength(data.code, 2, 20)){
         return false;
     }
+    if (! validator.isURL(data.url)){
+        return false;
+    }
+
     return true;
 }

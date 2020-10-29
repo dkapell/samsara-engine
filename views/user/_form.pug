@@ -4,8 +4,8 @@
     div.invalid-feedback Please choose a valid name
 
 .form-group
-    label.control-label(for="user_description") Email
-    input.form-control(type="email", placeholder="Email", name="user[email]",id="user_description",value=user.email,required)
+    label.control-label(for="user_email") Email
+    input.form-control(type="email", placeholder="Email", name="user[email]",id="user_email",value=user.email,required)
 
 .form-group
     .form-check
@@ -15,7 +15,12 @@
 .form-group
     .form-check
         input.form-check-input(type="checkbox", name="user[is_gm]",checked=user.is_gm id="user_is_gm")
-        label.form-check-label(for="user_is_admin") GM
+        label.form-check-label(for="user_is_gm") GM
+
+.form-group
+    .form-check
+        input.form-check-input(type="checkbox", name="user[is_player]",checked=user.is_player id="user_is_player")
+        label.form-check-label(for="user_is_player") Player
 
 .form-group
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'

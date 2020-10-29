@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+    a(class='btn btn-success' href='/room/new')
+        span(class="fa fa-plus")
+        |  New room
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th Name
+                    th Code
+                    th URL
+                    th GM
+                    th Active
+
+            tbody
+                for room in rooms
+                    tr(class='clickable-row', data-click-object='room' data-click-id=room.id)
+                        td
+                            a(href='/room/' + room.id)= room.name
+                        td= room.code
+                        td= room.url
+                        td= room.gm
+                        td= room.active?'Yes':'No'
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

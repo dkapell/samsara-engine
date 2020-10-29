@@ -2,7 +2,7 @@ extends ../layout
 
 block content
     a(class='btn btn-success' href='/user/new')
-        span(class="glyphicon glyphicon-plus")
+        span(class="fa fa-plus")
         |  New User
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
@@ -12,6 +12,7 @@ block content
                     th Email
                     th Admin
                     th GM
+                    th Player
 
             tbody
                 for user in users
@@ -21,6 +22,7 @@ block content
                         td= user.email
                         td= user.is_admin?'Yes':'No'
                         td= user.is_gm?'Yes':'No'
+                        td= user.is_player?'Yes':'No'
 
 
 append scripts

@@ -20,6 +20,7 @@ const permission = require('./lib/permission');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
+const roomsRouter = require('./routes/room');
 
 const app = express();
 
@@ -95,7 +96,6 @@ passport.serializeUser(function(user, cb) {
 passport.deserializeUser(async function(id, cb) {
     try{
         const user = await models.user.get(id);
-        console.log(user);
         cb(null, user);
     } catch (err){
         cb(err);
@@ -114,7 +114,6 @@ async function(accessToken, refreshToken, profile, cb) {
             google_id: profile.id,
             email: profile.emails[0].value
         });
-        console.log(user);
         cb(null, user);
     } catch (err) {
         cb(err);
@@ -138,6 +137,7 @@ app.use(function(req, res, next){
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/auth', authRouter);
+app.use('/room', roomsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

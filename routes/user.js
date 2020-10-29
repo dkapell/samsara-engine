@@ -48,7 +48,7 @@ function showEdit(req, res, next){
     res.locals.csrfToken = req.csrfToken();
 
     try{
-        const user = req.models.user.get(id);
+        const user = await req.models.user.get(id);
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.furniture = req.session.userData;

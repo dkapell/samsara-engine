@@ -8,8 +8,8 @@ block content
     .row.my-3
         .col
             form#code-form
-                input.form-control.code-search(type="search", placeholder="Code", id="code-entry")
-                .invalid-feedback#code-feedback
+                .alert.alert-warning#code-feedback(role='alert')
+                input.form-control.code-search(type="input", placeholder="Code", id="code-entry")
 
 
 append scripts

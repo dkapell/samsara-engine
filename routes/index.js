@@ -15,10 +15,10 @@ async function getRoom(req, res, next){
     try {
         const room = await req.models.room.getByCode(code);
         if(!room){
-            return res.json({success:false, error:'invalid code'});
+            return res.json({success:false, error:'Invalid code', retry:true});
         }
         if (!room.active){
-            return res.json({success:false, error:'room is not active'});
+            return res.json({success:false, error:'Room is not active', retry:false});
         }
         return res.json({success:true, url:room.url});
     } catch (err){

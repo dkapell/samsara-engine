@@ -88,14 +88,8 @@ async function update(req, res, next){
     const id = req.params.id;
     const room = req.body.room;
     req.session.roomData = room;
-    if (!_.has(room, 'is_admin')){
-        room.is_admin = false;
-    }
-    if (!_.has(room, 'is_gm')){
-        room.is_gm = false;
-    }
-    if (!_.has(room, 'is_player')){
-        room.is_player = false;
+    if (!_.has(room, 'active')){
+        room.active = false;
     }
 
     try {

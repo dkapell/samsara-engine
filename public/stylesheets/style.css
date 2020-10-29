@@ -1,5 +1,5 @@
 body {
-  padding: 5rem;
+  padding-top: 6rem;
 }
 body, .popover {
     font-family: 'Lato', sans-serif;
@@ -9,9 +9,6 @@ body, .popover {
     font-family:  'Montserrat', sans-serif;
 }
 
-a {
-  color: #00B7FF;
-}
 
 .code-search{
   -webkit-border-radius: 16px;

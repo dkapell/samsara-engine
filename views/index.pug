@@ -1,15 +1,15 @@
 extends layout
 
 block content
-    .container
-        h1= title
-        .lead Welcome to #{title}.  Please enter a room code below.
+    h1= title
+    .lead Welcome to #{title}.
+    p.my-2 Please enter a room code.
 
-        .row.my-3
-            .col
-                form#code-form
-                    input.form-control.code-search(type="search", placeholder="Code", id="code-entry")
-                    .invalid-feedback#code-feedback
+    .row.my-3
+        .col
+            form#code-form
+                input.form-control.code-search(type="search", placeholder="Code", id="code-entry")
+                .invalid-feedback#code-feedback
 
 
 append scripts

@@ -20,7 +20,7 @@ exports.get = async function(id){
 };
 
 exports.getByCode = async function(code){
-    const query = 'select * from rooms where code = $1';
+    const query = 'select * from rooms where UPPER(code) = UPPER($1)';
     const result = await database.query(query, [code]);
     if (result.rows.length){
         return result.rows[0];

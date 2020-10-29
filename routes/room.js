@@ -43,12 +43,12 @@ function showNew(req, res, next){
     res.render('room/new');
 }
 
-function showEdit(req, res, next){
+async function showEdit(req, res, next){
     const id = req.params.id;
     res.locals.csrfToken = req.csrfToken();
 
     try{
-        const room = req.models.room.get(id);
+        const room = await req.models.room.get(id);
         res.locals.room = room;
         if (_.has(req.session, 'roomData')){
             res.locals.furniture = req.session.roomData;

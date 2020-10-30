@@ -15,8 +15,10 @@ async function list(req, res, next){
         const users = await req.models.user.list();
         res.locals.users = await Promise.all(
             users.map( async user => {
-                user.player = await req.models.player.getByUserId(user.id);
-                user.player.run = await req.models.run.get(user.player.run_id);
+                if (user.is_player){
+                    user.player = await req.models.player.getByUserId(user.id);
+                    user.player.run = await req.models.run.get(user.player.run_id);
+                }
                 return user;
             })
         );

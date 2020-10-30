@@ -7,12 +7,21 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name'];
+const tableFields = ['name', 'current'];
 
 
 exports.get = async function(id){
     const query = 'select * from runs where id = $1';
     const result = await database.query(query, [id]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
+};
+
+exports.getCurrent = async function(){
+    const query = 'select * from runs where current = true limit 1';
+    const result = await database.query(query);
     if (result.rows.length){
         return result.rows[0];
     }

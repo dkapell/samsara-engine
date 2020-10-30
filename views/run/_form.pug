@@ -4,6 +4,11 @@
     div.invalid-feedback Please choose a valid name
 
 .form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="run[current]", id="run_current", checked=run.current disabled=run.current)
+        label.custom-control-label(for="run_current") Current
+
+.form-group
     button.btn.btn-primary(type="submit")= run.id?'Update':'Create'
     a.btn.btn-link(href="/run") Cancel
 

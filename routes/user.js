@@ -12,35 +12,52 @@ async function list(req, res, next){
         current: 'Users'
     };
     try {
-        res.locals.users = await req.models.user.list();
+        const users = await req.models.user.list();
+        res.locals.users = await Promise.all(
+            users.map( async user => {
+                user.player = await req.models.player.getByUserId(user.id);
+                user.player.run = await req.models.run.get(user.player.run_id);
+                return user;
+            })
+        );
         res.render('user/list', { pageTitle: 'Users' });
     } catch (err){
         next(err);
     }
 }
 
-function showNew(req, res, next){
-    res.locals.user = {
-        name: null,
-        email: null,
-        is_admin: false,
-        is_gm: false,
-        is_player: false,
-    };
-    res.locals.breadcrumbs = {
-        path: [
-            { url: '/', name: 'Home'},
-            { url: '/user', name: 'User'},
-        ],
-        current: 'New'
-    };
+async function showNew(req, res, next){
+    try{
+        res.locals.user = {
+            name: null,
+            email: null,
+            is_admin: false,
+            is_gm: false,
+            is_player: false,
+            player: {
+                run_id: (await req.models.run.getCurrent()).id,
+                game_state: 'initial'
+            }
+        };
+        res.locals.runs = await req.models.run.list();
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/user', name: 'User'},
+            ],
+            current: 'New'
+        };
 
-    res.locals.csrfToken = req.csrfToken();
-    if (_.has(req.session, 'userData')){
-        res.locals.user = req.session.userData;
-        delete req.session.userData;
+        res.locals.csrfToken = req.csrfToken();
+        if (_.has(req.session, 'userData')){
+            res.locals.user = req.session.userData;
+            delete req.session.userData;
+        }
+        res.render('user/new');
+    } catch(err){
+        next(err);
     }
-    res.render('user/new');
+
 }
 
 async function showEdit(req, res, next){
@@ -49,6 +66,16 @@ async function showEdit(req, res, next){
 
     try{
         const user = await req.models.user.get(id);
+        if (user.is_player){
+            user.player = await req.models.player.getByUserId(id);
+        }
+        if (!user.player){
+            user.player = {
+                run_id: (await req.models.run.getCurrent()).id,
+                game_state: 'initial'
+            };
+        }
+        res.locals.runs = await req.models.run.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.furniture = req.session.userData;
@@ -74,7 +101,14 @@ async function create(req, res, next){
     req.session.userData = user;
 
     try{
-        await req.models.user.create(user);
+        const id = await req.models.user.create(user);
+        if (user.is_player){
+            await req.models.player.create({
+                user_id:id,
+                run_id:user.player.run_id,
+                game_state:user.player.game_state
+            });
+        }
         delete req.session.userData;
         req.flash('success', 'Created User ' + user.name);
         res.redirect('/user');
@@ -103,6 +137,20 @@ async function update(req, res, next){
 
         await req.models.user.update(id, user);
         delete req.session.userData;
+        if (user.is_player){
+            const player = await req.models.player.getByUserId(id);
+            if (player){
+                player.run_id = user.player.run_id;
+                player.game_state =  user.player.game_state;
+                await req.models.player.update(player.id, player);
+            } else {
+                await req.models.player.create({
+                    user_id:id,
+                    run_id:user.player.run_id,
+                    game_state:user.player.game_state
+                });
+            }
+        }
         req.flash('success', 'Updated User ' + user.name);
         res.redirect('/user');
     } catch(err) {

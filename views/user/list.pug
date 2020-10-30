@@ -13,6 +13,7 @@ block content
                     th Admin
                     th GM
                     th Player
+                    th Run
 
             tbody
                 for user in users
@@ -23,6 +24,7 @@ block content
                         td= user.is_admin?'Yes':'No'
                         td= user.is_gm?'Yes':'No'
                         td= user.is_player?'Yes':'No'
+                        th= user.is_player?user.player.run.name:''
 
 
 append scripts

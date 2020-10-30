@@ -5,12 +5,15 @@ block content
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
                 tr
+                    th Run
                     th Name
                     th Email
+
                     th Game State
             tbody
                 for user in users
                     tr
+                        td= user.player.run.name
                         td= user.name
                         td= user.email
-                        td Coming Soon
+                        td= user.player.game_state

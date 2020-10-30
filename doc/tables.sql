@@ -23,6 +23,7 @@ create table rooms (
 create table runs (
     id          serial,
     name        varchar(80) not null unique,
+    current     boolean default false,
     primary key(id)
 );
 

@@ -22,6 +22,7 @@ async function list(req, res, next){
 function showNew(req, res, next){
     res.locals.run = {
         name: null,
+        current: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -70,7 +71,14 @@ async function create(req, res, next){
     req.session.runData = run;
 
     try{
+        if (run.current){
+            const current = await req.models.run.getCurrent();
+            current.current = false;
+            await req.models.run.update(current.id, current);
+        }
+
         await req.models.run.create(run);
+
         delete req.session.runData;
         req.flash('success', 'Created Run ' + run.name);
         res.redirect('/run');
@@ -86,7 +94,13 @@ async function update(req, res, next){
     req.session.runData = run;
 
     try {
-        const current = await req.models.run.get(id);
+        if (run.current){
+            const current = await req.models.run.getCurrent();
+            if (current.id !== id){
+                current.current = false;
+                await req.models.run.update(current.id, current);
+            }
+        }
 
         await req.models.run.update(id, run);
         delete req.session.runData;

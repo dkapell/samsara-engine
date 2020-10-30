@@ -8,22 +8,32 @@
     input.form-control(type="email", placeholder="Email", name="user[email]",id="user_email",value=user.email,required)
 
 .form-group
-    .form-check
-        input.form-check-input(type="checkbox", name="user[is_admin]",checked=user.is_admin id="user_is_admin")
-        label.form-check-label(for="user_is_admin") Admin
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="user[is_admin]",checked=user.is_admin id="user_is_admin")
+        label.custom-control-label(for="user_is_admin") Admin
 
 .form-group
-    .form-check
-        input.form-check-input(type="checkbox", name="user[is_gm]",checked=user.is_gm id="user_is_gm")
-        label.form-check-label(for="user_is_gm") GM
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="user[is_gm]",checked=user.is_gm id="user_is_gm")
+        label.custom-control-label(for="user_is_gm") GM
 
 .form-group
-    .form-check
-        input.form-check-input(type="checkbox", name="user[is_player]",checked=user.is_player id="user_is_player")
-        label.form-check-label(for="user_is_player") Player
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="user[is_player]",checked=user.is_player id="user_is_player")
+        label.custom-control-label(for="user_is_player") Player
+
+fieldset#player_fields
+    label.my-2.w-auto.lead Player settings
+    .form-group
+        label.control-label(for="user_run_id") Run
+        select.form-control(name="user[player][run_id]",id="user_run_id")
+            for run in runs
+                option(value=run.id selected=user.player.run_id===run.id)= run.name
+
+    .form-group
+        label.control-label(for="user_game_state") Game State
+        input.form-control(type="text",placeholder="Game State",name="user[player][game_state]",value=user.player.game_state,id='user_game_state')
 
 .form-group
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'
     a.btn.btn-link(href="/user") Cancel
-
-

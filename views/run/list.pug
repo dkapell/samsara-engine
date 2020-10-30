@@ -10,13 +10,14 @@ block content
                 tr
                     th(style="max-width:50px") ID
                     th Name
+                    th Current
             tbody
                 for run in runs
                     tr(class='clickable-row', data-click-object='run' data-click-id=run.id)
                         th(scope="row")= run.id
                         td
                             a(href='/run/' + run.id)= run.name
-
+                        td= run.current?'Yes':''
 
 append scripts
     script(src='/javascripts/data-table.js')

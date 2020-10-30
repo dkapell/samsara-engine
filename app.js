@@ -23,7 +23,7 @@ const authRouter = require('./routes/auth');
 const roomsRouter = require('./routes/room');
 const playersRouter = require('./routes/player');
 const runsRouter = require('./routes/run');
-
+const playerGroupsRouter = require('./routes/player_group');
 const app = express();
 
 // if running in SSL Only mode, redirect to SSL version
@@ -142,6 +142,7 @@ app.use('/auth', authRouter);
 app.use('/room', roomsRouter);
 app.use('/player', playersRouter);
 app.use('/run', runsRouter);
+app.use('/player_group', playerGroupsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

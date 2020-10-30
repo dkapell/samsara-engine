@@ -14,6 +14,7 @@ block content
                     th GM
                     th Player
                     th Run
+                    th Group
 
             tbody
                 for user in users
@@ -24,7 +25,8 @@ block content
                         td= user.is_admin?'Yes':'No'
                         td= user.is_gm?'Yes':'No'
                         td= user.is_player?'Yes':'No'
-                        th= user.is_player?user.player.run.name:''
+                        td= user.is_player?runs[user.player.run_id].name:''
+                        td= user.is_player?player_groups[user.player.group_id].name:''
 
 
 append scripts

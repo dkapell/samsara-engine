@@ -29,6 +29,13 @@ fieldset#player_fields
         select.form-control(name="user[player][run_id]",id="user_run_id")
             for run in runs
                 option(value=run.id selected=user.player.run_id===run.id)= run.name
+    .form-group
+        label.control-label(for="user_group_id") Player Group
+        select.form-control(name="user[player][group_id]",id="user_group_id")
+            option(value='' selected=!user.player.group) None
+            for group in player_groups
+                option(value=group.id selected=user.player.group_id===group.id)= group.name
+
 
     .form-group
         label.control-label(for="user_game_state") Game State

@@ -18,10 +18,11 @@ async function list(req, res, next){
         res.locals.users = await Promise.all(
             players.map( async user => {
                 user.player = await req.models.player.getByUserId(user.id);
-                user.player.run = await req.models.run.get(user.player.run_id);
                 return user;
             })
         );
+        res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
+        res.locals.player_groups = _.indexBy(await req.models.player_group.list(), 'id');
 
         res.render('player/list', { pageTitle: 'Players' });
     } catch (err){

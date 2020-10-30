@@ -7,11 +7,11 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['user_id', 'run_id', 'game_state', 'group_id'];
+const tableFields = ['name', 'description'];
 
 
 exports.get = async function(id){
-    const query = 'select * from players where id = $1';
+    const query = 'select * from player_groups where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -19,9 +19,9 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByUserId = async function(user_id){
-    const query = 'select * from players where user_id = $1';
-    const result = await database.query(query, [user_id]);
+exports.getByName = async function(name){
+    const query = 'select * from player_groups where name = $1';
+    const result = await database.query(query, [name]);
     if (result.rows.length){
         return result.rows[0];
     }
@@ -29,14 +29,8 @@ exports.getByUserId = async function(user_id){
 };
 
 exports.list = async function(){
-    const query = 'select * from players order by name';
+    const query = 'select * from player_groups order by name';
     const result = await database.query(query);
-    return result.rows;
-};
-
-exports.listByRunId = async function(run_id){
-    const query = 'select * from players where run_id = $1';
-    const result = await database.query(query, [run_id]);
     return result.rows;
 };
 
@@ -55,7 +49,7 @@ exports.create = async function(data, cb){
         }
     }
 
-    let query = 'insert into players (';
+    let query = 'insert into player_groups (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -78,7 +72,7 @@ exports.update = async function(id, data, cb){
         }
     }
 
-    let query = 'update players set ';
+    let query = 'update player_groups set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -86,14 +80,16 @@ exports.update = async function(id, data, cb){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from players where id = $1';
+    const query = 'delete from player_groups where id = $1';
     await database.query(query, [id]);
 };
 
 
 
 function validate(data){
-
+    if (! validator.isLength(data.name, 2, 80)){
+        return false;
+    }
 
     return true;
 }

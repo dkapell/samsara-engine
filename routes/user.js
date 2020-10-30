@@ -17,11 +17,12 @@ async function list(req, res, next){
             users.map( async user => {
                 if (user.is_player){
                     user.player = await req.models.player.getByUserId(user.id);
-                    user.player.run = await req.models.run.get(user.player.run_id);
                 }
                 return user;
             })
         );
+        res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
+        res.locals.player_groups = _.indexBy(await req.models.player_group.list(), 'id');
         res.render('user/list', { pageTitle: 'Users' });
     } catch (err){
         next(err);
@@ -38,10 +39,12 @@ async function showNew(req, res, next){
             is_player: false,
             player: {
                 run_id: (await req.models.run.getCurrent()).id,
-                game_state: 'initial'
+                game_state: 'initial',
+                group_id: null,
             }
         };
         res.locals.runs = await req.models.run.list();
+        res.locals.player_groups = await req.models.player_group.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -78,6 +81,7 @@ async function showEdit(req, res, next){
             };
         }
         res.locals.runs = await req.models.run.list();
+        res.locals.player_groups = await req.models.player_group.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.furniture = req.session.userData;
@@ -108,7 +112,8 @@ async function create(req, res, next){
             await req.models.player.create({
                 user_id:id,
                 run_id:user.player.run_id,
-                game_state:user.player.game_state
+                game_state:user.player.game_state,
+                group_id: null
             });
         }
         delete req.session.userData;
@@ -144,12 +149,14 @@ async function update(req, res, next){
             if (player){
                 player.run_id = user.player.run_id;
                 player.game_state =  user.player.game_state;
+                player.group_id = user.player.group_id;
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({
                     user_id:id,
                     run_id:user.player.run_id,
-                    game_state:user.player.game_state
+                    game_state:user.player.game_state,
+                    group_id: null
                 });
             }
         }

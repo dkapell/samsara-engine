@@ -27,10 +27,18 @@ create table runs (
     primary key(id)
 );
 
+create table player_groups (
+    id          serial,
+    name        varchar(80) not null unique,
+    description text
+    primary key (id),
+);
+
 create table players (
     id          serial,
     user_id     int,
     run_id      int,
+    group_id    int,
     game_state   varchar(80),
     primary key (id),
     CONSTRAINT players_user_fk FOREIGN KEY (user_id)
@@ -38,5 +46,8 @@ create table players (
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT players_run_fk FOREIGN KEY (run_id)
         REFERENCES "runs" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT players_group_fk FOREIGN KEY (group_id)
+        REFERENCES "player_groups" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );

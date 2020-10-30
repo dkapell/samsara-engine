@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/player_group/new')
+        span(class="fa fa-plus")
+        |  New Player Group
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th Name
+                    th Description
+
+            tbody
+                for player_group in player_groups
+                    tr(class='clickable-row', data-click-object='player_group' data-click-id=player_group.id)
+                        td
+                            a(href='/player_group/' + player_group.id)= player_group.name
+                        td= player_group.description
+
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

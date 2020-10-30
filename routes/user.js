@@ -113,7 +113,7 @@ async function create(req, res, next){
                 user_id:id,
                 run_id:user.player.run_id,
                 game_state:user.player.game_state,
-                group_id: null
+                group_id: user.player.group_id?user.player.group_id:null
             });
         }
         delete req.session.userData;
@@ -149,14 +149,18 @@ async function update(req, res, next){
             if (player){
                 player.run_id = user.player.run_id;
                 player.game_state =  user.player.game_state;
-                player.group_id = user.player.group_id;
+                if (Number(user.player.group_id)){
+                    player.group_id = user.player.group_id;
+                } else {
+                    player.group_id = null;
+                }
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({
                     user_id:id,
                     run_id:user.player.run_id,
                     game_state:user.player.game_state,
-                    group_id: null
+                    group_id: user.player.group_id?user.player.group_id:null
                 });
             }
         }

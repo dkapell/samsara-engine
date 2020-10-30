@@ -14,7 +14,7 @@ block content
                 for user in users
                     tr
                         td= runs[user.player.run_id].name
-                        td= user.is_player?player_groups[user.player.group_id].name:''
+                        td= user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped'
                         td= user.name
                         td= user.email
                         td= user.player.game_state

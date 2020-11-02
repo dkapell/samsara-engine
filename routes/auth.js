@@ -2,6 +2,7 @@ const config = require('config');
 const express = require('express');
 const passport = require('passport');
 const _ = require('underscore');
+const permission = require('../lib/permission');
 
 const router = express.Router();
 
@@ -34,6 +35,17 @@ router.get('/logout',
     function logout(req, res, next){
         req.logout();
         delete req.session.accessToken;
+        delete req.session.gm_mode;
+        res.redirect('/');
+    });
+
+router.get('/gm', permission('gm'),
+    function toggleGmMode(req, res, next){
+        if (req.session.gm_mode){
+            delete req.session.gm_mode;
+        } else {
+            req.session.gm_mode = true;
+        }
         res.redirect('/');
     });
 

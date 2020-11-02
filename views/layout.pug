@@ -55,16 +55,19 @@ html(lang="en")
                     ul.navbar-nav.float-right
                         - if (activeUser)
                             li.nav-item.dropdown
-                                a.nav-link.dropdown-toggle#userDropdown(
+                                a.nav-link.dropdown-toggle.px-4#userDropdown(
+                                    class=session.gm_mode?'bg-warning rounded-pill text-dark':''
                                     href='#'
                                     role='button'
                                     data-toggle='dropdown'
                                     aria-haspopup="true"
                                     aria-expanded="false")
-                                    span.fa.fa-user
+                                    i.fas.fa-user
                                     |  #{activeUser.name}
                                 .dropdown-menu(aria-labelledby="userDropdown")
-                                    a.dropdown-item(href='/auth/logout') Logout
+                                    a.dropdown-item(href="/auth/logout") Logout
+                                    if checkPermission('admin', true)
+                                        a.dropdown-item(href="/auth/gm") #{session.gm_mode?'Disable':'Enable'} GM Mode
 
                         - else
                             li.nav-item

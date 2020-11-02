@@ -1,14 +1,26 @@
 $(function(){
     $('.table-sorted').DataTable({
         paging: false,
-        fixedHeader: true
+        fixedHeader: true,
+        responsive: {
+            details: {
+                type: 'column'
+            }
+        },
+        columnDefs: [ {
+            className: 'dtr-control',
+            orderable: false,
+            targets:   0
+        } ],
     });
 
     $('.clickable-row').on('click', function(e){
         e.preventDefault();
+        if ($(e.target).hasClass('dtr-expand')){
+            return;
+        }
         var object = $(this).attr('data-click-object');
         var id = $(this).attr('data-click-id');
-        console.log('/'+ object + '/' + id);
         window.location.href='/'+ object + '/' + id;
     });
     $('.table-sorted').show();

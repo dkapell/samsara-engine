@@ -8,15 +8,17 @@ block content
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
                 tr
-                    th Name
-                    th Code
+                    th
+                    th(data-priority="1") Name
+                    th(data-priority="2") Code
                     th URL
-                    th GM
-                    th Active
+                    th(data-priority="3") GM
+                    th(data-priority="4") Active
 
             tbody
                 for room in rooms
                     tr(class='clickable-row', data-click-object='room' data-click-id=room.id)
+                        td.dtr-expand
                         td
                             a(href='/room/' + room.id)= room.name
                         td= room.code

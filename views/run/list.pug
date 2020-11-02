@@ -8,12 +8,14 @@ block content
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
                 tr
+                    th
                     th(style="max-width:50px") ID
                     th Name
                     th Current
             tbody
                 for run in runs
                     tr(class='clickable-row', data-click-object='run' data-click-id=run.id)
+                        td.dtr-expand
                         th(scope="row")= run.id
                         td
                             a(href='/run/' + run.id)= run.name

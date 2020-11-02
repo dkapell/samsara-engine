@@ -15,3 +15,9 @@ body, .popover {
      -moz-border-radius: 16px;
           border-radius: 16px;
 }
+
+table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>td:first-child:before,
+table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
+{
+    top:14px;
+}

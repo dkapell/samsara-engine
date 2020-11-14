@@ -24,6 +24,8 @@ const roomsRouter = require('./routes/room');
 const playersRouter = require('./routes/player');
 const runsRouter = require('./routes/run');
 const playerGroupsRouter = require('./routes/player_group');
+const imageRouter = require('./routes/image');
+const stubRouter = require('./routes/roomStub');
 const app = express();
 
 // if running in SSL Only mode, redirect to SSL version
@@ -143,6 +145,8 @@ app.use('/room', roomsRouter);
 app.use('/player', playersRouter);
 app.use('/run', runsRouter);
 app.use('/player_group', playerGroupsRouter);
+app.use('/image', imageRouter);
+app.use('/stub', stubRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

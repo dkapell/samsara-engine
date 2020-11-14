@@ -41,6 +41,7 @@ async function showNew(req, res, next){
                 run_id: (await req.models.run.getCurrent()).id,
                 game_state: 'initial',
                 group_id: null,
+                character: null
             }
         };
         res.locals.runs = await req.models.run.list();
@@ -77,7 +78,8 @@ async function showEdit(req, res, next){
         if (!user.player){
             user.player = {
                 run_id: (await req.models.run.getCurrent()).id,
-                game_state: 'initial'
+                game_state: 'initial',
+                character: null
             };
         }
         res.locals.runs = await req.models.run.list();
@@ -113,7 +115,9 @@ async function create(req, res, next){
                 user_id:id,
                 run_id:user.player.run_id,
                 game_state:user.player.game_state,
+                character: user.player.character,
                 group_id: user.player.group_id?user.player.group_id:null
+
             });
         }
         delete req.session.userData;
@@ -148,6 +152,7 @@ async function update(req, res, next){
             const player = await req.models.player.getByUserId(id);
             if (player){
                 player.run_id = user.player.run_id;
+                player.character = user.player.character;
                 player.game_state =  user.player.game_state;
                 if (Number(user.player.group_id)){
                     player.group_id = user.player.group_id;

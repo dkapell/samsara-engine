@@ -1,5 +1,6 @@
 'use strict';
 const async = require('async');
+const config = require('config');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
@@ -7,31 +8,21 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'code', 'description', 'url', 'gm', 'active'];
-
+const tableFields = ['name', 'description', 'status'];
 
 exports.get = async function(id){
-    const query = 'select * from rooms where id = $1';
+    const query = 'select * from images where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
-    }
-    return;
-};
-
-exports.getByCode = async function(code){
-    const query = 'select * from rooms where UPPER(code) = UPPER($1)';
-    const result = await database.query(query, [code]);
-    if (result.rows.length){
-        return result.rows[0];
+        return makeURL(result.rows[0]);
     }
     return;
 };
 
 exports.list = async function(){
-    const query = 'select * from rooms order by name';
+    const query = 'select * from images order by name';
     const result = await database.query(query);
-    return result.rows;
+    return result.rows.map(makeURL);
 };
 
 exports.create = async function(data, cb){
@@ -49,7 +40,7 @@ exports.create = async function(data, cb){
         }
     }
 
-    let query = 'insert into rooms (';
+    let query = 'insert into images (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -72,7 +63,7 @@ exports.update = async function(id, data, cb){
         }
     }
 
-    let query = 'update rooms set ';
+    let query = 'update images set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -80,22 +71,21 @@ exports.update = async function(id, data, cb){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from rooms where id = $1';
+    const query = 'delete from images where id = $1';
     await database.query(query, [id]);
 };
 
 
 
 function validate(data){
-    if (! validator.isLength(data.name, 2, 80)){
+    if (_.has(data, 'name') && ! validator.isLength(data.name, 2, 80)){
         return false;
     }
-    if (! validator.isLength(data.code, 2, 20)){
-        return false;
-    }
-    if (data.url !== 'stub' && !validator.isURL(data.url)){
-        return false;
-    }
-
     return true;
+}
+
+function makeURL(image){
+    const key = ['images', image.id, image.name].join('/');
+    image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
+    return image;
 }

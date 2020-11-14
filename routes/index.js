@@ -20,7 +20,11 @@ async function getRoom(req, res, next){
         if (!room.active){
             return res.json({success:false, error:'Room is not active', retry:false});
         }
-        return res.json({success:true, url:room.url});
+        if (room.url === 'stub'){
+            return res.json({success:true, url:'/stub/' + room.id});
+        } else {
+            return res.json({success:true, url:room.url});
+        }
     } catch (err){
         return res.json({success:false, error:err.message});
 

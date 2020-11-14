@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+    .row
+        .col-sm-8.offset-sm-2
+            .card
+                .card-header= 'Edit Image: ' + image.name
+                .card-body
+                    .row.my-2
+                        .col
+                            image.mx-auto.d-block.img-fluid(src=image.url)
+                    .row
+                        .col
+                            form.form.needs-validation(method="POST" action="/image/" + image.id novalidate)
+                                input(type="hidden", name="_method",  value="PUT")
+                                input(type="hidden", name='_csrf',value=csrfToken)
+                                input(type="hidden", name='image[id]',value=image.id)
+                                .form-group
+                                    label.control-label(for="image_description") Description
+                                    textarea.form-control(name="image[description]",id="image_description",rows=3) #{image.description}
+
+
+                                .form-group
+                                    button.btn.btn-primary(type="submit") Update
+                                    a.btn.btn-link(href="/image") Cancel
+
+append scripts
+    script(src='/javascripts/validator.js')
+    script(src='/javascripts/image.js')

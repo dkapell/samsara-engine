@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/image/new')
+        span(class="fa fa-plus")
+        |  New Image
+    ul.list-unstyled.my-3
+        for image in images
+            .media.my-1.border-bottom.border-light
+                .col-4
+                    img.mr-3.img-fluid(src=image.url)
+                .media-body.col
+                    h5.mt-0.mb-1
+                        a(href='/image/' + image.id)= image.name
+                        .badge.badge-primary.ml-2=image.status
+                    p= image.description
+
+append scripts
+    script(src='/javascripts/data-table.js')

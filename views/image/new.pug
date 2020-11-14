@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+    .row
+        .col-sm-8.offset-sm-2
+            .card
+                .card-header New Image
+                .card-body
+                    form#new-image-form.form.needs-validation(method="POST" action="/image" novalidate)
+                        input(type="hidden", name="_method",  value="PUT")
+                        input(type="hidden", name='_csrf',value=csrfToken)
+                        input#image-id(type="hidden", name='image[id]',value='')
+                        input#image-status(type="hidden", name='image[status]',value='new')
+                        .form-group
+                            .form-row
+                                .col
+                                    .custom-file
+                                        input.custom-file-input#imagePicker(type="file", name="image[file]")
+                                        label.custom-file-label(for="imagePicker") Choose File
+                            .form-row
+                                .col#upload-type
+                                .col#upload-size
+                            .form-row
+                                .col#upload-feedback.text-danger
+
+                        .form-group
+                            label.control-label(for="image_description") Description
+                            textarea.form-control(name="image[description]",id="image_description",rows=3) #{image.description}
+
+
+                        .form-group
+                            button.btn.btn-primary(type="submit") Create
+                            a.btn.btn-link(href="/image") Cancel
+
+append scripts
+    script(src='/javascripts/image.js')
+    //script(src='/javascripts/validator.js')

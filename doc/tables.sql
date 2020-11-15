@@ -60,3 +60,15 @@ create table images (
     status varchar(20) default 'new' not null,
     primary key (id)
 );
+
+create table imagemaps (
+    id  serial,
+    name varchar(255) not null,
+    description text,
+    image_id int not null,
+    map jsonb,
+    primary key(id),
+    CONSTRAINT imagemaps_image_fk FOREIGN KEY (image_id)
+        REFERENCES "images" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);

@@ -139,9 +139,9 @@ async function signS3(req, res, next){
 
 const router = express.Router();
 
-router.use(permission('admin'));
+router.use(permission('gm'));
 router.use(function(req, res, next){
-    res.locals.siteSection='admin';
+    res.locals.siteSection='config';
     next();
 });
 

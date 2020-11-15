@@ -25,6 +25,7 @@ const playersRouter = require('./routes/player');
 const runsRouter = require('./routes/run');
 const playerGroupsRouter = require('./routes/player_group');
 const imageRouter = require('./routes/image');
+const imagemapRouter = require('./routes/imagemap');
 const stubRouter = require('./routes/roomStub');
 const app = express();
 
@@ -146,6 +147,7 @@ app.use('/player', playersRouter);
 app.use('/run', runsRouter);
 app.use('/player_group', playerGroupsRouter);
 app.use('/image', imageRouter);
+app.use('/imagemap', imagemapRouter);
 app.use('/stub', stubRouter);
 
 // catch 404 and forward to error handler

@@ -1,0 +1,11 @@
+mixin imagemap(imagemap)
+    image(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+    map(name= 'imagemap-' + imagemap.id)
+        for area of imagemap.map
+            area(
+                shape=area.shape,
+                coords=area.coords,
+                data-code=area.code,
+                href='#',
+                target="_self"
+            )

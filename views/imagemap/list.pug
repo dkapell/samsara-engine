@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/imagemap/new')
+        span(class="fa fa-plus")
+        |  New Imagemap
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th Name
+                    th Image
+                    th Description
+
+            tbody
+                for imagemap in imagemaps
+                    tr
+                        td.dtr-expand
+                        td
+                            a(href='/imagemap/' + imagemap.id)= imagemap.name
+                        td
+                            a(href='/image/' + imagemap.image.id)= imagemap.image.name
+                        td= imagemap.description
+
+append scripts
+    script(src='/javascripts/data-table.js')

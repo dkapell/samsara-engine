@@ -1,0 +1,17 @@
+extends ../layout
+
+block content
+    .row
+        .col-md-10.offset-md-1
+            .card
+                .card-header= 'Edit Imagemap: ' + imagemap.name
+                .card-body
+                    form.form.needs-validation(method="POST" action="/imagemap/" + imagemap.id novalidate)
+                        input(type="hidden", name="_method",  value="PUT")
+                        input(type="hidden", name='_csrf',value=csrfToken)
+                        input(type="hidden", name='imagemap[id]',value=imagemap.id)
+                        include ./_form.pug
+
+append scripts
+    script(src='/javascripts/validator.js')
+    script(src='/javascripts/imagemap.js')

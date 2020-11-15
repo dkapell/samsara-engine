@@ -39,6 +39,17 @@ html(lang="en")
                                     a.dropdown-item(href='/room') Rooms List
                                     a.dropdown-item(href='/player') Players List
 
+                            li.nav-item.dropdown(class= siteSection==='config'?"active":null)
+                                a.nav-link.dropdown-toggle#configDropdown(
+                                    href='#'
+                                    role='button'
+                                    data-toggle='dropdown'
+                                    aria-haspopup="true"
+                                    aria-expanded="false") Game Config
+                                .dropdown-menu(aria-labelledby="configDropdown")
+                                    a.dropdown-item(href='/image') Images
+                                    a.dropdown-item(href='/imagemap') Imagemaps
+
                         - if (checkPermission('admin'))
                             li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
                                 a.nav-link.dropdown-toggle#adminDropdown(
@@ -51,7 +62,7 @@ html(lang="en")
                                     a.dropdown-item(href='/user') Users
                                     a.dropdown-item(href='/run') Runs
                                     a.dropdown-item(href='/player_group') Player Groups
-                                    a.dropdown-item(href='/image') Images
+
 
                     ul.navbar-nav.float-right
                         - if (activeUser)

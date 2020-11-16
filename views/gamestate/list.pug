@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/gamestate/new')
+        span(class="fa fa-plus")
+        |  New Gamestate
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th(data-priority="1") Name
+                    th(data-priority="2") Imagemap
+                    th(data-priority="4") Allow Codes
+
+            tbody
+                for gamestate in gamestates
+                    tr(class='clickable-row', data-click-object='gamestate' data-click-id=gamestate.id)
+                        td.dtr-expand
+                        td
+                            a(href='/gamestate/' + gamestate.id)= gamestate.name
+                        td
+                            if gamestate.imagemap
+                                = gamestate.imagemap.name
+                            else
+                                i None
+                        td= gamestate.allow_codes?'Yes':'No'
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

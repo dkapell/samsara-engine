@@ -87,7 +87,7 @@ async function showEdit(req, res, next){
         }
         res.locals.imagemap = imagemap;
         if (_.has(req.session, 'imagemapData')){
-            res.locals.furniture = req.session.imagemapData;
+            res.locals.imagemap = req.session.imagemapData;
             delete req.session.imagemapData;
         }
         res.locals.breadcrumbs = {

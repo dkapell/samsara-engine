@@ -48,7 +48,7 @@ async function showEdit(req, res, next){
         const run = await req.models.run.get(id);
         res.locals.run = run;
         if (_.has(req.session, 'runData')){
-            res.locals.furniture = req.session.runData;
+            res.locals.run = req.session.runData;
             delete req.session.runData;
         }
         res.locals.breadcrumbs = {

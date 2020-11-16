@@ -48,7 +48,7 @@ async function showEdit(req, res, next){
         const player_group = await req.models.player_group.get(id);
         res.locals.player_group = player_group;
         if (_.has(req.session, 'player_groupData')){
-            res.locals.furniture = req.session.player_groupData;
+            res.locals.player_group = req.session.player_groupData;
             delete req.session.player_groupData;
         }
         res.locals.breadcrumbs = {

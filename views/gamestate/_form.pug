@@ -1,0 +1,27 @@
+.form-group
+    label.control-label(for="gamestate_name") Name
+    input.form-control(type="text",placeholder="Name",name="gamestate[name]",value=gamestate.name,id='gamestate_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="gamestate_imagemap_id") Imagemap
+    select.custom-select(name="gamestate[imagemap_id]",id="gamestate_imagemap_id")
+        option(selected=!gamestate.imagemap_id value="-1") None
+        for imagemap in imagemaps
+            option(value=imagemap.id selected=gamestate.imagemap_id===imagemap.id)= imagemap.name
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="gamestate[allow_codes]", id="gamestate_allow_codes", checked=gamestate.allow_codes)
+        label.custom-control-label(for="gamestate_allow_codes") Allow Code Entry
+
+.form-group
+    label.control-label(for="gamestate_description") Description (Player Facing)
+    textarea.form-control(name="gamestate[description]",id="gamestate_description",rows=3)
+        = gamestate.description
+
+.form-group
+    button.btn.btn-primary(type="submit")= gamestate.id?'Update':'Create'
+    a.btn.btn-link(href="/gamestate") Cancel
+
+

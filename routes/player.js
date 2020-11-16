@@ -18,6 +18,8 @@ async function list(req, res, next){
         res.locals.users = await Promise.all(
             players.map( async user => {
                 user.player = await req.models.player.getByUserId(user.id);
+                user.player.gamestate = await req.models.gamestate.get(user.player.gamestate_id);
+                user.player.prev_gamestate = await req.models.gamestate.get(user.player.prev_gamestate_id);
                 return user;
             })
         );

@@ -21,6 +21,7 @@ async function list(req, res, next){
                 return user;
             })
         );
+        res.locals.gamestates = await req.models.gamestate.list();
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
         res.locals.player_groups = _.indexBy(await req.models.player_group.list(), 'id');
         res.render('user/list', { pageTitle: 'Users' });
@@ -46,6 +47,7 @@ async function showNew(req, res, next){
         };
         res.locals.runs = await req.models.run.list();
         res.locals.player_groups = await req.models.player_group.list();
+        res.locals.gamestates = await req.models.gamestate.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -78,15 +80,16 @@ async function showEdit(req, res, next){
         if (!user.player){
             user.player = {
                 run_id: (await req.models.run.getCurrent()).id,
-                game_state: 'initial',
+                gamestate_id: null,
                 character: null
             };
         }
         res.locals.runs = await req.models.run.list();
         res.locals.player_groups = await req.models.player_group.list();
+        res.locals.gamestates = await req.models.gamestate.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
-            res.locals.furniture = req.session.userData;
+            res.locals.user = req.session.userData;
             delete req.session.userData;
         }
         res.locals.breadcrumbs = {
@@ -114,7 +117,8 @@ async function create(req, res, next){
             await req.models.player.create({
                 user_id:id,
                 run_id:user.player.run_id,
-                game_state:user.player.game_state,
+                gamestate_id:user.player.gamestate_id,
+                prev_gamestate_id:null,
                 character: user.player.character,
                 group_id: user.player.group_id?user.player.group_id:null
 
@@ -153,7 +157,7 @@ async function update(req, res, next){
             if (player){
                 player.run_id = user.player.run_id;
                 player.character = user.player.character;
-                player.game_state =  user.player.game_state;
+                player.gamestate_id =  user.player.gamestate_id;
                 if (Number(user.player.group_id)){
                     player.group_id = user.player.group_id;
                 } else {

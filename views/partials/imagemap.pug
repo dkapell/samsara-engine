@@ -1,5 +1,5 @@
 mixin imagemap(imagemap)
-    image(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+    image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
     map(name= 'imagemap-' + imagemap.id)
         for area of imagemap.map
             area(

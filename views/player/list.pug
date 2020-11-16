@@ -21,6 +21,10 @@ block content
                         td= user.name
                         td= user.player.character
                         td= user.email
-                        td= user.player.game_state
+                        td
+                            if user.player.gamestate
+                                = user.player.gamestate.name
+                            else
+                                i Unknown
 append scripts
     script(src='/javascripts/data-table.js')

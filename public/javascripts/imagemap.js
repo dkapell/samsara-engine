@@ -1,8 +1,16 @@
 let codeLocked = false;
 let nextIndex = 0;
 $(function(){
-    // For Show
+    //For Show
     $('img[usemap]').rwdImageMaps();
+    $('.map').maphilight({
+        wrapClass:true,
+        shadow:true,
+        strokeWidth:3,
+        strokeColor: '3498db',
+        fillColor: '000000',
+        fillOpacity: 0.2,
+    });
     $('area').on('click', toggleLock);
     $('area').on('mouseover', showCode);
     $('area').on('mouseout', clearCode);

@@ -41,8 +41,11 @@ fieldset#player_fields
         input.form-control(type="text",placeholder="Character",name="user[player][character]",value=user.player.character,id='user_character')
 
     .form-group
-        label.control-label(for="user_game_state") Game State
-        input.form-control(type="text",placeholder="Game State",name="user[player][game_state]",value=user.player.game_state,id='user_game_state')
+        label.control-label(for="user_gamestate_id") Game State
+        select.custom-select(name="user[player][gamestate_id]",id="user_gamestate_id")
+            option(selected disabled value="") Select Gamestate
+            for gamestate in gamestates
+                option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
 
 .form-group
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'

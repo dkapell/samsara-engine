@@ -49,7 +49,7 @@ async function showEdit(req, res, next){
         const image = await req.models.image.get(id);
         res.locals.image = image;
         if (_.has(req.session, 'imageData')){
-            res.locals.furniture = req.session.imageData;
+            res.locals.image = req.session.imageData;
             delete req.session.imageData;
         }
         res.locals.breadcrumbs = {

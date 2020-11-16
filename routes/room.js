@@ -51,7 +51,7 @@ async function showEdit(req, res, next){
         const room = await req.models.room.get(id);
         res.locals.room = room;
         if (_.has(req.session, 'roomData')){
-            res.locals.furniture = req.session.roomData;
+            res.locals.room = req.session.roomData;
             delete req.session.roomData;
         }
         res.locals.breadcrumbs = {

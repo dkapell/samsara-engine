@@ -7,11 +7,11 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'group_id', 'statetime'];
+const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes'];
 
 
 exports.get = async function(id){
-    const query = 'select * from players where id = $1';
+    const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -19,28 +19,13 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByUserId = async function(user_id){
-    const query = 'select * from players where user_id = $1';
-    const result = await database.query(query, [user_id]);
-    if (result.rows.length){
-        return result.rows[0];
-    }
-    return;
-};
-
 exports.list = async function(){
-    const query = 'select * from players order by name';
+    const query = 'select * from gamestates order by name';
     const result = await database.query(query);
     return result.rows;
 };
 
-exports.listByRunId = async function(run_id){
-    const query = 'select * from players where run_id = $1';
-    const result = await database.query(query, [run_id]);
-    return result.rows;
-};
-
-exports.create = async function(data){
+exports.create = async function(data, cb){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -55,7 +40,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into players (';
+    let query = 'insert into gamestates (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -65,7 +50,7 @@ exports.create = async function(data){
     return result.rows[0].id;
 };
 
-exports.update = async function(id, data){
+exports.update = async function(id, data, cb){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -78,7 +63,7 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update players set ';
+    let query = 'update gamestates set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -86,20 +71,14 @@ exports.update = async function(id, data){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from players where id = $1';
+    const query = 'delete from gamestates where id = $1';
     await database.query(query, [id]);
 };
 
-exports.updateState = async function(id, gamestate_id, cb){
-    const player = await exports.get(id);
-    player.prev_gamestate_id = player.gamestate_id;
-    player.statetime = new Date();
-    player.gamestate_id = gamestate_id;
-    await exports.update(id, player);
-};
-
 function validate(data){
-
+    if (! validator.isLength(data.name, 2, 80)){
+        return false;
+    }
 
     return true;
 }

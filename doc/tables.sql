@@ -34,13 +34,55 @@ create table player_groups (
     primary key (id),
 );
 
+create table gamestates (
+    id serial,
+    name varchar(255) not null,
+    description text,
+    imagemap_id int,
+    allow_codes boolean,
+    primary key (id),
+    CONSTRAINT gamestate_imagemap_fk FOREIGN KEY (imagemap_id)
+        REFERENCES "imagemaps" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL
+);
+
+insert into gamestates (name) values ('Initial');
+
+create table gamestate_rooms(
+    gamestate_id int not null,
+    room_id int not null,
+    primary key (gamestate_id, room_id),
+    CONSTRAINT gsr_gamestate_fk FOREIGN KEY (gamestate_id)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT gsr_room_fk FOREIGN KEY (room_id)
+        REFERENCES "rooms" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+create table transitions(
+    id serial,
+    from_state int not null,
+    to_state int not null,
+    criteria jsonb,
+    primary key(id),
+    CONSTRAINT transitions_from_fk FOREIGN KEY (from_state)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT transitions_to_fk FOREIGN KEY (to_state)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
 create table players (
     id          serial,
     user_id     int,
     run_id      int,
     group_id    int,
     character   varchar(255),
-    game_state  varchar(80),
+    gamestate_id int,
+    prev_gamestate_id int,
+    statetime timestamp with time zone DEFAULT now(),
     primary key (id),
     CONSTRAINT players_user_fk FOREIGN KEY (user_id)
         REFERENCES "users" (id) MATCH SIMPLE
@@ -50,7 +92,13 @@ create table players (
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT players_group_fk FOREIGN KEY (group_id)
         REFERENCES "player_groups" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE CASCADE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT players_gamestate_fk FOREIGN KEY (gamestate_id)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT players_prev_gamestate_fk FOREIGN KEY (prev_gamestate_id)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
 );
 
 create table images (
@@ -72,3 +120,4 @@ create table imagemaps (
         REFERENCES "images" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
+

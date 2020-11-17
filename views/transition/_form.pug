@@ -1,0 +1,37 @@
+
+.form-group
+    label.control-label(for="transition_from_state") From State
+    select.custom-select(name="transition[from_state_id]",id="transition_from_state")
+        option(selected disabled value="") Pick State
+        for gamestate in gamestates
+            option(value=gamestate.id selected=transition.from_state_id===gamestate.id)= gamestate.name
+
+.form-group
+    label.control-label(for="transition_to_state") To State
+    select.custom-select(name="transition[to_state_id]",id="transition_to_state")
+        option(selected disabled value="") Pick State
+        for gamestate in gamestates
+            option(value=gamestate.id selected=transition.to_state_id===gamestate.id)= gamestate.name
+
+.form-group
+    label.control-label(for="transition_group_id") Player Group
+    select.custom-select(name="transition[group_id]",id="transition_group_id")
+        option(selected=!transition.group_id value="-1") All
+        for player_group in player_groups
+            option(value=player_group.id selected=transition.group_id===player_group.id)= player_group.name
+
+.form-group
+    label.control-label(for="transition_room_id") Change On Enter Room
+    select.custom-select(name="transition[room_id]",id="transition_room_id")
+        option(selected=!transition.room_id value="-1") Manual
+        for room in rooms
+            option(value=room.id selected=transition.room_id===room.id)= room.name
+.form-group
+    label.control-label(for="transition_delay") Delay (Seconds)
+    input.form-control(type="number",placeholder="Delay in Seconds",name="transition[delay]",id="transition_delay", value=transition.delay)
+
+.form-group
+    button.btn.btn-primary(type="submit")= transition.id?'Update':'Create'
+    a.btn.btn-link(href="/transition") Cancel
+
+

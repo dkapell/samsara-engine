@@ -28,6 +28,8 @@ const imageRouter = require('./routes/image');
 const imagemapRouter = require('./routes/imagemap');
 const stubRouter = require('./routes/roomStub');
 const gamestateRouter = require('./routes/gamestate');
+const transitionRouter = require('./routes/transition');
+
 const app = express();
 
 // if running in SSL Only mode, redirect to SSL version
@@ -151,6 +153,7 @@ app.use('/image', imageRouter);
 app.use('/imagemap', imagemapRouter);
 app.use('/stub', stubRouter);
 app.use('/gamestate', gamestateRouter);
+app.use('/transition', transitionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

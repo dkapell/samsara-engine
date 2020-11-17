@@ -1,0 +1,38 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/transition/new')
+        span(class="fa fa-plus")
+        |  New Transition
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th From
+                    th To
+                    th Player Group
+                    th Room
+                    th Delay
+
+            tbody
+                for transition in transitions
+                    tr(class='clickable-row', data-click-object='transition' data-click-id=transition.id)
+                        td.dtr-expand
+                        td= transition.from_state.name
+                        td= transition.to_state.name
+                        td
+                            if transition.group_id
+                                |= transition.player_group.name
+                            else
+                                i All
+                        td
+                            if transition.room_id
+                                |= transition.player_group.name
+                            else
+                                i Manual
+                        td #{transition.delay} Seconds
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

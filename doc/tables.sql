@@ -62,15 +62,23 @@ create table gamestate_rooms(
 
 create table transitions(
     id serial,
-    from_state int not null,
-    to_state int not null,
-    criteria jsonb,
+    from_state_id int not null,
+    to_state_id int not null,
+    group_id int,
+    room_id int,
+    delay int default 0,
     primary key(id),
-    CONSTRAINT transitions_from_fk FOREIGN KEY (from_state)
+    CONSTRAINT transitions_from_fk FOREIGN KEY (from_state_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT transitions_to_fk FOREIGN KEY (to_state)
+    CONSTRAINT transitions_to_fk FOREIGN KEY (to_state_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
+        REFERENCES "player_groups" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+     CONSTRAINT transitions_room_fk FOREIGN KEY (room_id)
+        REFERENCES "rooms" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 

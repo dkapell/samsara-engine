@@ -40,7 +40,7 @@ async function show(req, res, next){
             ],
             current: imagemap.name
         };
-
+        res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
         res.render('imagemap/show');
     } catch(err){
         next(err);

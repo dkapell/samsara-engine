@@ -22,11 +22,11 @@
         each area in imagemap.map
             .list-group-item
                 .form-group.form-row
-                    label.col-md-2.col-form-label(for="imagemap_map_area_code-" + i ) Room
+                    label.col-md-2.col-form-label(for="imagemap_map_area_room_id-" + i ) Room
                     .col-md-6
-                        select.custom-select(name=`imagemap[map][${i}][code]`,id=`imagemap_map_area_code-${i}`, required)
+                        select.custom-select(name=`imagemap[map][${i}][room_id]`,id=`imagemap_map_area_room_id-${i}`, required)
                             for room in rooms
-                                option(value=room.code selected=area.code===room.code)= room.name
+                                option(value=room.id selected=area.room_id===room.id)= room.name
 
                     label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
                     .col-md-2
@@ -45,12 +45,12 @@
             - i++;
         .list-group-item#new-area
             .form-group.form-row
-                label.col-md-2.col-form-label(for="imagemap_map_area_code-new" ) Room
+                label.col-md-2.col-form-label(for="imagemap_map_area_room_id-new" ) Room
                 .col-md-6
-                    select.custom-select(name=`imagemap[map][new][code]`,id=`imagemap_map_area_code-new`)
+                    select.custom-select(name=`imagemap[map][new][room_id]`,id=`imagemap_map_area_room_id-new`)
                         option(selected disabled value="") Select a room
                         for room in rooms
-                            option(value=room.code)= room.name
+                            option(value=room.id)= room.name
 
                 label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
                 .col-md-2

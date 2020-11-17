@@ -1,11 +1,13 @@
-mixin imagemap(imagemap)
+mixin imagemap(imagemap, rooms)
     image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
     map(name= 'imagemap-' + imagemap.id)
         for area of imagemap.map
             area(
                 shape=area.shape,
                 coords=area.coords,
-                data-code=area.code,
+                data-room-id=area.room_id,
+                data-code=rooms?rooms[area.room_id].code:'',
+                data-room=rooms?rooms[area.room_id].name:''
                 href='#',
                 target="_self"
             )

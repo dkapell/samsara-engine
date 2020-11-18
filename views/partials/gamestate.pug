@@ -5,6 +5,13 @@ mixin gamestate(gamestate, rooms)
     if gamestate.imagemap
         .row.my-2
             +imagemap(gamestate.imagemap, rooms)
+    if gamestate.allow_codes && gamestate.rooms.length
+        .row.my-3
+            .col
+                form#code-form
+                    .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
+                    input.form-control.code-search.col-md-8.offset-md-2#code-entry(type="input", placeholder="Code")
+
 
 mixin transition(transition, gamestates, player_groups)
     - const fromState = _.findWhere(gamestates, {id: transition.from_state_id});

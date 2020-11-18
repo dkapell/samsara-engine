@@ -2,12 +2,25 @@ const express = require('express');
 const config = require('config');
 const _ = require('underscore');
 const permission = require('../lib/permission');
+const gameEngine = require('../lib/gameEngine');
 
 
 /* GET home page. */
 function showIndex(req, res, next){
     res.locals.siteSection='home';
-    res.render('index', { title: config.get('app.name') });
+    res.render('index');
+}
+
+async function getGamePage(req, res, next){
+    if (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player)){
+        const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
+        res.locals.gamestate = gamestate;
+        res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
+        res.set('x-game-state', gamestate.current.id);
+        return res.render('game/page');
+
+    }
+    return res.render('game/default', { title: config.get('app.name') });
 }
 
 async function getRoom(req, res, next){
@@ -31,9 +44,12 @@ async function getRoom(req, res, next){
     }
 }
 
+
+
 const router = express.Router();
 
 router.get('/', showIndex);
+router.get('/game', getGamePage);
 router.get('/code/:code', getRoom);
 
 module.exports = router;

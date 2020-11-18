@@ -17,10 +17,9 @@ block content
 
     h4.my-2 Player View
     .row.my-2
+        .col.border-primary.border.rounded.p-2
+            +gamestate(gamestate, rooms)
 
-        .card.col
-            .card-body
-                +gamestate(gamestate, rooms)
     if gamestate.imagemap_id
         .row.my-2
             label.col-sm-2.col-form-label(for="room-display") Imagemap Room
@@ -49,3 +48,4 @@ block content
 
 append scripts
     script(src='/javascripts/imagemap.js')
+    script(src='/javascripts/gamestate.js')

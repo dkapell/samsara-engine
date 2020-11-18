@@ -1,16 +1,8 @@
 extends layout
 
 block content
-    h1= title
-    .lead Welcome to #{title}.
-    p.my-2 Please enter a room code.
-
-    .row.my-3
-        .col
-            form#code-form
-                .alert.alert-warning#code-feedback(role='alert')
-                input.form-control.code-search(type="input", placeholder="Code", id="code-entry")
-
+    .row
+        .col#game-content
 
 append scripts
     script(src='/javascripts/samsara.js')

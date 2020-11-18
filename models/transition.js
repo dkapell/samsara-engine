@@ -31,6 +31,7 @@ exports.find = async function(conditions){
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
+    query += ' order by room_id nulls last';
     const result = await database.query(query, queryData);
     return result.rows;
 };

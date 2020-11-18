@@ -21,6 +21,12 @@
         = gamestate.description
 
 .form-group
+    label.control-label(for="gamestate_rooms") Additional Rooms
+    select.custom-select(multiple, name="gamestate[rooms]",id="gamestate_rooms")
+        for room in rooms
+            option(value=room.id selected=_.indexOf(gamestate.rooms, room.id.toString()) !== -1)= room.name
+
+.form-group
     button.btn.btn-primary(type="submit")= gamestate.id?'Update':'Create'
     a.btn.btn-link(href="/gamestate") Cancel
 

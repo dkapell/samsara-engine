@@ -12,6 +12,7 @@ block content
                     th(data-priority="1") Name
                     th(data-priority="2") Imagemap
                     th(data-priority="4") Allow Codes
+                    th(data-priority="3") Non-Map Rooms
 
             tbody
                 for gamestate in gamestates
@@ -25,6 +26,7 @@ block content
                             else
                                 i None
                         td= gamestate.allow_codes?'Yes':'No'
+                        td= _.pluck(gamestate.rooms, 'name').join(', ')
 
 
 append scripts

@@ -15,12 +15,45 @@ async function list(req, res, next){
         const gamestates = await req.models.gamestate.list();
         res.locals.gamestates = await Promise.all(
             gamestates.map( async gamestate => {
-                gamestate.imagemap = await req.models.imagemap.get(gamestate.imagemap_id);
+                if (gamestate.imagemap_id){
+                    gamestate.imagemap = await req.models.imagemap.get(gamestate.imagemap_id);
+                }
                 return gamestate;
             })
         );
         res.render('gamestate/list', { pageTitle: 'Gamestates' });
     } catch (err){
+        next(err);
+    }
+}
+
+async function show(req, res, next){
+    try{
+        const gamestate = await req.models.gamestate.get(req.params.id);
+        if(gamestate.imagemap_id){
+            gamestate.imagemap = await req.models.imagemap.get(gamestate.imagemap_id);
+            if (!_.isArray(gamestate.imagemap.map)){
+                gamestate.imagemap.map = [];
+            }
+            gamestate.imagemap.image = await req.models.image.get(gamestate.imagemap.image_id);
+        }
+        gamestate.transitions = {
+            to: await req.models.transition.find({to_state_id:req.params.id}),
+            from: await req.models.transition.find({from_state_id:req.params.id})
+        };
+        res.locals.gamestate = gamestate;
+        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/gamestate', name: 'Gamestates'},
+            ],
+            current: gamestate.name
+        };
+        res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
+        res.render('gamestate/show');
+    } catch(err){
         next(err);
     }
 }
@@ -35,7 +68,7 @@ async function showNew(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/gamestate', name: 'Gamestate'},
+            { url: '/gamestate', name: 'Gamestates'},
         ],
         current: 'New'
     };
@@ -47,6 +80,7 @@ async function showNew(req, res, next){
     }
     try{
         res.locals.imagemaps = await req.models.imagemap.list();
+        res.locals.rooms = await req.models.room.list();
         res.render('gamestate/new');
     } catch (err){
         next(err);
@@ -59,6 +93,7 @@ async function showEdit(req, res, next){
 
     try{
         const gamestate = await req.models.gamestate.get(id);
+        gamestate.rooms = _.pluck(gamestate.rooms, 'id').map(id => {return id.toString();});
         res.locals.gamestate = gamestate;
         if (_.has(req.session, 'gamestateData')){
             res.locals.gamestate = req.session.gamestateData;
@@ -72,6 +107,7 @@ async function showEdit(req, res, next){
             current: 'Edit: ' + gamestate.name
         };
         res.locals.imagemaps = await req.models.imagemap.list();
+        res.locals.rooms = await req.models.room.list();
         res.render('gamestate/edit');
     } catch(err){
         next(err);
@@ -86,6 +122,11 @@ async function create(req, res, next){
     }
     if(Number(gamestate.imagemap_id) === -1){
         gamestate.imagemap_id = null;
+    }
+    if (!gamestate.rooms){
+        gamestate.rooms = [];
+    } else if(!_.isArray(gamestate.rooms)){
+        gamestate.rooms = [gamestate.rooms];
     }
 
     try{
@@ -109,7 +150,11 @@ async function update(req, res, next){
     if(Number(gamestate.imagemap_id) === -1){
         gamestate.imagemap_id = null;
     }
-
+    if (!gamestate.rooms){
+        gamestate.rooms = [];
+    } else if(!_.isArray(gamestate.rooms)){
+        gamestate.rooms = [gamestate.rooms];
+    }
 
     try {
         const current = await req.models.gamestate.get(id);
@@ -140,13 +185,14 @@ const router = express.Router();
 
 router.use(permission('gm'));
 router.use(function(req, res, next){
-    res.locals.siteSection='gm';
+    res.locals.siteSection='config';
     next();
 });
 
 router.get('/', list);
 router.get('/new', csrf(), showNew);
-router.get('/:id', csrf(), showEdit);
+router.get('/:id', csrf(), show);
+router.get('/:id/edit', csrf(), showEdit);
 router.post('/', csrf(), create);
 router.put('/:id', csrf(), update);
 router.delete('/:id', remove);

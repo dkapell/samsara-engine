@@ -1,0 +1,38 @@
+include ./imagemap
+
+mixin gamestate(gamestate, rooms)
+    .lead=gamestate.description
+    if gamestate.imagemap
+        .row.my-2
+            +imagemap(gamestate.imagemap, rooms)
+
+mixin transition(transition, gamestates, player_groups)
+    - const fromState = _.findWhere(gamestates, {id: transition.from_state_id});
+    - const toState = _.findWhere(gamestates, {id: transition.to_state_id});
+    .card
+        .card-header #{fromState.name} -> #{toState.name}
+        .card-body
+            .row
+                .col
+                    strong Player Group
+                .col
+                    if transition.group_id
+                        = _.findWhere(player_groups, {id: transition.group_id}).name
+                    else
+                        i All
+            .row
+                .col
+                    strong Room
+                .col
+                    if transition.room_id
+                        = _.findWhere(rooms, {id: transition.room_id}).name
+                    else
+                        i Manual
+            .row
+                .col
+                    strong Delay
+                .col #{transition.delay} seconds
+
+
+
+

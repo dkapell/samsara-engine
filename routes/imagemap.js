@@ -57,7 +57,7 @@ async function showNew(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/imagemap', name: 'Imagemap'},
+            { url: '/imagemap', name: 'Imagemaps'},
         ],
         current: 'New'
     };

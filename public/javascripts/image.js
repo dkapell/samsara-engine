@@ -42,14 +42,13 @@ async function getSignedRequest(file){
             return false;
         }
         const imageId = response.data.imageId;
-        console.log(imageId);
         $('#image-id').val(imageId);
         $('#new-image-form').attr('action', '/image/' + imageId);
         return await uploadFile(file, response.data.signedRequest, response.data.url);
 
     } catch (err){
         $('#upload-feedback').text('Error getting signed request');
-        console.log(err);
+        console.trace(err);
         return false;
     }
 }
@@ -61,7 +60,7 @@ async function uploadFile(file, signedRequest, url){
         return true;
     } catch (err){
         $('#upload-feedback').text('Error uploading file');
-        console.log(err);
+        console.trace(err);
         return false;
     }
 }

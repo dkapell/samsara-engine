@@ -30,7 +30,7 @@ function showNew(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/room', name: 'Room'},
+            { url: '/room', name: 'Rooms'},
         ],
         current: 'New'
     };

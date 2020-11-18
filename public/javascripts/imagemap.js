@@ -12,8 +12,8 @@ $(function(){
         fillOpacity: 0.2,
     });
     $('area').on('click', toggleLock);
-    $('area').on('mouseover', showCode);
-    $('area').on('mouseout', clearCode);
+    $('area').on('mouseover', showRoom);
+    $('area').on('mouseout', clearRoom);
 
     // For Form
     $('.remove-area-btn').on('click', removeArea);
@@ -22,25 +22,25 @@ $(function(){
 
 });
 
-function showCode(e){
-    $('#code-display').val($(this).attr('data-code'));
+function showRoom(e){
+    $('#room-display').val($(this).attr('data-room'));
 }
 
-function clearCode(e){
+function clearRoom(e){
     if(!codeLocked){
-        $('#code-display').val('');
+        $('#room-display').val('');
     }
 }
 
 function toggleLock(e){
     e.preventDefault();
-    e.stopPropogation();
+    e.stopPropagation();
     codeLocked = !codeLocked;
 }
 
 function removeArea(e){
     const $this = $(this);
-    e.preventDefault();
+    e.preventDefaulstopPropagationt();
     $this.closest('.list-group-item').remove();
 }
 

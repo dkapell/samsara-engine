@@ -27,7 +27,7 @@ function showNew(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/player_group', name: 'Player Group'},
+            { url: '/player_group', name: 'Player Groups'},
         ],
         current: 'New'
     };

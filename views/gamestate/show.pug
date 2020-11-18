@@ -1,0 +1,51 @@
+extends ../layout
+
+include ../partials/gamestate
+
+block content
+    h2 Gamestate #{gamestate.name}
+
+    a.btn.btn-outline-primary.mr-2(role="button" href='/gamestate/' + gamestate.id + '/edit')
+        i.fas.fa-edit
+        |  Edit Gamestate
+    a.btn.btn-outline-danger.mx-2#delete-gamestate-btn(role="button", href='/gamestate/' + gamestate.id + '/delete')
+        i.fas.fa-trash
+        |  Delete Gamestate
+    a.btn.btn-outline-success.mx-2(href='/transition/new')
+        span(class="fa fa-plus")
+        |  New Transition
+
+    h4.my-2 Player View
+    .row.my-2
+
+        .card.col
+            .card-body
+                +gamestate(gamestate, rooms)
+    if gamestate.imagemap_id
+        .row.my-2
+            label.col-sm-2.col-form-label(for="room-display") Imagemap Room
+            .col-sm-6
+                input.form-control#room-display(type="text")
+
+    if gamestate.rooms.length
+        h4.my-2 Code-only Rooms
+        ul
+            for room in gamestate.rooms
+                li #{room.name} (Code: #{room.code})
+
+    if gamestate.transitions.to.length
+        h4.my-2 Transitions To #{gamestate.name}
+        .row.row-cols-1.row-cols-md-2.row-cols-lg-3
+            for transition in gamestate.transitions.to
+                +transition(transition, gamestates, player_groups)
+
+    if gamestate.transitions.from.length
+        h4.my-2 Transitions From #{gamestate.name}
+        .row.row-cols-1.row-cols-md-2.row-cols-lg-3
+            for transition in gamestate.transitions.from
+                +transition(transition, gamestates, player_groups)
+
+
+
+append scripts
+    script(src='/javascripts/imagemap.js')

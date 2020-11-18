@@ -8,7 +8,7 @@ async function fetchGamePage(){
     const response = await fetch('/game');
     const gameState = response.headers.get('x-game-state');
     if (gameState !== currentGameState){
-        currentGameState = gameState
+        currentGameState = gameState;
         const content = await response.text();
         $('#game-content').html(content);
         $('#code-feedback').hide();

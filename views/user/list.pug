@@ -12,6 +12,7 @@ block content
                     th Name
                     th Email
                     th Admin
+                    th Creator
                     th GM
                     th Player
                     th Run
@@ -26,6 +27,7 @@ block content
                             a(href='/user/' + user.id)= user.name
                         td= user.email
                         td= user.is_admin?'Yes':'No'
+                        td= user.is_creator?'Yes':'No'
                         td= user.is_gm?'Yes':'No'
                         td= user.is_player?'Yes':'No'
                         td= user.is_player?runs[user.player.run_id].name:''

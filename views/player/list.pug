@@ -12,6 +12,7 @@ block content
                     th(data-priority="2") Character
                     th Email
                     th(data-priority="3") Game State
+                    th
             tbody
                 for user in users
                     tr
@@ -26,5 +27,7 @@ block content
                                 = user.player.gamestate.name
                             else
                                 i Unknown
+                        td
+                            a.btn.btn-outline-warning.btn-sm(role=button href=`/player/${user.id}/assume`) Assume
 append scripts
     script(src='/javascripts/data-table.js')

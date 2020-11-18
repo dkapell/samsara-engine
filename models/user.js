@@ -5,6 +5,7 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
+    player: require('./player')
 };
 
 const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm', 'is_player'];
@@ -14,7 +15,11 @@ exports.get = async function(id){
     const query = 'select * from users where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        const user = result.rows[0];
+        if (user.is_player){
+            user.player = await models.player.getByUserId(user.id);
+        }
+        return user;
     }
     return;
 };

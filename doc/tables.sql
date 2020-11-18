@@ -4,6 +4,7 @@ create table users (
     email       varchar(100),
     google_id  varchar(500),
     is_admin   boolean default false,
+    is_creator boolean default false,
     is_gm boolean default false,
     is_player boolean default false,
     PRIMARY KEY (id)

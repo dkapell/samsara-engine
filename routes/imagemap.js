@@ -166,7 +166,7 @@ async function remove(req, res, next){
 
 const router = express.Router();
 
-router.use(permission('gm'));
+router.use(permission('creator'));
 router.use(function(req, res, next){
     res.locals.siteSection='config';
     next();

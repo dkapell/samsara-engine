@@ -27,7 +27,7 @@ html(lang="en")
                         li.nav-item(class= siteSection==='home'?"active":null)
                             a.nav-link(href="/") Home
                                 span.sr-only (current)
-                        - if (checkPermission('gm'))
+                        if (checkPermission('gm'))
                             li.nav-item.dropdown(class= siteSection==='gm'?"active":null)
                                 a.nav-link.dropdown-toggle#gmDropdown(
                                     href='#'
@@ -39,6 +39,7 @@ html(lang="en")
                                     a.dropdown-item(href='/room') Rooms List
                                     a.dropdown-item(href='/player') Players List
 
+                        if checkPermission('creator')
                             li.nav-item.dropdown(class= siteSection==='config'?"active":null)
                                 a.nav-link.dropdown-toggle#configDropdown(
                                     href='#'
@@ -52,7 +53,7 @@ html(lang="en")
                                     a.dropdown-item(href='/gamestate') Gamestates
                                     a.dropdown-item(href='/transition') Transitions
 
-                        - if (checkPermission('admin'))
+                        if (checkPermission('admin'))
                             li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
                                 a.nav-link.dropdown-toggle#adminDropdown(
                                     href='#'
@@ -70,18 +71,23 @@ html(lang="en")
                         - if (activeUser)
                             li.nav-item.dropdown
                                 a.nav-link.dropdown-toggle.px-4#userDropdown(
-                                    class=session.gm_mode?'bg-warning rounded-pill text-dark':''
+                                    class=session.gm_mode || session.assumed_user?'bg-warning rounded-pill text-dark':''
                                     href='#'
                                     role='button'
                                     data-toggle='dropdown'
                                     aria-haspopup="true"
                                     aria-expanded="false")
-                                    i.fas.fa-user
-                                    |  #{activeUser.name}
+                                    i.fas.mr-1(class=session.assumed_user?'fa-user-secret':'fa-user')
+                                    = session.assumed_user ?  session.assumed_user.name : activeUser.name
+
                                 .dropdown-menu(aria-labelledby="userDropdown")
                                     a.dropdown-item(href="/auth/logout") Logout
                                     if checkPermission('admin', true)
                                         a.dropdown-item(href="/auth/gm") #{session.gm_mode?'Disable':'Enable'} GM Mode
+                                    if session.assumed_user
+                                        a.dropdown-item(href="/player/revert") Revert to #{activeUser.name}
+
+
 
                         - else
                             li.nav-item

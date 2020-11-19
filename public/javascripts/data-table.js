@@ -26,6 +26,9 @@ $(function(){
     $('.table-sorted').show();
     $('.table-sorted-loading').hide();
     $('#exportCSV').click(exportCSV);
+    $('.delete-btn').confirmation({
+        title: 'Delete this item'
+    }).on('click', deleteItem);
 });
 
 function exportCSV(e){
@@ -37,4 +40,15 @@ function exportCSV(e){
     e.preventDefault();
     window.open(url, '_self');
     $(this).blur();
+}
+
+async function deleteItem(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const $this = $(this);
+    const url = $this.attr('url');
+    const result = await fetch(url, {method:'DELETE'});
+    if($this.attr('data-back')){
+        location = $this.attr('data-back');
+    }
 }

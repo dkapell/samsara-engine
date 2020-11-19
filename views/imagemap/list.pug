@@ -13,6 +13,8 @@ block content
                     th Name
                     th Image
                     th Description
+                    if checkPermission('creator')
+                        th
 
             tbody
                 for imagemap in imagemaps
@@ -27,6 +29,14 @@ block content
                                 =imagemap.image.name
 
                         td= imagemap.description
+                        if checkPermission('creator')
+                            td.text-right
+                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                    role="button",
+                                    url=`/imagemap/${imagemap.id}`,
+                                    data-back='/imagemap'
+                                )
+                                    i.fas.fa-trash.fa-fw
 
 append scripts
     script(src='/javascripts/data-table.js')

@@ -15,6 +15,8 @@ block content
                     th Player Group
                     th Room
                     th Delay
+                    if checkPermission('creator')
+                        th
 
             tbody
                 for transition in transitions
@@ -24,15 +26,23 @@ block content
                         td= transition.to_state.name
                         td
                             if transition.group_id
-                                |= transition.player_group.name
+                                = transition.player_group.name
                             else
                                 i All
                         td
                             if transition.room_id
-                                |= transition.player_group.name
+                                = transition.room.name
                             else
                                 i Manual
                         td #{transition.delay} Seconds
+                        if checkPermission('creator')
+                            td.text-right
+                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                    role="button",
+                                    url=`/transition/${transition.id}`,
+                                    data-back='/transition'
+                                )
+                                    i.fas.fa-trash.fa-fw
 
 
 append scripts

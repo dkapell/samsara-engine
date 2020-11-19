@@ -12,36 +12,54 @@ function showIndex(req, res, next){
 }
 
 async function getGamePage(req, res, next){
-    if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
-        const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
-        res.locals.gamestate = gamestate;
-        res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
-        res.set('x-game-state', gamestate.current.id);
-        return res.render('game/page');
+    try {
+        if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
+            const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
+            res.locals.gamestate = gamestate;
+            res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
+            res.set('x-game-state', gamestate.current.id);
+            return res.render('game/page');
 
+        }
+        return res.render('game/default', { title: config.get('app.name') });
+    } catch(err){
+        next(err);
     }
-    return res.render('game/default', { title: config.get('app.name') });
 }
 
 async function getRoom(req, res, next){
     const code = req.params.code;
     try {
-        const room = await req.models.room.getByCode(code);
-        if(!room){
-            return res.json({success:false, error:'Invalid code', retry:true});
-        }
-        if (!room.active){
-            return res.json({success:false, error:'Room is not active', retry:false});
-        }
-        if (room.url === 'stub'){
-            return res.json({success:true, url:'/stub/' + room.id});
+        if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
+            const user = req.session.assumed_user?req.session.assumed_user:req.user;
+            const result = await gameEngine.openCode(code, user.id);
+
+            if(!result){
+                throw new Error('Room not found');
+            }
+
+            if (result.room.url === 'stub'){
+                return res.json({success:true, url:'/stub/' + result.room.id});
+            } else {
+                return res.json({success:true, url:result.room.url});
+            }
         } else {
-            return res.json({success:true, url:room.url});
+            throw new Error('You are not a player');
         }
     } catch (err){
-        return res.json({success:false, error:err.message});
-
+        console.trace(err);
+        let retry = false;
+        if (err.message === 'Room is not active'){
+            retry = true;
+        }
+        return res.json({success:false, error:err.message, retry:retry});
     }
+}
+
+async function validateGame(req, res, next){
+    res.locals.siteSection = 'config'
+    res.locals.validation = await gameEngine.validate(1);
+    res.render('game/validate');
 }
 
 
@@ -49,7 +67,8 @@ async function getRoom(req, res, next){
 const router = express.Router();
 
 router.get('/', showIndex);
-router.get('/game', getGamePage);
-router.get('/code/:code', getRoom);
+router.get('/game', permission('player'), getGamePage);
+router.get('/code/:code', permission('player'), getRoom);
+router.get('/game/validator', permission('gm'), validateGame);
 
 module.exports = router;

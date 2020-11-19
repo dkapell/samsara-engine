@@ -17,10 +17,16 @@ async function list(req, res, next){
             transitions.map( async transition => {
                 transition.from_state = await req.models.gamestate.get(transition.from_state_id);
                 transition.to_state = await req.models.gamestate.get(transition.to_state_id);
+                if(transition.room_id){
+                    transition.room = await req.models.room.get(transition.room_id);
+                }
+                if(transition.group_id){
+                    transition.player_group = await req.models.player_group.get(transition.group_id);
+                }
                 return transition;
             })
         );
-        res.render('transition/list', { pageTitle: 'Gamestates' });
+        res.render('transition/list', { pageTitle: 'Transitions' });
     } catch (err){
         next(err);
     }

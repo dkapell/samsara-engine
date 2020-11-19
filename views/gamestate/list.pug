@@ -28,6 +28,14 @@ block content
                                 i None
                         td= gamestate.allow_codes?'Yes':'No'
                         td= _.pluck(gamestate.rooms, 'name').join(', ')
+                        if checkPermission('creator')
+                            td.text-right
+                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                    role="button",
+                                    url=`/gamestate/${gamestate.id}`,
+                                    data-back='/gamestate'
+                                )
+                                    i.fas.fa-trash.fa-fw
 
 
 append scripts

@@ -12,6 +12,7 @@ block content
                     th(style="max-width:50px") ID
                     th Name
                     th Current
+                    th
             tbody
                 for run in runs
                     tr(class='clickable-row', data-click-object='run' data-click-id=run.id)
@@ -20,6 +21,14 @@ block content
                         td
                             a(href='/run/' + run.id)= run.name
                         td= run.current?'Yes':''
+                        td.text-right
+                            a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                role="button",
+                                url=`/run/${run.id}`,
+                                data-back='/run'
+                            )
+                                i.fas.fa-trash.fa-fw
+
 
 append scripts
     script(src='/javascripts/data-table.js')

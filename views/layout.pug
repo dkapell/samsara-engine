@@ -36,8 +36,12 @@ html(lang="en")
                                     aria-haspopup="true"
                                     aria-expanded="false") GM Stuff
                                 .dropdown-menu(aria-labelledby="gmDropdown")
-                                    a.dropdown-item(href='/room') Rooms List
-                                    a.dropdown-item(href='/player') Players List
+                                    a.dropdown-item(href='/room')
+                                        i.fas.fa-building.fa-fw
+                                        | Rooms List
+                                    a.dropdown-item(href='/player')
+                                        i.fas.fa-users.fa-fw
+                                        |  Players List
 
                         if checkPermission('gm')
                             li.nav-item.dropdown(class= siteSection==='config'?"active":null)
@@ -48,10 +52,21 @@ html(lang="en")
                                     aria-haspopup="true"
                                     aria-expanded="false") Game Config
                                 .dropdown-menu(aria-labelledby="configDropdown")
-                                    a.dropdown-item(href='/image') Images
-                                    a.dropdown-item(href='/imagemap') Imagemaps
-                                    a.dropdown-item(href='/gamestate') Gamestates
-                                    a.dropdown-item(href='/transition') Transitions
+                                    a.dropdown-item(href='/image')
+                                        i.fas.fa-images.fa-fw.mr-1
+                                        | Images
+                                    a.dropdown-item(href='/imagemap')
+                                        i.fas.fa-map.fa-fw.mr-1
+                                        | Imagemaps
+                                    a.dropdown-item(href='/gamestate')
+                                        i.fas.fa-project-diagram.fa-fw.mr-1
+                                        | Gamestates
+                                    a.dropdown-item(href='/transition')
+                                        i.fas.fa-exchange-alt.fa-fw.mr-1
+                                        | Transitions
+                                    a.dropdown-item(href='/game/validator')
+                                        i.far.fa-check-square.fa-fw.mr-1
+                                        | Validator
 
                         if (checkPermission('admin'))
                             li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
@@ -62,9 +77,15 @@ html(lang="en")
                                     aria-haspopup="true"
                                     aria-expanded="false") Admin
                                 .dropdown-menu(aria-labelledby="adminDropdown")
-                                    a.dropdown-item(href='/user') Users
-                                    a.dropdown-item(href='/run') Runs
-                                    a.dropdown-item(href='/player_group') Player Groups
+                                    a.dropdown-item(href='/user')
+                                        i.fas.fa-users-cog.fa-fw
+                                        |  Users
+                                    a.dropdown-item(href='/run')
+                                        i.fas.fa-layer-group.fa-fw
+                                        |  Runs
+                                    a.dropdown-item(href='/player_group')
+                                        i.fas.fa-users.fa-fw
+                                        |  Player Groups
 
 
                     ul.navbar-nav.float-right
@@ -148,3 +169,4 @@ html(lang="en")
             script(src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js")
             script(src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-rwdImageMaps/1.6/jquery.rwdImageMaps.min.js")
             script(src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js")
+            script(src="/javascripts/vendor/bootstrap-confirmation.min.js")

@@ -20,6 +20,10 @@ $(function(){
     $('#add-area-btn').on('click', addArea);
     $('#new-area').hide();
 
+    $('.delete-btn').confirmation({
+        title: 'Delete this item'
+    }).on('click', deleteItem);
+
 });
 
 function showRoom(e){
@@ -76,4 +80,14 @@ function addArea(e){
     $new.find('.remove-area-btn').on('click', removeArea);
     $new.appendTo('#imagemap_map');
     $new.show();
+}
+
+async function deleteItem(e){
+    e.preventDefault();
+    const $this = $(this);
+    const url = $this.attr('url');
+    const result = await fetch(url, {method:'DELETE'});
+    if($this.attr('data-back')){
+        location = $this.attr('data-back');
+    }
 }

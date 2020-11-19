@@ -11,6 +11,7 @@ block content
                     th
                     th Name
                     th Description
+                    th
 
             tbody
                 for player_group in player_groups
@@ -19,6 +20,13 @@ block content
                         td
                             a(href='/player_group/' + player_group.id)= player_group.name
                         td= player_group.description
+                        td.text-right
+                            a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                role="button",
+                                url=`/player_group/${player_group.id}`,
+                                data-back='/player_group'
+                            )
+                                i.fas.fa-trash.fa-fw
 
 
 

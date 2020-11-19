@@ -37,7 +37,7 @@ async function show(req, res, next){
         const users = await Promise.all(
             players.map( async player => {
                 const user = await req.models.user.get(player.user_id);
-                user.gamestate = await gameEngine.getGameState(user.id)
+                user.gamestate = await gameEngine.getGameState(user.id);
                 if (!user.gamestate){
                     return user;
                 }
@@ -48,7 +48,8 @@ async function show(req, res, next){
                 return user;
             })
         );
-        res.locals.users = users.filter(user => { return user.is_player});
+        res.locals.users = users.filter(user => { return user.is_player;});
+        res.locals.gamestates = await req.models.gamestate.listSpecial();
         res.locals.csrfToken = req.csrfToken();
         res.render('run/show');
 
@@ -164,7 +165,7 @@ async function remove(req, res, next){
 
 async function resetRun(req, res, next){
     try{
-        const run = await req.models.run.get(req.params.id)
+        const run = await req.models.run.get(req.params.id);
         if (!run){
             throw new Error ('Run not found');
         }
@@ -173,6 +174,27 @@ async function resetRun(req, res, next){
         await Promise.all(
             players.map( async player => {
                 return gameEngine.changeState(player.user_id, initialState.id, 0);
+            })
+        );
+        res.json({success:true});
+
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
+async function updateAllPlayers(req, res, next){
+    try{
+        const run = await req.models.run.get(req.params.id);
+        if (!run){
+            throw new Error ('Run not found');
+        }
+        const players = await req.models.player.listByRunId(req.params.id);
+        const state = await req.models.gamestate.get(req.body.state_id);
+        if (!state) { throw new Error('State not found'); }
+        await Promise.all(
+            players.map( async player => {
+                return gameEngine.changeState(player.user_id, state.id, 0);
             })
         );
         res.json({success:true});
@@ -196,6 +218,7 @@ router.get('/current', showCurrent);
 router.get('/:id', csrf(), show);
 router.get('/:id/edit', permission('admin'), csrf(), showEdit);
 router.put('/:id/reset', permission('admin'), csrf(), resetRun);
+router.put('/:id/stateChange', permission('admin'), csrf(), updateAllPlayers);
 router.post('/', permission('admin'), csrf(), create);
 router.put('/:id', permission('admin'), csrf(), update);
 router.delete('/:id', permission('admin'), remove);

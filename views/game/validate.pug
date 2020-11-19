@@ -6,7 +6,7 @@ block content
         - hasErrors=true;
         h3.text-danger Issues
         ul.list-unstyled
-            for issue of validation.issues
+            each issue in validation.issues
                 li= issue
 
     if _.keys(validation.unused.gamestates).length || _.keys(validation.unused.rooms).length || _.keys(validation.unused.imagemaps).length

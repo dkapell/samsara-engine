@@ -74,10 +74,10 @@ async function showNew(req, res, next){
                 };
             }
         }
-    if (_.has(req.session, 'imagemapData')){
-        res.locals.imagemap = req.session.imagemapData;
-        delete req.session.imagemapData;
-    }
+        if (_.has(req.session, 'imagemapData')){
+            res.locals.imagemap = req.session.imagemapData;
+            delete req.session.imagemapData;
+        }
 
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();

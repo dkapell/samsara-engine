@@ -57,7 +57,7 @@ async function getRoom(req, res, next){
 }
 
 async function validateGame(req, res, next){
-    res.locals.siteSection = 'config'
+    res.locals.siteSection = 'config';
     res.locals.validation = await gameEngine.validate(1);
     res.render('game/validate');
 }

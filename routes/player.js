@@ -18,7 +18,7 @@ async function list(req, res, next){
         });
         res.locals.users = await Promise.all(
             players.map( async user => {
-                user.gamestate = await gameEngine.getGameState(user.id)
+                user.gamestate = await gameEngine.getGameState(user.id);
                 if (user.gamestate.player.group_id){
                     user.gamestate.player.group = await req.models.player_group.get(user.gamestate.player.group_id);
                 }

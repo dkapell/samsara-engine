@@ -4,19 +4,29 @@ include ../partials/gamestate
 include ../partials/players
 
 block content
-    h2= run.name
+    .row.my-3
+        h2.d-inline-block Run: #{run.name}
         if run.current
-            span.badge.badge-light.ml-2 Current
+            h3
+                span.badge.badge-light.ml-2 Current
     if checkPermission('admin')
-        a.btn.btn-outline-primary.mr-2(role="button" href='/run/' + run.id + '/edit')
-            i.fas.fa-edit
-            |  Edit Run
-        a.btn.btn-outline-danger.mr-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
-            i.fas.fa-sync
-            |  Reset Run
-
-
-
+        .row
+            .form-inline
+                a.btn.btn-outline-primary.mr-2(role="button" href='/run/' + run.id + '/edit')
+                    i.fas.fa-edit
+                    |  Edit Run
+                a.btn.btn-outline-danger.mr-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+                    i.fas.fa-sync
+                    |  Reset Run
+                .input-group.ml-3
+                    .input-group-prepend.border-warning
+                        .input-group-text.border-warning Send all Players to:
+                    select.custom-select.border-warning#run-update-state
+                        option(selected disabled value="") Pick State
+                        for gamestate in gamestates
+                            option(value=gamestate.id)= gamestate.name
+                    .input-group-append
+                        button.btn.btn-warning#state-update-btn(type="button", url=`/run/${run.id}/stateChange`, data-csrf=csrfToken) Go
 
 
     h3.my-2 Players

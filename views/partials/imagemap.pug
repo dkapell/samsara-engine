@@ -1,7 +1,7 @@
 mixin imagemap(imagemap, rooms)
     image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
     map(name= 'imagemap-' + imagemap.id)
-        for area of imagemap.map
+        each area in imagemap.map
             area(
                 shape=area.shape,
                 coords=area.coords,

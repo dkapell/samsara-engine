@@ -3,7 +3,17 @@ extends ../layout
 include ../partials/gamestate
 
 block content
-    h2 Gamestate #{gamestate.name}
+    .row.my-3
+        h2.d-inline-block Gamestate #{gamestate.name}
+
+        if gamestate.start
+            h3
+                .badge.badge-success.float-right.ml-2 Start
+        if gamestate.special
+            h3
+                .badge.badge-info.float-right.ml-2 Special
+
+
     if checkPermission('creator')
         a.btn.btn-outline-primary.mr-2(role="button" href='/gamestate/' + gamestate.id + '/edit')
             i.fas.fa-edit
@@ -17,7 +27,7 @@ block content
 
     h4.my-2 Player View
     .row.my-2
-        .col.border-primary.border.rounded.p-2
+        .col.border-primary.border.rounded.p-2(style='min-height:200px')
             +gamestate(gamestate, rooms)
 
     if gamestate.imagemap_id

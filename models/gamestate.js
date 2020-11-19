@@ -8,7 +8,7 @@ const models = {
     room: require('./room')
 };
 
-const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes', 'start'];
+const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes', 'start', 'special'];
 
 
 exports.get = async function(id){
@@ -31,6 +31,12 @@ exports.getStart = async function(){
 
 exports.list = async function(){
     const query = 'select * from gamestates order by name';
+    const result = await database.query(query);
+    return Promise.all(result.rows.map(fillRooms));
+};
+
+exports.listSpecial = async function(){
+    const query = 'select * from gamestates where start = true or special = true order by start desc nulls last, name';
     const result = await database.query(query);
     return Promise.all(result.rows.map(fillRooms));
 };

@@ -65,6 +65,7 @@ async function showNew(req, res, next){
         imagemap_id: null,
         allow_codes: true,
         start: false,
+        special: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -121,7 +122,9 @@ async function create(req, res, next){
     if (!_.has(gamestate, 'allow_codes')){
         gamestate.allow_codes = false;
     }
-
+    if (!_.has(gamestate, 'special')){
+        gamestate.special = false;
+    }
     if(Number(gamestate.imagemap_id) === -1){
         gamestate.imagemap_id = null;
     }
@@ -155,6 +158,9 @@ async function update(req, res, next){
     req.session.gamestateData = gamestate;
     if (!_.has(gamestate, 'allow_codes')){
         gamestate.allow_codes = false;
+    }
+    if (!_.has(gamestate, 'special')){
+        gamestate.special = false;
     }
     if(Number(gamestate.imagemap_id) === -1){
         gamestate.imagemap_id = null;

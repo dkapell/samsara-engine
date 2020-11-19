@@ -14,7 +14,7 @@ $(function(){
         } ],
     });
 
-    $('.clickable-row').on('click', function(e){
+    $('.clickable-row').on('click.data-table', function(e){
         e.preventDefault();
         if ($(e.target).hasClass('dtr-expand')){
             return;
@@ -29,6 +29,10 @@ $(function(){
     $('.delete-btn').confirmation({
         title: 'Delete this item'
     }).on('click', deleteItem);
+
+    $('.action-btn').on('click', function(e){
+        e.stopPropagation();
+    });
 });
 
 function exportCSV(e){

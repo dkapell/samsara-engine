@@ -26,7 +26,7 @@
                     .col-md-6
                         select.custom-select(name=`imagemap[map][${i}][room_id]`,id=`imagemap_map_area_room_id-${i}`, required)
                             for room in rooms
-                                option(value=room.id selected=area.room_id===room.id)= room.name
+                                option(value=room.id selected=Number(area.room_id)===room.id)= room.name
 
                     label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
                     .col-md-2

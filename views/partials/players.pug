@@ -1,0 +1,31 @@
+mixin players(players)
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    if runs
+                        th(data-priority="5") Run
+                    th(data-priority="4") Group
+                    th(data-priority="1") Name
+                    th(data-priority="2") Character
+                    th Email
+                    th(data-priority="3") Game State
+                    th
+            tbody
+                for user in users
+                    tr
+                        td.dtr-expand
+                        if runs
+                            td= runs[user.player.run_id].name
+                        td= user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped'
+                        td= user.name
+                        td= user.player.character
+                        td= user.email
+                        td
+                            if user.gamestate.current
+                                = user.gamestate.current.name
+                            else
+                                i Unknown
+                        td.text-right
+                            a.btn.btn-outline-warning.btn-sm(role=button href=`/player/${user.id}/assume`) Assume

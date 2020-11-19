@@ -64,6 +64,7 @@ async function showNew(req, res, next){
         description: null,
         imagemap_id: null,
         allow_codes: true,
+        start: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -120,6 +121,7 @@ async function create(req, res, next){
     if (!_.has(gamestate, 'allow_codes')){
         gamestate.allow_codes = false;
     }
+
     if(Number(gamestate.imagemap_id) === -1){
         gamestate.imagemap_id = null;
     }
@@ -130,6 +132,13 @@ async function create(req, res, next){
     }
 
     try{
+        if (gamestate.start){
+            const current = await req.models.gamestate.getStart();
+            if (current){
+                current.start = false;
+                await req.models.gamestate.update(current.id, current);
+            }
+        }
         await req.models.gamestate.create(gamestate);
         delete req.session.gamestateData;
         req.flash('success', 'Created Gamestate ' + gamestate.name);
@@ -157,8 +166,13 @@ async function update(req, res, next){
     }
 
     try {
-        const current = await req.models.gamestate.get(id);
-
+        if (gamestate.start){
+            const current = await req.models.gamestate.getStart();
+            if (current){
+                current.start = false;
+                await req.models.gamestate.update(current.id, current);
+            }
+        }
         await req.models.gamestate.update(id, gamestate);
         delete req.session.gamestateData;
         req.flash('success', 'Updated Gamestate ' + gamestate.name);

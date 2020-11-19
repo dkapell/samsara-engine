@@ -1,0 +1,26 @@
+extends ../layout
+
+include ../partials/gamestate
+include ../partials/players
+
+block content
+    h2= run.name
+        if run.current
+            span.badge.badge-light.ml-2 Current
+    if checkPermission('admin')
+        a.btn.btn-outline-primary.mr-2(role="button" href='/run/' + run.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Run
+        a.btn.btn-outline-danger.mr-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+            i.fas.fa-sync
+            |  Reset Run
+
+
+
+
+
+    h3.my-2 Players
+    +players(users)
+
+append scripts
+    script(src='/javascripts/run.js')

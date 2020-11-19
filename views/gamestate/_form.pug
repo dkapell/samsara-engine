@@ -16,6 +16,11 @@
         label.custom-control-label(for="gamestate_allow_codes") Allow Code Entry
 
 .form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="gamestate[start]", id="gamestate_start", checked=gamestate.start disabled=gamestate.start)
+        label.custom-control-label(for="gamestate_start") Start State
+
+.form-group
     label.control-label(for="gamestate_description") Description (Player Facing)
     textarea.form-control(name="gamestate[description]",id="gamestate_description",rows=3)
         = gamestate.description

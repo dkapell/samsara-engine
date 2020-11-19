@@ -31,10 +31,18 @@ block content
                         td= imagemap.description
                         if checkPermission('creator')
                             td.text-right
+                                a.btn.btn-outline-success.btn-sm.mr-1(
+                                    role="button",
+                                    href=`/imagemap/new?clone=${imagemap.id}`,
+                                    data-back='/imagemap'
+                                    title="Copy"
+                                )
+                                    i.fas.fa-copy.fa-fw
                                 a.btn.btn-outline-danger.btn-sm.delete-btn(
                                     role="button",
                                     url=`/imagemap/${imagemap.id}`,
                                     data-back='/imagemap'
+                                    title="Delete"
                                 )
                                     i.fas.fa-trash.fa-fw
 

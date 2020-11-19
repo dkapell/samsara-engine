@@ -8,12 +8,21 @@ const models = {
     room: require('./room')
 };
 
-const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes'];
+const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes', 'start'];
 
 
 exports.get = async function(id){
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
+    if (result.rows.length){
+        return fillRooms(result.rows[0]);
+    }
+    return;
+};
+
+exports.getStart = async function(){
+    const query = 'select * from gamestates where start = true limit 1';
+    const result = await database.query(query);
     if (result.rows.length){
         return fillRooms(result.rows[0]);
     }

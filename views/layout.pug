@@ -36,11 +36,14 @@ html(lang="en")
                                     aria-haspopup="true"
                                     aria-expanded="false") GM Stuff
                                 .dropdown-menu(aria-labelledby="gmDropdown")
+                                    a.dropdown-item(href='/run/current')
+                                        i.fas.fa-theater-masks.fa-fw.mr-1
+                                        | Current Run
                                     a.dropdown-item(href='/room')
-                                        i.fas.fa-building.fa-fw
+                                        i.fas.fa-building.fa-fw.mr-1
                                         | Rooms List
                                     a.dropdown-item(href='/player')
-                                        i.fas.fa-users.fa-fw
+                                        i.fas.fa-users.fa-fw.mr-1
                                         |  Players List
 
                         if checkPermission('gm')
@@ -78,13 +81,13 @@ html(lang="en")
                                     aria-expanded="false") Admin
                                 .dropdown-menu(aria-labelledby="adminDropdown")
                                     a.dropdown-item(href='/user')
-                                        i.fas.fa-users-cog.fa-fw
+                                        i.fas.fa-users-cog.fa-fw.mr-1
                                         |  Users
                                     a.dropdown-item(href='/run')
-                                        i.fas.fa-layer-group.fa-fw
+                                        i.fas.fa-layer-group.fa-fw.mr-1
                                         |  Runs
                                     a.dropdown-item(href='/player_group')
-                                        i.fas.fa-users.fa-fw
+                                        i.fas.fa-users.fa-fw.mr-1
                                         |  Player Groups
 
 

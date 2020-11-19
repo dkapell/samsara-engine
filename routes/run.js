@@ -2,6 +2,7 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
+const gameEngine = require('../lib/gameEngine');
 
 /* GET runs listing. */
 async function list(req, res, next){
@@ -15,6 +16,43 @@ async function list(req, res, next){
         res.locals.runs = await req.models.run.list();
         res.render('run/list', { pageTitle: 'Runs' });
     } catch (err){
+        next(err);
+    }
+}
+
+async function showCurrent(req, res, next){
+    try{
+        const run = await req.models.run.getCurrent();
+        res.redirect('/run/' + run.id);
+    } catch(err){
+        next(err);
+    }
+}
+
+async function show(req, res, next){
+    try{
+        res.locals.run = await req.models.run.get(req.params.id);
+        const players = await req.models.player.listByRunId(req.params.id);
+
+        const users = await Promise.all(
+            players.map( async player => {
+                const user = await req.models.user.get(player.user_id);
+                user.gamestate = await gameEngine.getGameState(user.id)
+                if (!user.gamestate){
+                    return user;
+                }
+                if (user.gamestate.player.group_id){
+                    user.gamestate.player.group = await req.models.player_group.get(user.gamestate.player.group_id);
+                }
+                user.player = user.gamestate.player;
+                return user;
+            })
+        );
+        res.locals.users = users.filter(user => { return user.is_player});
+        res.locals.csrfToken = req.csrfToken();
+        res.render('run/show');
+
+    } catch(err){
         next(err);
     }
 }
@@ -124,19 +162,42 @@ async function remove(req, res, next){
     }
 }
 
+async function resetRun(req, res, next){
+    try{
+        const run = await req.models.run.get(req.params.id)
+        if (!run){
+            throw new Error ('Run not found');
+        }
+        const players = await req.models.player.listByRunId(req.params.id);
+        const initialState = await req.models.gamestate.getStart();
+        await Promise.all(
+            players.map( async player => {
+                return gameEngine.changeState(player.user_id, initialState.id, 0);
+            })
+        );
+        res.json({success:true});
+
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
 const router = express.Router();
 
-router.use(permission('admin'));
+router.use(permission('gm'));
 router.use(function(req, res, next){
     res.locals.siteSection='admin';
     next();
 });
 
 router.get('/', list);
-router.get('/new', csrf(), showNew);
-router.get('/:id', csrf(), showEdit);
-router.post('/', csrf(), create);
-router.put('/:id', csrf(), update);
-router.delete('/:id', remove);
+router.get('/new',permission('admin'), csrf(), showNew);
+router.get('/current', showCurrent);
+router.get('/:id', csrf(), show);
+router.get('/:id/edit', permission('admin'), csrf(), showEdit);
+router.put('/:id/reset', permission('admin'), csrf(), resetRun);
+router.post('/', permission('admin'), csrf(), create);
+router.put('/:id', permission('admin'), csrf(), update);
+router.delete('/:id', permission('admin'), remove);
 
 module.exports = router;

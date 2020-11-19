@@ -61,13 +61,24 @@ async function showNew(req, res, next){
         ],
         current: 'New'
     };
-
-    res.locals.csrfToken = req.csrfToken();
+    try {
+        res.locals.csrfToken = req.csrfToken();
+        if (req.query.clone){
+            const old = await req.models.imagemap.get(Number(req.query.clone));
+            if (old){
+                res.locals.imagemap = {
+                    name: 'Copy of ' + old.name,
+                    description: old.description?old.description:null,
+                    image_id: old.image_id,
+                    map: old.map?old.map:[]
+                };
+            }
+        }
     if (_.has(req.session, 'imagemapData')){
         res.locals.imagemap = req.session.imagemapData;
         delete req.session.imagemapData;
     }
-    try {
+
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();
         res.render('imagemap/new');

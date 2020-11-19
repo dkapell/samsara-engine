@@ -41,6 +41,7 @@ create table gamestates (
     description text,
     imagemap_id int,
     allow_codes boolean,
+    start       boolean default false,
     primary key (id),
     CONSTRAINT gamestate_imagemap_fk FOREIGN KEY (imagemap_id)
         REFERENCES "imagemaps" (id) MATCH SIMPLE

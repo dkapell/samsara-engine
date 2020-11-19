@@ -1,9 +1,10 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/imagemap/new')
-        span(class="fa fa-plus")
-        |  New Imagemap
+    if checkPermission('creator')
+        a.btn.btn-outline-success(href='/imagemap/new')
+            span(class="fa fa-plus")
+            |  New Imagemap
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
@@ -20,7 +21,11 @@ block content
                         td
                             a(href='/imagemap/' + imagemap.id)= imagemap.name
                         td
-                            a(href='/image/' + imagemap.image.id)= imagemap.image.name
+                            if checkPermission('creator')
+                                a(href='/image/' + imagemap.image.id)= imagemap.image.name
+                            else
+                                =imagemap.image.name
+
                         td= imagemap.description
 
 append scripts

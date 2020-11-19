@@ -183,18 +183,18 @@ async function remove(req, res, next){
 
 const router = express.Router();
 
-router.use(permission('creator'));
+router.use(permission('gm'));
 router.use(function(req, res, next){
     res.locals.siteSection='config';
     next();
 });
 
 router.get('/', list);
-router.get('/new', csrf(), showNew);
+router.get('/new', permission('creator'), csrf(), showNew);
 router.get('/:id', csrf(), show);
-router.get('/:id/edit', csrf(), showEdit);
-router.post('/', csrf(), create);
-router.put('/:id', csrf(), update);
-router.delete('/:id', remove);
+router.get('/:id/edit', permission('creator'), csrf(), showEdit);
+router.post('/', permission('creator'), csrf(), create);
+router.put('/:id', permission('creator'), csrf(), update);
+router.delete('/:id', permission('creator'), remove);
 
 module.exports = router;

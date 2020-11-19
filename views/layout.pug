@@ -39,7 +39,7 @@ html(lang="en")
                                     a.dropdown-item(href='/room') Rooms List
                                     a.dropdown-item(href='/player') Players List
 
-                        if checkPermission('creator')
+                        if checkPermission('gm')
                             li.nav-item.dropdown(class= siteSection==='config'?"active":null)
                                 a.nav-link.dropdown-toggle#configDropdown(
                                     href='#'

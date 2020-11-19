@@ -139,17 +139,18 @@ async function signS3(req, res, next){
 
 const router = express.Router();
 
-router.use(permission('creator'));
+router.use(permission('gm'));
 router.use(function(req, res, next){
     res.locals.siteSection='config';
     next();
 });
 
 router.get('/', list);
-router.get('/new', csrf(), showNew);
-router.get('/sign-s3', csrf(), signS3);
-router.get('/:id', csrf(), showEdit);
-router.put('/:id', csrf(), update);
-router.delete('/:id', remove);
+router.get('/new', permission('creator'), csrf(), showNew);
+router.get('/sign-s3', permission('creator'), csrf(), signS3);
+router.get('/:id', permission('creator'), csrf(), showEdit);
+router.put('/:id', permission('creator'), csrf(), update);
+router.delete('/:id', permission('creator'), remove);
+
 
 module.exports = router;

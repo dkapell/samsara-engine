@@ -1,9 +1,10 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/transition/new')
-        span(class="fa fa-plus")
-        |  New Transition
+    if checkPermission('creator')
+        a.btn.btn-outline-success(href='/transition/new')
+            span(class="fa fa-plus")
+            |  New Transition
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
@@ -17,7 +18,7 @@ block content
 
             tbody
                 for transition in transitions
-                    tr(class='clickable-row', data-click-object='transition' data-click-id=transition.id)
+                    tr(class=checkPermission('creator')?'clickable-row':'', data-click-object='transition' data-click-id=transition.id)
                         td.dtr-expand
                         td= transition.from_state.name
                         td= transition.to_state.name

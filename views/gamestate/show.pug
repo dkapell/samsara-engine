@@ -4,16 +4,16 @@ include ../partials/gamestate
 
 block content
     h2 Gamestate #{gamestate.name}
-
-    a.btn.btn-outline-primary.mr-2(role="button" href='/gamestate/' + gamestate.id + '/edit')
-        i.fas.fa-edit
-        |  Edit Gamestate
-    a.btn.btn-outline-danger.mx-2#delete-gamestate-btn(role="button", href='/gamestate/' + gamestate.id + '/delete')
-        i.fas.fa-trash
-        |  Delete Gamestate
-    a.btn.btn-outline-success.mx-2(href='/transition/new')
-        span(class="fa fa-plus")
-        |  New Transition
+    if checkPermission('creator')
+        a.btn.btn-outline-primary.mr-2(role="button" href='/gamestate/' + gamestate.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Gamestate
+        a.btn.btn-outline-danger.mx-2#delete-gamestate-btn(role="button", href='/gamestate/' + gamestate.id + '/delete')
+            i.fas.fa-trash
+            |  Delete Gamestate
+        a.btn.btn-outline-success.mx-2(href='/transition/new')
+            span(class="fa fa-plus")
+            |  New Transition
 
     h4.my-2 Player View
     .row.my-2

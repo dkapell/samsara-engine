@@ -12,7 +12,7 @@ function showIndex(req, res, next){
 }
 
 async function getGamePage(req, res, next){
-    if (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player)){
+    if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
         const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
         res.locals.gamestate = gamestate;
         res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');

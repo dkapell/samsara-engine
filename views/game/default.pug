@@ -1,5 +1,9 @@
 h1= title
 .lead This is the website for #{title}.
 
-if !checkPermission('login')
-    p If you are staff please log in, above.
+if checkPermission('gm')
+    p This is where the players would see content
+else if (checkPermission('login'))
+    p If you're a player in this game, and you're seeing this, please bear with us as we get you set up
+else
+    p Please log in, above.

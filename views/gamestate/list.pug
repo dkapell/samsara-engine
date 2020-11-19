@@ -1,9 +1,10 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/gamestate/new')
-        span(class="fa fa-plus")
-        |  New Gamestate
+    if checkPermission('creator')
+        a.btn.btn-outline-success(href='/gamestate/new')
+            span(class="fa fa-plus")
+            |  New Gamestate
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead

@@ -1,34 +1,47 @@
 let currentGameState = 0;
+let refreshInterval = null;
 $(function(){
     fetchGamePage();
-    setInterval(fetchGamePage, 2000);
+    refreshInterval = setInterval(fetchGamePage, 2000);
 });
 
 async function fetchGamePage(){
-    const response = await fetch('/game');
-    const gameState = response.headers.get('x-game-state');
-    if (gameState !== currentGameState){
-        currentGameState = gameState;
-        const content = await response.text();
-        $('#game-content').html(content);
-        $('#code-feedback').hide();
-        $('#code-form').on('submit', submitCodeForm);
-        $('#code-entry').on('change keyup copy paste cut', function() {
-            if (!this.value) {
-                $(this).removeClass('is-invalid');
-            }
-        });
-        $('img[usemap]').rwdImageMaps();
-        $('.map').maphilight({
-            wrapClass:true,
-            shadow:true,
-            strokeWidth:3,
-            strokeColor: '3498db',
-            fillColor: '000000',
-            fillOpacity: 0.2,
-        });
-        $('area').on('click', clickRoom);
+
+    try{
+        const response = await fetch('/game');
+        if(!response.ok){
+            console.log('Got a bad response');
+            clearInterval(refreshInterval);
+            return;
+        }
+        const gameState = response.headers.get('x-game-state');
+        if (gameState !== currentGameState){
+            currentGameState = gameState;
+            const content = await response.text();
+            $('#game-content').html(content);
+            $('#code-feedback').hide();
+            $('#code-form').on('submit', submitCodeForm);
+            $('#code-entry').on('change keyup copy paste cut', function() {
+                if (!this.value) {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            $('img[usemap]').rwdImageMaps();
+            $('.map').maphilight({
+                wrapClass:true,
+                shadow:true,
+                strokeWidth:3,
+                strokeColor: '3498db',
+                fillColor: '000000',
+                fillOpacity: 0.2,
+            });
+            $('area').on('click', clickRoom);
+        }
+    } catch (e){
+        console.log(e);
+        clearInterval(refreshInterval);
     }
+
 }
 
 async function submitCodeForm(e){

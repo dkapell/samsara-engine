@@ -39,9 +39,11 @@ async function getRoom(req, res, next){
             }
 
             if (result.room.url === 'stub'){
-                return res.json({success:true, url:'/stub/' + result.room.id});
+                return res.json({success:true, action:'load', url:'/stub/' + result.room.id});
+            } else if (result.room.url === 'none'){
+                return res.json({success:true, action:'reload'});
             } else {
-                return res.json({success:true, url:result.room.url});
+                return res.json({success:true, action:'load', url:result.room.url});
             }
         } else {
             throw new Error('You are not a player');

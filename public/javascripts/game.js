@@ -33,7 +33,6 @@ async function fetchGamePage(){
         console.log(e);
         clearInterval(refreshInterval);
     }
-
 }
 
 function prepImageMap(){
@@ -55,28 +54,17 @@ async function submitCodeForm(e){
     e.preventDefault();
     $('#code-feedback').hide();
     const code = $('#code-entry').val();
-    const response = await fetch('/code/'+ code);
-    const data = await response.json();
-    if (!data.success){
-        $('#code-entry').addClass('is-invalid');
-        if (!data.retry){
-            console.log('clear');
-            $('#code-entry').val('');
-        }
-        $('#code-feedback').text(data.error);
-        $('#code-feedback').show();
-
-    } else {
-        window.open(data.url, '_blank');
-        $('#code-entry').removeClass('is-invalid');
-        $('#code-entry').val('');
-    }
+    checkRoom(code);
 }
 
 async function clickRoom(e){
     e.preventDefault();
     e.stopPropagation();
     const code = ($(this).attr('data-code'));
+    checkRoom(code);
+}
+
+async function checkRoom(code){
     const response = await fetch('/code/'+ code);
     const data = await response.json();
     if (!data.success){
@@ -87,9 +75,14 @@ async function clickRoom(e){
         }
         $('#code-feedback').text(data.error);
         $('#code-feedback').show();
-
-    } else {
+        return;
+    }
+    $('#code-entry').removeClass('is-invalid');
+    $('#code-entry').val('');
+    if (data.action === 'load'){
         window.open(data.url, '_blank');
+    } else if (data.action === 'reload'){
+        fetchGamePage();
     }
 }
 

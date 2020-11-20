@@ -4,5 +4,5 @@ $(function(){
         minimumResultsForSearch: 6,
         width:'resolve'
     });
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
 });

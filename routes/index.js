@@ -13,7 +13,7 @@ function showIndex(req, res, next){
 
 async function getGamePage(req, res, next){
     try {
-        if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
+        if (req.user && (req.user.type === 'player' || (req.session.assumed_user && req.session.assumed_user.type === 'player'))){
             const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
             res.locals.gamestate = gamestate;
             res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
@@ -30,7 +30,7 @@ async function getGamePage(req, res, next){
 async function getRoom(req, res, next){
     const code = req.params.code;
     try {
-        if (req.user && (req.user.is_player || (req.session.assumed_user && req.session.assumed_user.is_player))){
+        if (req.user && (req.user.type === 'player' || (req.session.assumed_user && req.session.assumed_user.type === 'player'))){
             const user = req.session.assumed_user?req.session.assumed_user:req.user;
             const result = await gameEngine.openCode(code, user.id);
 

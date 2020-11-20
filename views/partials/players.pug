@@ -24,7 +24,13 @@ mixin players(players)
                         td= user.email
                         td
                             if user.gamestate.current
-                                = user.gamestate.current.name
+                                if user.gamestate.transitioning
+                                    .badge.badge-light.badge-gamestate #{user.gamestate.prev.name}
+                                    i.fas.fa-arrow-right.fa-fw.mx-1
+                                    .badge.badge-light.badge-gamestate #{user.gamestate.next.name}
+                                    span.ml-2 #{moment(user.player.statetime).fromNow()}
+                                else
+                                    .badge.badge-light.badge-gamestate #{user.gamestate.current.name}
                             else
                                 i Unknown
                         td.text-right

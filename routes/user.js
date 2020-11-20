@@ -15,7 +15,7 @@ async function list(req, res, next){
         const users = await req.models.user.list();
         res.locals.users = await Promise.all(
             users.map( async user => {
-                if (user.is_player){
+                if (user.type === 'player'){
                     user.player = await req.models.player.getByUserId(user.id);
                 }
                 return user;
@@ -35,9 +35,7 @@ async function showNew(req, res, next){
         res.locals.user = {
             name: null,
             email: null,
-            is_admin: false,
-            is_gm: false,
-            is_player: false,
+            type: 'none',
             player: {
                 run_id: (await req.models.run.getCurrent()).id,
                 game_state: 'initial',
@@ -74,7 +72,7 @@ async function showEdit(req, res, next){
 
     try{
         const user = await req.models.user.get(id);
-        if (user.is_player){
+        if (user.type === 'player'){
             user.player = await req.models.player.getByUserId(id);
         }
         if (!user.player){
@@ -113,7 +111,7 @@ async function create(req, res, next){
 
     try{
         const id = await req.models.user.create(user);
-        if (user.is_player){
+        if (user.type === 'player'){
             await req.models.player.create({
                 user_id:id,
                 run_id:user.player.run_id,
@@ -137,22 +135,12 @@ async function update(req, res, next){
     const id = req.params.id;
     const user = req.body.user;
     req.session.userData = user;
-    if (!_.has(user, 'is_admin')){
-        user.is_admin = false;
-    }
-    if (!_.has(user, 'is_gm')){
-        user.is_gm = false;
-    }
-    if (!_.has(user, 'is_player')){
-        user.is_player = false;
-    }
-
     try {
         const current = await req.models.user.get(id);
 
         await req.models.user.update(id, user);
         delete req.session.userData;
-        if (user.is_player){
+        if (user.type === 'player'){
             const player = await req.models.player.getByUserId(id);
             if (player){
                 player.run_id = user.player.run_id;

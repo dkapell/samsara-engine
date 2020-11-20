@@ -48,7 +48,7 @@ async function show(req, res, next){
                 return user;
             })
         );
-        res.locals.users = users.filter(user => { return user.is_player;});
+        res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
         res.locals.csrfToken = req.csrfToken();
         res.render('run/show');

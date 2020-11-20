@@ -8,24 +8,10 @@
     input.form-control(type="email", placeholder="Email", name="user[email]",id="user_email",value=user.email,required)
 
 .form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="user[is_admin]",checked=user.is_admin id="user_is_admin")
-        label.custom-control-label(for="user_is_admin") Admin
-
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="user[is_creator]",checked=user.is_creator id="user_is_creator")
-        label.custom-control-label(for="user_is_creator") Creator
-
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="user[is_gm]",checked=user.is_gm id="user_is_gm")
-        label.custom-control-label(for="user_is_gm") GM
-
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="user[is_player]",checked=user.is_player id="user_is_player")
-        label.custom-control-label(for="user_is_player") Player
+    label.control-label(for="user_type") User Type
+    select.custom-select.select2(name="user[type]",id="user_type")
+        for type in ['admin', 'creator', 'gm', 'player', 'none']
+            option(value=type selected=user.type === type)= capitalize(type)
 
 fieldset#player_fields
     label.my-2.w-auto.lead Player settings

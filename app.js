@@ -138,6 +138,9 @@ app.use(function(req, res, next){
     res.locals._ = _;
     res.locals.moment = moment;
     res.locals.activeUser = req.user;
+    res.locals.capitalize = function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
     next();
 });
 

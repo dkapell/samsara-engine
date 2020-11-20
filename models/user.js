@@ -8,7 +8,7 @@ const models = {
     player: require('./player')
 };
 
-const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm', 'is_player', 'is_creator'];
+const tableFields = ['name', 'email', 'google_id', 'type'];
 
 
 exports.get = async function(id){
@@ -16,7 +16,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         const user = result.rows[0];
-        if (user.is_player){
+        if (user.type === 'player'){
             user.player = await models.player.getByUserId(user.id);
         }
         return user;

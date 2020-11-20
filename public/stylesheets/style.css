@@ -29,3 +29,7 @@ table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
 .select2-results__option--selectable, .select2-selection__rendered{
     color: #444;
 }
+
+.badge-gamestate{
+    font-size: .9rem;
+}

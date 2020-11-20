@@ -32,7 +32,7 @@ async function updateAll(e){
     const url = $this.attr('url');
     const csrf = $this.attr('data-csrf');
     const formData = new FormData();
-    const state_id = $('#run-update-state').val()
+    const state_id = $('#run-update-state').val();
     if (!state_id || state_id === ''){
         return;
     }

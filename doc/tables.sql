@@ -1,12 +1,17 @@
+create type user_type as ENUM(
+    'admin',
+    'creator',
+    'gm',
+    'player',
+    'none'
+);
+
 create table users (
     id          serial,
     name        varchar(80),
     email       varchar(100),
-    google_id  varchar(500),
-    is_admin   boolean default false,
-    is_creator boolean default false,
-    is_gm boolean default false,
-    is_player boolean default false,
+    google_id   varchar(500),
+    type        user_type default none,
     PRIMARY KEY (id)
 );
 

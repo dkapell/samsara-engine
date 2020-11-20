@@ -11,10 +11,7 @@ block content
                     th
                     th Name
                     th Email
-                    th Admin
-                    th Creator
-                    th GM
-                    th Player
+                    th Type
                     th Run
                     th Group
                     th Character
@@ -27,13 +24,10 @@ block content
                         td
                             a(href='/user/' + user.id)= user.name
                         td= user.email
-                        td= user.is_admin?'Yes':'No'
-                        td= user.is_creator?'Yes':'No'
-                        td= user.is_gm?'Yes':'No'
-                        td= user.is_player?'Yes':'No'
-                        td= user.is_player?runs[user.player.run_id].name:''
-                        td= user.is_player?user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped':''
-                        td= user.is_player?user.player.character:''
+                        td= capitalize(user.type)
+                        td= user.type === 'player'?runs[user.player.run_id].name:''
+                        td= user.type === 'player'?user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped':''
+                        td= user.type === 'player'?user.player.character:''
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(
                                 role="button",

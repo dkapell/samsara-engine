@@ -14,7 +14,7 @@ async function list(req, res, next){
     };
     try {
         const players = (await req.models.user.list()).filter(user => {
-            return user.is_player;
+            return user.type === 'player';
         });
         res.locals.users = await Promise.all(
             players.map( async user => {
@@ -42,7 +42,7 @@ async function assumePlayer(req, res, next){
             req.flash('error', 'No User Found');
             return res.redirect('/player');
         }
-        if (!user.is_player){
+        if (user.type !== 'player'){
             req.flash('error', 'User is not a player');
             return res.redirect('/player');
         }

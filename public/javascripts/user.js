@@ -1,10 +1,10 @@
 $(function(){
-    $('#user_is_player').on('change', updateUser);
+    $('#user_type').on('change', updateUser);
     updateUser();
 });
 
 function updateUser(e){
-    if ( $('#user_is_player').prop('checked')){
+    if ( $('#user_type').val() === 'player'){
         $('#player_fields').show();
     } else {
         $('#player_fields').hide();

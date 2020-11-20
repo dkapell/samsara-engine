@@ -12,6 +12,7 @@ block content
                     th
                     th Name
                     th Image
+                    th Template
                     th Description
                     if checkPermission('creator')
                         th
@@ -27,6 +28,7 @@ block content
                                 a(href='/image/' + imagemap.image.id)= imagemap.image.name
                             else
                                 =imagemap.image.name
+                        td= imagemap.template?'Yes':'No'
 
                         td= imagemap.description
                         if checkPermission('creator')

@@ -81,7 +81,7 @@ async function showNew(req, res, next){
         delete req.session.gamestateData;
     }
     try{
-        res.locals.imagemaps = await req.models.imagemap.list();
+        res.locals.imagemaps = (await req.models.imagemap.list()).filter(imagemap => {return !imagemap.template});
         res.locals.rooms = await req.models.room.list();
         res.render('gamestate/new');
     } catch (err){
@@ -108,7 +108,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + gamestate.name
         };
-        res.locals.imagemaps = await req.models.imagemap.list();
+        res.locals.imagemaps = (await req.models.imagemap.list()).filter(imagemap => {return !imagemap.template});
         res.locals.rooms = await req.models.room.list();
         res.render('gamestate/edit');
     } catch(err){

@@ -8,6 +8,10 @@
     select.custom-select.select2(name="imagemap[image_id]",id="imagemap_image_id")
         for image in images
             option(value=image.id selected=imagemap.image_id===image.id)= image.name
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="imagemap[template]", id="imagemap_template", checked=imagemap.template)
+        label.custom-control-label(for="imagemap_template") Imagemap is a Template
 
 .form-group
     label.control-label(for="imagemap_description") Description
@@ -47,14 +51,14 @@
             .form-group.form-row
                 label.col-md-2.col-form-label(for="imagemap_map_area_room_id-new" ) Room
                 .col-md-6
-                    select.custom-select(name=`imagemap[map][new][room_id]`,id=`imagemap_map_area_room_id-new`)
+                    select.custom-select(name=`imagemap[map][new][room_id]`,id=`imagemap_map_area_room_id-new` data-placeholder="Select Room")
                         option(selected disabled value="") Select a room
                         for room in rooms
                             option(value=room.id)= room.name
 
                 label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
                 .col-md-2
-                    select.custom-select(name=`imagemap[map][new][shape]`,id=`imagemap_map_area_shape-new`)
+                    select.custom-select(name=`imagemap[map][new][shape]`,id=`imagemap_map_area_shape-new` data-placeholder="Select Shape")
                         option(selected disabled value="") Shape
                         for shape in ['rect', 'circle', 'poly']
                             option(value=shape)= shape

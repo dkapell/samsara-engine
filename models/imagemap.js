@@ -8,7 +8,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'image_id', 'map'];
+const tableFields = ['name', 'description', 'image_id', 'map', 'template'];
 
 exports.get = async function(id){
     const query = 'select * from imagemaps where id = $1';

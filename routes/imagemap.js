@@ -53,6 +53,7 @@ async function showNew(req, res, next){
         description: null,
         image_id: null,
         map: [],
+        template: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -70,7 +71,8 @@ async function showNew(req, res, next){
                     name: 'Copy of ' + old.name,
                     description: old.description?old.description:null,
                     image_id: old.image_id,
-                    map: old.map?old.map:[]
+                    map: old.map?old.map:[],
+                    template:false
                 };
             }
         }
@@ -121,6 +123,9 @@ async function create(req, res, next){
 
     req.session.imagemapData = imagemap;
     imagemap.map = parseMap(imagemap.map);
+    if (!_.has(imagemap, 'template')){
+        imagemap.allow_codes = false;
+    }
 
     try{
         await req.models.imagemap.create(imagemap);
@@ -138,7 +143,9 @@ async function update(req, res, next){
     const imagemap = req.body.imagemap;
     imagemap.map = parseMap(imagemap.map);
     req.session.imagemapData = imagemap;
-
+    if (!_.has(imagemap, 'template')){
+        imagemap.allow_codes = false;
+    }
     try {
         const current = await req.models.imagemap.get(id);
 

@@ -67,7 +67,7 @@ async function validateGame(req, res, next){
 const router = express.Router();
 
 router.get('/', showIndex);
-router.get('/game', permission('player'), getGamePage);
+router.get('/game', getGamePage);
 router.get('/code/:code', permission('player'), getRoom);
 router.get('/game/validator', permission('gm'), validateGame);
 

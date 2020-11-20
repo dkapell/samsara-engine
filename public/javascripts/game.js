@@ -26,22 +26,29 @@ async function fetchGamePage(){
                     $(this).removeClass('is-invalid');
                 }
             });
-            $('img[usemap]').rwdImageMaps();
-            $('.map').maphilight({
-                wrapClass:true,
-                shadow:true,
-                strokeWidth:3,
-                strokeColor: '3498db',
-                fillColor: '000000',
-                fillOpacity: 0.2,
-            });
-            $('area').on('click', clickRoom);
+            prepImageMap();
+
         }
     } catch (e){
         console.log(e);
         clearInterval(refreshInterval);
     }
 
+}
+
+function prepImageMap(){
+    //$('img[usemap]').rwdImageMaps();
+    $('.map').maphilight({
+        wrapClass:true,
+        shadow:true,
+        strokeWidth:3,
+        strokeColor: '3498db',
+        fillColor: '000000',
+        fillOpacity: 0.2,
+    });
+    $('area').on('click', clickRoom);
+    $('area').on('mouseover', showRoom);
+    $('area').on('mouseout', clearRoom);
 }
 
 async function submitCodeForm(e){
@@ -68,6 +75,7 @@ async function submitCodeForm(e){
 
 async function clickRoom(e){
     e.preventDefault();
+    e.stopPropagation();
     const code = ($(this).attr('data-code'));
     const response = await fetch('/code/'+ code);
     const data = await response.json();
@@ -83,4 +91,12 @@ async function clickRoom(e){
     } else {
         window.open(data.url, '_blank');
     }
+}
+
+function showRoom(e){
+    $('#room-name').text($(this).attr('data-room'));
+}
+
+function clearRoom(e){
+    $('#room-name').html('&nbsp;');
 }

@@ -4,7 +4,8 @@ mixin gamestate(gamestate, rooms)
     .lead=gamestate.description
     if gamestate.imagemap
         .row.my-2
-            +imagemap(gamestate.imagemap, rooms)
+            .col.text-center
+                +imagemap(gamestate.imagemap, rooms)
     if gamestate.allow_codes && gamestate.rooms.length
         .row.my-3
             .col

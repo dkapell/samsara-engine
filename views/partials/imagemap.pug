@@ -1,13 +1,19 @@
 mixin imagemap(imagemap, rooms)
-    image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
-    map(name= 'imagemap-' + imagemap.id)
-        each area in imagemap.map
-            area(
-                shape=area.shape,
-                coords=area.coords,
-                data-room-id=area.room_id,
-                data-code=rooms?rooms[area.room_id].code:'',
-                data-room=rooms?rooms[area.room_id].name:''
-                href='#',
-                target="_self"
-            )
+    .row.my-1
+        .col-sm-6.offset-sm-3
+            .lead.text-center#room-name &nbsp;
+
+            -//input.form-control.bg-dark.text-light.text-center.lead#room-name(disabled)
+    .row.my-1
+        image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+        map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
+            each area in imagemap.map
+                area(
+                    shape=area.shape,
+                    coords=area.coords,
+                    data-room-id=area.room_id,
+                    data-code=rooms?rooms[area.room_id].code:'',
+                    data-room=rooms?rooms[area.room_id].name:'',
+                    href='#',
+                    target="_self"
+                )

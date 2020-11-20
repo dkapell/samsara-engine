@@ -27,12 +27,12 @@ $(function(){
 });
 
 function showRoom(e){
-    $('#room-display').val($(this).attr('data-room'));
+    $('#room-name').text($(this).attr('data-room'));
 }
 
 function clearRoom(e){
     if(!codeLocked){
-        $('#room-display').val('');
+        $('#room-name').html('&nbsp;');
     }
 }
 

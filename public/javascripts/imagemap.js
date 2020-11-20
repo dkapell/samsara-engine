@@ -78,6 +78,10 @@ function addArea(e){
         .attr('for', 'imagemap_map_area_code-new-' + id);
 
     $new.find('.remove-area-btn').on('click', removeArea);
+
+    $new.find('select').select2({
+        theme:'bootstrap4',
+    });
     $new.appendTo('#imagemap_map');
     $new.show();
 }

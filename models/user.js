@@ -8,7 +8,7 @@ const models = {
     player: require('./player')
 };
 
-const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm', 'is_player'];
+const tableFields = ['name', 'email', 'google_id', 'is_admin', 'is_gm', 'is_player', 'is_creator'];
 
 
 exports.get = async function(id){

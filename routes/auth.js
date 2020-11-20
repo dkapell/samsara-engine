@@ -25,6 +25,9 @@ router.get('/google/callback',
         if (_.has(req.session, 'backto')){
             const backto = req.session.backto;
             delete req.session.backto;
+            if (backto.match(/^\/game/)){
+                res.redirect('/');
+            }
             res.redirect(backto);
         } else {
             res.redirect('/');

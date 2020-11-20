@@ -4,14 +4,13 @@ block content
     .row
         .col-sm-8.offset-sm-2
             .card
-                .card-header= 'Edit Transition: ' + user.name
+                .card-header= 'Edit Transition'
                 .card-body
-                    form.form.needs-validation(method="POST" action="/user/" + user.id novalidate)
+                    form.form.needs-validation(method="POST" action="/transition/" + transition.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='user[id]',value=user.id)
+                        input(type="hidden", name='transition[id]',value=transition.id)
                         include ./_form.pug
 
 append scripts
     script(src='/javascripts/validator.js')
-    script(src='/javascripts/user.js')

@@ -14,6 +14,11 @@
 
 .form-group
     .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="user[is_creator]",checked=user.is_creator id="user_is_creator")
+        label.custom-control-label(for="user_is_creator") Creator
+
+.form-group
+    .custom-control.custom-switch
         input.custom-control-input(type="checkbox", name="user[is_gm]",checked=user.is_gm id="user_is_gm")
         label.custom-control-label(for="user_is_gm") GM
 
@@ -26,12 +31,12 @@ fieldset#player_fields
     label.my-2.w-auto.lead Player settings
     .form-group
         label.control-label(for="user_run_id") Run
-        select.form-control(name="user[player][run_id]",id="user_run_id")
+        select.form-control.select2(name="user[player][run_id]",id="user_run_id")
             for run in runs
                 option(value=run.id selected=user.player.run_id===run.id)= run.name
     .form-group
         label.control-label(for="user_group_id") Player Group
-        select.form-control(name="user[player][group_id]",id="user_group_id")
+        select.form-control.select2(name="user[player][group_id]",id="user_group_id")
             option(value=0 selected=!user.player.group) None
             for group in player_groups
                 option(value=group.id selected=user.player.group_id===group.id)= group.name
@@ -42,7 +47,7 @@ fieldset#player_fields
 
     .form-group
         label.control-label(for="user_gamestate_id") Game State
-        select.custom-select(name="user[player][gamestate_id]",id="user_gamestate_id")
+        select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id")
             option(selected disabled value="") Select Gamestate
             for gamestate in gamestates
                 option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name

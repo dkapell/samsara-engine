@@ -21,3 +21,11 @@ table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
 {
     top:14px;
 }
+
+.select2-results__option--disabled, .select2-selection__placeholder{
+    color: #999;
+}
+
+.select2-results__option--selectable, .select2-selection__rendered{
+    color: #444;
+}

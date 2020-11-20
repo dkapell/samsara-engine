@@ -5,7 +5,7 @@
 
 .form-group
     label.control-label(for="gamestate_imagemap_id") Imagemap
-    select.custom-select(name="gamestate[imagemap_id]",id="gamestate_imagemap_id")
+    select.custom-select.select2(name="gamestate[imagemap_id]",id="gamestate_imagemap_id")
         option(selected=!gamestate.imagemap_id value="-1") None
         for imagemap in imagemaps
             option(value=imagemap.id selected=gamestate.imagemap_id===imagemap.id)= imagemap.name
@@ -32,7 +32,7 @@
 
 .form-group
     label.control-label(for="gamestate_rooms") Additional Rooms
-    select.custom-select(multiple, name="gamestate[rooms]",id="gamestate_rooms")
+    select.custom-select.select2(multiple, name="gamestate[rooms]",id="gamestate_rooms")
         for room in rooms
             option(value=room.id selected=_.indexOf(gamestate.rooms, room.id.toString()) !== -1)= room.name
 

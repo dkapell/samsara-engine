@@ -1,28 +1,28 @@
 
 .form-group
     label.control-label(for="transition_from_state") From State
-    select.custom-select(name="transition[from_state_id]",id="transition_from_state")
-        option(selected disabled value="") Pick State
+    select.custom-select.select2#transition_from_state(name="transition[from_state_id]",data-placeholder="Select a state")
+        option
         for gamestate in gamestates
             option(value=gamestate.id selected=transition.from_state_id===gamestate.id)= gamestate.name
 
 .form-group
     label.control-label(for="transition_to_state") To State
-    select.custom-select(name="transition[to_state_id]",id="transition_to_state")
-        option(selected disabled value="") Pick State
+    select.custom-select.select2#transition_to_state(name="transition[to_state_id]",data-placeholder="Select a state")
+        option
         for gamestate in gamestates
             option(value=gamestate.id selected=transition.to_state_id===gamestate.id)= gamestate.name
 
 .form-group
     label.control-label(for="transition_group_id") Player Group
-    select.custom-select(name="transition[group_id]",id="transition_group_id")
+    select.custom-select.select2#transition_group_id(name="transition[group_id]")
         option(selected=!transition.group_id value="-1") All
         for player_group in player_groups
             option(value=player_group.id selected=transition.group_id===player_group.id)= player_group.name
 
 .form-group
     label.control-label(for="transition_room_id") Change On Enter Room
-    select.custom-select(name="transition[room_id]",id="transition_room_id")
+    select.custom-select.select2#transition_room_id(name="transition[room_id]")
         option(selected=!transition.room_id value="-1") Manual
         for room in rooms
             option(value=room.id selected=transition.room_id===room.id)= room.name

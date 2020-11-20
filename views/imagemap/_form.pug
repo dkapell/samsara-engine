@@ -5,7 +5,7 @@
 
 .form-group
     label.control-label(for="imagemap_image_id") Image
-    select.custom-select(name="imagemap[image_id]",id="imagemap_image_id")
+    select.custom-select.select2(name="imagemap[image_id]",id="imagemap_image_id")
         for image in images
             option(value=image.id selected=imagemap.image_id===image.id)= image.name
 
@@ -24,13 +24,13 @@
                 .form-group.form-row
                     label.col-md-2.col-form-label(for="imagemap_map_area_room_id-" + i ) Room
                     .col-md-6
-                        select.custom-select(name=`imagemap[map][${i}][room_id]`,id=`imagemap_map_area_room_id-${i}`, required)
+                        select.custom-select.select2(name=`imagemap[map][${i}][room_id]`,id=`imagemap_map_area_room_id-${i}`, required)
                             for room in rooms
                                 option(value=room.id selected=Number(area.room_id)===room.id)= room.name
 
                     label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
                     .col-md-2
-                        select.custom-select(name=`imagemap[map][${i}][shape]`,id=`imagemap_map_area_shape-${i}`, required)
+                        select.custom-select.select2(name=`imagemap[map][${i}][shape]`,id=`imagemap_map_area_shape-${i}`, required)
                             for shape in ['rect', 'circle', 'poly']
                                 option(value=shape selected=area.shape===shape)= shape
                     .col-md-1.text-right

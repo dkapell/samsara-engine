@@ -4,7 +4,7 @@ include ../partials/gamestate
 include ../partials/players
 
 block content
-    .row.my-3
+    .row.my-2
         h2.d-inline-block Run: #{run.name}
         if run.current
             h3
@@ -12,17 +12,17 @@ block content
     if checkPermission('admin')
         .row
             .form-inline
-                a.btn.btn-outline-primary.mr-2(role="button" href='/run/' + run.id + '/edit')
+                a.btn.btn-outline-primary.mr-2.mt-2(role="button" href='/run/' + run.id + '/edit')
                     i.fas.fa-edit
                     |  Edit Run
-                a.btn.btn-outline-danger.mr-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+                a.btn.btn-outline-danger.mr-3.mt-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
                     i.fas.fa-sync
                     |  Reset Run
-                .input-group.ml-3
+                .input-group.mt-2
                     .input-group-prepend.border-warning
                         .input-group-text.border-warning Send all Players to:
-                    select.custom-select.border-warning#run-update-state
-                        option(selected disabled value="") Pick State
+                    select.custom-select.border-warning.select2#run-update-state(data-placeholder='Pick State' style='min-width:150px')
+                        option
                         for gamestate in gamestates
                             option(value=gamestate.id)= gamestate.name
                     .input-group-append

@@ -79,7 +79,7 @@ async function showEdit(req, res, next){
                 { url: '/', name: 'Home'},
                 { url: '/transition', name: 'Transitions'},
             ],
-            current: 'Edit: ' + transition.name
+            current: 'Edit Transition'
         };
         res.locals.gamestates = await req.models.gamestate.list();
         res.locals.rooms = await req.models.room.list();

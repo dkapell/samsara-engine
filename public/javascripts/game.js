@@ -37,7 +37,7 @@ async function fetchGamePage(){
 }
 
 function prepImageMap(){
-    //$('img[usemap]').rwdImageMaps();
+    $('img[usemap]').rwdImageMaps();
     $('.map').maphilight({
         wrapClass:true,
         shadow:true,

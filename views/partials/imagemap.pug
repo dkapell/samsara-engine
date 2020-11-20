@@ -5,7 +5,7 @@ mixin imagemap(imagemap, rooms)
 
             -//input.form-control.bg-dark.text-light.text-center.lead#room-name(disabled)
     .row.my-1
-        image.map.mx-auto(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+        image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
         map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
             each area in imagemap.map
                 area(

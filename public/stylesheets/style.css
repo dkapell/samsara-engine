@@ -33,3 +33,7 @@ table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
 .badge-gamestate{
     font-size: .9rem;
 }
+
+map, image {
+    outline: none;
+}

@@ -141,7 +141,9 @@ async function create(req, res, next){
 async function update(req, res, next){
     const id = req.params.id;
     const imagemap = req.body.imagemap;
+
     imagemap.map = parseMap(imagemap.map);
+
     req.session.imagemapData = imagemap;
     if (!_.has(imagemap, 'template')){
         imagemap.allow_codes = false;
@@ -166,6 +168,23 @@ function parseMap(input){
         if (id === 'new'){
             continue;
         }
+        const actions = [];
+        for (const actionId in input[id].actions){
+            const row = input[id].actions[actionId];
+            const action = {
+                type: row.type
+            };
+            switch (row.type){
+                case 'room':
+                    action.room_id = row.room_id;
+                    break;
+                case 'text':
+                    action.content = row.content;
+                    break;
+            }
+            actions.push(action);
+        }
+        input[id].actions = actions;
         map.push(input[id]);
     }
     return JSON.stringify(map);

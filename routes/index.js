@@ -39,11 +39,11 @@ async function getRoom(req, res, next){
             }
 
             if (result.room.url === 'stub'){
-                return res.json({success:true, action:'load', url:'/stub/' + result.room.id});
+                return res.json({success:true, actions:[ {action:'load', url:'/stub/' + result.room.id}]});
             } else if (result.room.url === 'none'){
-                return res.json({success:true, action:'reload'});
+                return res.json({success:true, actions: [{ action:'reload'}]});
             } else {
-                return res.json({success:true, action:'load', url:result.room.url});
+                return res.json({success:true, actions: [ {action:'load', url:result.room.url}]});
             }
         } else {
             throw new Error('You are not a player');
@@ -58,11 +58,37 @@ async function getRoom(req, res, next){
     }
 }
 
+async function checkArea(req, res, next){
+    const areaId = Number(req.params.id);
+    try{
+        if (req.user && (req.user.type === 'player' || (req.session.assumed_user && req.session.assumed_user.type === 'player'))){
+            const user = req.session.assumed_user?req.session.assumed_user:req.user;
+            const actions = await gameEngine.checkArea(areaId, user.id);
+            if (actions){
+                return res.json({success:true, actions: actions});
+            }
+            return res.json({success:true, actions: [{ action:'reload'}]});
+        } else {
+            throw new Error('You are not a player');
+        }
+
+    } catch(err){
+        console.trace(err);
+        let retry = false;
+        if (err.message === 'Room is not active'){
+            retry = true;
+        }
+        return res.json({success:false, error:err.message, retry:retry});
+    }
+
+}
+
 async function validateGame(req, res, next){
     res.locals.siteSection = 'config';
-    res.locals.validation = await gameEngine.validate(1);
+    res.locals.validation = await gameEngine.validate();
     res.render('game/validate');
 }
+
 
 
 
@@ -70,7 +96,8 @@ const router = express.Router();
 
 router.get('/', showIndex);
 router.get('/game', getGamePage);
-router.get('/code/:code', permission('player'), getRoom);
+router.get('/game/code/:code', permission('player'), getRoom);
+router.get('/game/area/:id', permission('player'), checkArea);
 router.get('/game/validator', permission('gm'), validateGame);
 
 module.exports = router;

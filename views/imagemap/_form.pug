@@ -1,3 +1,4 @@
+include ../partials/imagemap
 .form-group
     label.control-label(for="imagemap_name") Name
     input.form-control(type="text",placeholder="Name",name="imagemap[name]",value=imagemap.name,id='imagemap_name',required)
@@ -24,57 +25,10 @@
 
         - let i = 0;
         each area in imagemap.map
-            .list-group-item
-                .form-group.form-row
-                    label.col-md-2.col-form-label(for="imagemap_map_area_room_id-" + i ) Room
-                    .col-md-6
-                        select.custom-select.select2(name=`imagemap[map][${i}][room_id]`,id=`imagemap_map_area_room_id-${i}`, required)
-                            for room in rooms
-                                option(value=room.id selected=Number(area.room_id)===room.id)= room.name
-
-                    label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
-                    .col-md-2
-                        select.custom-select.select2(name=`imagemap[map][${i}][shape]`,id=`imagemap_map_area_shape-${i}`, required)
-                            for shape in ['rect', 'circle', 'poly']
-                                option(value=shape selected=area.shape===shape)= shape
-                    .col-md-1.text-right
-                        button.btn.btn-outline-danger.remove-area-btn
-                            i.fa.fa-trash
-
-                .form-group.form-row
-                    label.col-md-2.col-form-label(for=`imagemap_map_area_coords-${i}` ) Coords
-                    .col-md-10
-                        input.form-control(name=`imagemap[map][${i}][coords]`, value=area.coords, id=`imagemap_map_area_coords-${i}`, required)
-
+            +area(area, i, rooms)
             - i++;
-        .list-group-item#new-area
-            .form-group.form-row
-                label.col-md-2.col-form-label(for="imagemap_map_area_room_id-new" ) Room
-                .col-md-6
-                    select.custom-select(name=`imagemap[map][new][room_id]`,id=`imagemap_map_area_room_id-new` data-placeholder="Select Room")
-                        option(selected disabled value="") Select a room
-                        for room in rooms
-                            option(value=room.id)= room.name
+        +area({}, 'new', rooms)
 
-                label.col-md-1.col-form-label(for="imagemap_map_area_shape-" + i ) Shape
-                .col-md-2
-                    select.custom-select(name=`imagemap[map][new][shape]`,id=`imagemap_map_area_shape-new` data-placeholder="Select Shape")
-                        option(selected disabled value="") Shape
-                        for shape in ['rect', 'circle', 'poly']
-                            option(value=shape)= shape
-                .col-md-1.text-right
-                    button.btn.btn-outline-danger.remove-area-btn
-                        i.fa.fa-trash
-
-            .form-group.form-row
-                label.col-md-2.col-form-label(for=`imagemap_map_area_coords-new` ) Coords
-                .col-md-10
-                    input.form-control(
-                        name=`imagemap[map][new][coords]`,
-                        value="",
-                        id=`imagemap_map_area_coords-new`
-                        placeholder="Coordinates"
-                    )
     .col.text-right.mt-2
         button.btn.btn-outline-success#add-area-btn
             i.fa.fa-plus
@@ -83,5 +37,8 @@
 .form-group
     button.btn.btn-primary(type="submit")= imagemap.id?'Update':'Create'
     a.btn.btn-link(href="/imagemap") Cancel
+
+
++action({}, 'new', 'new', rooms)
 
 

@@ -7,13 +7,93 @@ mixin imagemap(imagemap, rooms)
     .row.my-1
         image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
         map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
-            each area in imagemap.map
+            - let areaId = 0;
+            while areaId < imagemap.map.length
+                - let area = imagemap.map[areaId]
+                - let name = _.findWhere(area.actions, {type:'room'})?rooms[_.findWhere(area.actions, {type:'room'}).room_id].name:'None'
                 area(
                     shape=area.shape,
                     coords=area.coords,
-                    data-room-id=area.room_id,
-                    data-code=rooms?rooms[area.room_id].code:'',
-                    data-room=rooms?rooms[area.room_id].name:'',
+                    data-name=name,
+                    data-imagemap-id=imagemap.id
+                    data-area=areaId
                     href='#',
                     target="_self"
                 )
+                - areaId++;
+
+mixin area(area, id, rooms)
+    .list-group-item(id=`area-${id}`)
+        .form-row.mb-3
+            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="imagemap_map_area_shape-" + id ) Shape
+            .col-md-2
+                select.custom-select(
+                    name=`imagemap[map][${id}][shape]`,
+                    id=`imagemap_map_area_shape-${id}`,
+                    class=id!=='new'?'select2':'',
+                    data-placeholder="Select Shape"
+                    required=id!== 'new'
+                )
+                    option
+                    for shape in ['rect', 'circle', 'poly']
+                        option(value=shape selected=area.shape===shape)= shape
+            label.col-md-1.d-md-none.d-lg-block.col-form-label(for=`imagemap_map_area_coords-${id}` ) Coords
+            .col
+                input.form-control(
+                    name=`imagemap[map][${id}][coords]`,
+                    value=area.coords,
+                    id=`imagemap_map_area_coords-${id}`,
+                    placeholder="Coordinates",
+                    required=id!== 'new'
+                )
+
+            .col-md-2.text-right
+                button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
+                    i.fa.fa-plus
+                button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
+                    i.fa.fa-trash
+
+        if _.isArray(area.actions)
+            - let actionId = 0;
+            for action of area.actions
+                +action(action, id, actionId, rooms)
+                - actionId++
+
+
+mixin action(action, areaId, actionId, rooms)
+    .form-row.my-1.action-row(id=`action-${areaId}-${actionId}`)
+        label.col-md-1.col-form-label(for=`imagemap_map_area-${areaId}-action-${actionId}-type`) Action
+        .col-md-2
+            select.custom-select.action-type-select(
+                name=`imagemap[map][${areaId}][actions][${actionId}][type]`,
+                id=`imagemap_map_area-${areaId}-action-${actionId}-type`,
+                class=actionId!=='new'?'select2':'',
+                data-placeholder="Type",
+            )
+                option
+                for type in ['room', 'text']
+                    option(value=type, selected=action.type === type)= type
+        label.col-md-2.col-form-label.action-room(for=`imagemap_map_area-${areaId}-action-${actionId}-room_id` ) Room
+        .col-md-6.action-room
+            select.custom-select(
+                name=`imagemap[map][${areaId}][actions][${actionId}][room_id]`,
+                id=`imagemap_map_area-${areaId}-action-${actionId}-room_id`,
+                class=actionId!=='new'?'select2':'',
+                data-placeholder="Select Room",
+            )
+                option
+                for room in rooms
+                    option(value=room.id selected=action.room_id && Number(action.room_id)===room.id)= room.name
+
+
+        label.col-md-2.col-form-label.action-text(for=`imagemap_map_area-${areaId}-action-${actionId}-content` ) Display Text
+        .col-md.action-text
+                textarea.form-control(
+                    name=`imagemap[map][${areaId}][actions][${actionId}][content]`,
+                    id=`imagemap_map_area-${areaId}-action-${actionId}-content`,
+                    rows=3
+                )
+                    = action.content
+        .col.text-right
+                button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
+                    i.fa.fa-trash

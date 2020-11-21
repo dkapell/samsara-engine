@@ -1,5 +1,7 @@
+/* global _ */
 let room_idLocked = false;
 let nextIndex = 0;
+const nextActions = {};
 $(function(){
     //For Show
     $('img[usemap]').rwdImageMaps();
@@ -16,18 +18,34 @@ $(function(){
     $('area').on('mouseout', clearRoom);
 
     // For Form
-    $('.remove-area-btn').on('click', removeArea);
+    $('.remove-area-btn').confirmation({
+        title: 'Delete this Area'
+    }).on('click', removeArea);
     $('#add-area-btn').on('click', addArea);
-    $('#new-area').hide();
+    $('#area-new').hide();
+    $('.add-action-btn').on('click', addAction);
+    $('#action-new-new').hide();
+
+    $('.remove-action-btn').confirmation({
+        title: 'Delete this Action'
+    }).on('click', removeAction);
 
     $('.delete-btn').confirmation({
         title: 'Delete this item'
     }).on('click', deleteItem);
+    $('.action-room').hide();
+    $('.action-text').hide();
+
+    showAllActions();
+
+    $('.action-type-select').on('change', function(e){
+        showAction($(this).closest('.action-row'));
+    });
 
 });
 
 function showRoom(e){
-    $('#room-name').text($(this).attr('data-room'));
+    $('#room-name').text($(this).attr('data-name'));
 }
 
 function clearRoom(e){
@@ -49,11 +67,18 @@ function removeArea(e){
     $this.closest('.list-group-item').remove();
 }
 
+function removeAction(e){
+    const $this = $(this);
+    e.preventDefault();
+    e.stopPropagation();
+    $this.closest('.action-row').remove();
+}
+
 function addArea(e){
     const $this = $(this);
     e.preventDefault();
 
-    const $new = $('#new-area').clone();
+    const $new = $('#area-new').clone();
     const id = nextIndex++;
 
     $new.find('#imagemap_map_area_room_id-new')
@@ -78,10 +103,18 @@ function addArea(e){
     $new.find('label [for=imagemap_map_area_shape-new]')
         .attr('for', 'imagemap_map_area_shape-new-' + id);
 
-    $new.find('.remove-area-btn').on('click', removeArea);
+    $new.find('.remove-area-btn').confirmation({
+        title: 'Delete this Area'
+    }).on('click', removeArea);
+
+    $new.find('.add-action-btn')
+        .attr('data-area', 'new-' + id)
+        .on('click', addAction);
 
     $new.find('select').select2({
         theme:'bootstrap4',
+        minimumResultsForSearch: 6,
+        width:'resolve'
     });
     $new.appendTo('#imagemap_map');
     $new.show();
@@ -95,4 +128,77 @@ async function deleteItem(e){
     if($this.attr('data-back')){
         location = $this.attr('data-back');
     }
+}
+
+function showAllActions(){
+    $('.action-row').each(function(index) {
+        showAction($(this));
+    });
+}
+
+function showAction($row) {
+    const type = $row.find('.action-type-select').val();
+    switch(type){
+        case 'room':
+            $row.find('.action-room').show();
+            $row.find('.action-text').hide();
+            break;
+        case 'text':
+            $row.find('.action-room').hide();
+            $row.find('.action-text').show();
+            break;
+    }
+}
+
+function addAction(e){
+    const $this = $(this);
+    e.preventDefault();
+    const areaId = $this.attr('data-area');
+    const $new = $('#action-new-new').clone();
+    if (!_.has(nextActions, areaId)){
+        nextActions[areaId] = 0;
+    }
+    const id = nextActions[areaId]++;
+
+    $new.attr('id', `action-${areaId}-new-${id}`);
+
+    console.log('cloning ' + areaId + ': ' + id);
+    console.log($new.find('#imagemap_map_area-new-action-new-type'));
+
+    $new.find('#imagemap_map_area-new-action-new-type')
+        .attr('required', true)
+        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-type`)
+        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][type]`);
+    $new.find('label [for=imagemap_map_area-new-action-new-type]')
+        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-type`);
+
+    $new.find('#imagemap_map_area-new-action-new-room_id')
+        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-room_id`)
+        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][room_id]`);
+    $new.find('label [for=imagemap_map_area-new-action-new-room_id]')
+        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-room_id`);
+
+    $new.find('#imagemap_map_area-new-action-new-content')
+        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-content`)
+        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][content]`);
+    $new.find('label [for=imagemap_map_area-new-action-new-content]')
+        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-content`);
+
+    $new.find('.remove-action-btn').confirmation({
+        title: 'Delete this Action'
+    }).on('click', removeAction);
+
+
+    $new.find('.action-type-select').on('change', function(e){
+        showAction($(this).closest('.action-row'));
+    });
+
+    $new.find('select').select2({
+        theme:'bootstrap4',
+        minimumResultsForSearch: 6,
+        width:'resolve'
+    });
+
+    $new.appendTo($this.closest('.list-group-item'));
+    $new.show();
 }

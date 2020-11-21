@@ -6,6 +6,7 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
+
 };
 
 const tableFields = ['name', 'description', 'image_id', 'map', 'template'];

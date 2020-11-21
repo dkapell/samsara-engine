@@ -60,12 +60,28 @@ async function submitCodeForm(e){
 async function clickRoom(e){
     e.preventDefault();
     e.stopPropagation();
-    const code = ($(this).attr('data-code'));
-    checkRoom(code);
+    const areaId = ($(this).attr('data-area'));
+    const response = await fetch('/game/area/'+ areaId);
+    const data = await response.json();
+    if (!data.success){
+        console.log(data);
+        return;
+    }
+    performActions(data.actions);
+}
+
+function performActions(actions){
+    for (const action of actions){
+        if (action.action === 'load'){
+            window.open(action.url, '_blank');
+        } else if (action.action === 'reload'){
+            fetchGamePage();
+        } // add display text
+    }
 }
 
 async function checkRoom(code){
-    const response = await fetch('/code/'+ code);
+    const response = await fetch('/game/code/'+ code);
     const data = await response.json();
     if (!data.success){
         $('#code-entry').addClass('is-invalid');
@@ -79,15 +95,11 @@ async function checkRoom(code){
     }
     $('#code-entry').removeClass('is-invalid');
     $('#code-entry').val('');
-    if (data.action === 'load'){
-        window.open(data.url, '_blank');
-    } else if (data.action === 'reload'){
-        fetchGamePage();
-    }
+    performActions(data.actions);
 }
 
 function showRoom(e){
-    $('#room-name').text($(this).attr('data-room'));
+    $('#room-name').text($(this).attr('data-name'));
 }
 
 function clearRoom(e){

@@ -3,7 +3,6 @@ mixin imagemap(imagemap, rooms)
         .col-sm-6.offset-sm-3
             .lead.text-center#room-name &nbsp;
 
-            -//input.form-control.bg-dark.text-light.text-center.lead#room-name(disabled)
     .row.my-1
         image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
         map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
@@ -61,39 +60,85 @@ mixin area(area, id, rooms)
 
 
 mixin action(action, areaId, actionId, rooms)
-    .form-row.my-1.action-row(id=`action-${areaId}-${actionId}`)
-        label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
-        .col-md-2
-            select.custom-select.action-type-select(
-                name=`gamestate[map][${areaId}][actions][${actionId}][type]`,
-                id=`gamestate_map_area-${areaId}-action-${actionId}-type`,
-                class=actionId!=='new'?'select2':'',
-                data-placeholder="Type",
-            )
-                option
-                for type in ['room', 'text']
-                    option(value=type, selected=action.type === type)= type
-        label.col-md-2.col-form-label.action-room(for=`gamestate_map_area-${areaId}-action-${actionId}-room_id` ) Room
-        .col-md-6.action-room
-            select.custom-select(
-                name=`gamestate[map][${areaId}][actions][${actionId}][room_id]`,
-                id=`gamestate_map_area-${areaId}-action-${actionId}-room_id`,
-                class=actionId!=='new'?'select2':'',
-                data-placeholder="Select Room",
-            )
-                option
-                for room in rooms
-                    option(value=room.id selected=action.room_id && Number(action.room_id)===room.id)= room.name
-
-
-        label.col-md-2.col-form-label.action-text(for=`gamestate_map_area-${areaId}-action-${actionId}-content` ) Display Text
-        .col-md-6.action-text
-                textarea.form-control(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][content]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-content`,
-                    rows=3
+    .action-row(id=`action-${areaId}-${actionId}`)
+        .form-row.my-1
+            label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
+            .col-md-2
+                select.custom-select.action-type-select(
+                    name=`gamestate[map][${areaId}][actions][${actionId}][type]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-type`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Type",
                 )
-                    = action.content
-        .col.text-right
-                button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
-                    i.fa.fa-trash
+                    option
+                    for type in ['room', 'text', 'transition']
+                        option(value=type, selected=action.type === type)= type
+
+
+            label.col-md-2.col-form-label.action-room(for=`gamestate_map_area-${areaId}-action-${actionId}-room_id` ) Room
+            .col-md-6.action-room
+                select.custom-select(
+                    name=`gamestate[map][${areaId}][actions][${actionId}][room_id]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-room_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Room",
+                )
+                    option
+                    for room in rooms
+                        option(value=room.id selected=action.room_id && Number(action.room_id)===room.id)= room.name
+
+
+            label.col-md-2.col-form-label.action-text(for=`gamestate_map_area-${areaId}-action-${actionId}-content` ) Display Text
+            .col-md-6.action-text
+                    textarea.form-control(
+                        name=`gamestate[map][${areaId}][actions][${actionId}][content]`,
+                        id=`gamestate_map_area-${areaId}-action-${actionId}-content`,
+                        rows=3
+                    )
+                        = action.content
+
+            label.col-md-2.col-form-label.action-transition(for=`gamestate_map_area-${areaId}-action-${actionId}-to_state_id` ) To State
+            .col-md-6.action-transition
+                select.custom-select(
+                    name=`gamestate[map][${areaId}][actions][${actionId}][to_state_id]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-to_state_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Gamestate",
+                )
+                    option
+                    for gamestate in gamestates
+                        option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
+
+
+            .col.text-right
+                    button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
+                        i.fa.fa-trash
+        .form-row.my-1.action-transition
+            label.col-md-2.offset-md-3.col-form-label(
+                for=`gamestate_map_area-${areaId}-action-${actionId}-delay`
+            ) Delay in Seconds
+            input.col-md-1.form-control(
+                type="number",
+                placeholder="Delay",
+                name="gamestate[map][${areaId}][actions][${actionId}][delay]",
+                id=`gamestate_map_area-${areaId}-action-${actionId}-delay`,
+                value=action.delay?action.delay:0)
+            label.col-md-2.col-form-label(
+                for=`gamestate_map_area-${areaId}-action-${actionId}-group_id`
+            ) Player Group
+            .col-md-3
+                select.custom-select(
+                    name="gamestate[map][${areaId}][actions][${actionId}][group_id]"
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-group_id`,
+                    class=actionId!=='new'?'select2':'',
+                )
+                    option(selected=!action.group_id value="-1") All
+                    for player_group in player_groups
+                        option(
+                            value=player_group.id
+                            selected=action.group_id && Number(action.group_id)===room.id
+                        )= player_group.name
+
+
+
+

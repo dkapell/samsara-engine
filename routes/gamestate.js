@@ -98,6 +98,8 @@ async function showNew(req, res, next){
 
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();
+        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.player_groups = await req.models.player_group.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
     } catch (err){
@@ -124,6 +126,8 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + gamestate.name
         };
+        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.player_groups = await req.models.player_group.list();
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();
         res.render('gamestate/edit');

@@ -4,7 +4,8 @@ include ../partials/gamestate
 
 block content
     .row.my-3
-        h2.d-inline-block Gamestate #{gamestate.name}
+        h2.d-inline-block Gamestate
+            i.ml-2 #{gamestate.name}
 
         if gamestate.start
             h3
@@ -12,6 +13,10 @@ block content
         if gamestate.special
             h3
                 .badge.badge-info.float-right.ml-2 Special
+
+        if gamestate.template
+            h3
+                .badge.badge-warning.float-right.ml-2 Template
 
 
     if checkPermission('creator')

@@ -27,6 +27,8 @@ block content
                                 span.badge.badge-success.ml-2 Start
                             if gamestate.special
                                 span.badge.badge-info.ml-2 Special
+                            if gamestate.template
+                                span.badge.badge-warning.ml-2 Template
                         td
                             if gamestate.image_id
                                 = gamestate.image.name

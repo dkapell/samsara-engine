@@ -57,7 +57,7 @@ async function showNew(req, res, next){
         delete req.session.transitionData;
     }
     try{
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.rooms = await req.models.room.list();
         res.locals.player_groups = await req.models.player_group.list();
         res.render('transition/new');
@@ -84,7 +84,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit Transition'
         };
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.rooms = await req.models.room.list();
         res.locals.player_groups = await req.models.player_group.list();
         res.render('transition/edit');

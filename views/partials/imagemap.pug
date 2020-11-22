@@ -158,7 +158,7 @@ mixin areaCard(areaId, area, gamestates, rooms)
                             | ${action.content}
                         when 'transition'
                             strong.mr-1 Transition to state
-                            i.mr-1 #{gamestates[action.to_state_id].name}
+                            i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}
                             if action.group_id
                                 | for
                                 i.mx-1 #{player_groups[action.group_id].name}
@@ -166,3 +166,5 @@ mixin areaCard(areaId, area, gamestates, rooms)
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else
                                 | immediately
+                        default
+                            | None

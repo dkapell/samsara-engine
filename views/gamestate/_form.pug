@@ -46,6 +46,11 @@ include ../partials/imagemap
         label.custom-control-label(for="gamestate_special") Special State
 
 .form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="gamestate[template]", id="gamestate_template", checked=gamestate.template)
+        label.custom-control-label(for="gamestate_template") is a Template
+
+.form-group
     label.control-label(for="gamestate_description") Description (Player Facing)
     textarea.form-control(name="gamestate[description]",id="gamestate_description",rows=3)
         = gamestate.description

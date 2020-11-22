@@ -39,7 +39,7 @@ async function show(req, res, next){
             }
             gamestate.image.image = await req.models.image.get(gamestate.image.image_id);
         }
-        const gamestates = await req.models.gamestate.list();
+        const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         gamestate.transitions = {
             to: await gameEngine.getTransitionsTo(gamestate.id),
             from: await gameEngine.getTransitionsFrom(gamestate)
@@ -69,6 +69,7 @@ async function showNew(req, res, next){
         map: [],
         start: false,
         special: false,
+        template:false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -89,6 +90,7 @@ async function showNew(req, res, next){
                     map: old.map?old.map:[],
                     start: false,
                     special: false,
+                    template:false,
                 };
             }
         }
@@ -97,10 +99,9 @@ async function showNew(req, res, next){
             res.locals.gamestate = req.session.gamestateData;
             delete req.session.gamestateData;
         }
-
+        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();
-        res.locals.gamestates = await req.models.gamestate.list();
         res.locals.player_groups = await req.models.player_group.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
@@ -128,7 +129,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + gamestate.name
         };
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.player_groups = await req.models.player_group.list();
         res.locals.images = await req.models.image.list();
         res.locals.rooms = await req.models.room.list();
@@ -143,6 +144,9 @@ async function create(req, res, next){
     req.session.gamestateData = gamestate;
     if (!_.has(gamestate, 'special')){
         gamestate.special = false;
+    }
+    if (!_.has(gamestate, 'template')){
+        gamestate.template = false;
     }
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
@@ -178,6 +182,9 @@ async function update(req, res, next){
     req.session.gamestateData = gamestate;
     if (!_.has(gamestate, 'special')){
         gamestate.special = false;
+    }
+    if (!_.has(gamestate, 'template')){
+        gamestate.template = false;
     }
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
@@ -220,9 +227,6 @@ async function remove(req, res, next){
         return next(err);
     }
 }
-
-
-
 
 const router = express.Router();
 

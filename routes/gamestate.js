@@ -3,6 +3,7 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const imagemapHelper = require('../lib/imagemapHelper');
+const gameEngine = require('../lib/gameEngine');
 
 /* GET gamestates listing. */
 async function list(req, res, next){
@@ -38,12 +39,13 @@ async function show(req, res, next){
             }
             gamestate.image.image = await req.models.image.get(gamestate.image.image_id);
         }
+        const gamestates = await req.models.gamestate.list();
         gamestate.transitions = {
-            to: await req.models.transition.find({to_state_id:req.params.id}),
-            from: await req.models.transition.find({from_state_id:req.params.id})
+            to: await gameEngine.getTransitionsTo(gamestate.id),
+            from: await gameEngine.getTransitionsFrom(gamestate)
         };
         res.locals.gamestate = gamestate;
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.gamestates = gamestates;
         res.locals.player_groups = await req.models.player_group.list();
         res.locals.breadcrumbs = {
             path: [
@@ -150,7 +152,7 @@ async function create(req, res, next){
     } else if(!_.isArray(gamestate.rooms)){
         gamestate.rooms = [gamestate.rooms];
     }
-    gamestate.map = imagemapHelper.parseMap(gamestate.map);
+    gamestate.map = await imagemapHelper.parseMap(gamestate.map);
 
     try{
         if (gamestate.start){
@@ -186,7 +188,7 @@ async function update(req, res, next){
         gamestate.rooms = [gamestate.rooms];
     }
 
-    gamestate.map = imagemapHelper.parseMap(gamestate.map);
+    gamestate.map = await imagemapHelper.parseMap(gamestate.map);
 
 
     try {

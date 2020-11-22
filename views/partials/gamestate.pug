@@ -17,30 +17,44 @@ mixin gamestate(gamestate, rooms)
 mixin transition(transition, gamestates, player_groups)
     - const fromState = _.findWhere(gamestates, {id: transition.from_state_id});
     - const toState = _.findWhere(gamestates, {id: transition.to_state_id});
-    .card
-        .card-header #{fromState.name} -> #{toState.name}
+    - moment.relativeTimeThreshold('ss', 0);
+
+    .card.m-1
+        .card-header
+            | #{fromState.name}
+            i.fas.fa-arrow-right.fa-fw.mx-1
+            | #{toState.name}
         .card-body
-            .row
-                .col
-                    strong Player Group
-                .col
+            dl.row.py-0.my-0
+                dt.col-5 Source
+                dd.col-7
+                    strong
+
+                    case transition.type
+                        when 'map'
+                            strong.mr-1 Map:
+                            span.map-highlight(data-area=transition.areaId)
+                                | #{transition.name}
+                                i.fa.fa-search.ml-1
+                        when 'gamestate'
+                            if transition.room_id
+                               strong.mr-1 Code:
+                               i.ml-1 #{rooms[transition.room_id].code}
+                            else
+                                strong Manual
+
+                dt.col-5 Delay
+                dd.col-7
+                    if transition.delay
+                        = moment.duration(transition.delay, "seconds").humanize()
+                    else
+                        i None
+
+                dt.col-5 Player Group
+                dd.col-7
                     if transition.group_id
                         = _.findWhere(player_groups, {id: transition.group_id}).name
                     else
                         i All
-            .row
-                .col
-                    strong Room
-                .col
-                    if transition.room_id
-                        = _.findWhere(rooms, {id: transition.room_id}).name
-                    else
-                        i Manual
-            .row
-                .col
-                    strong Delay
-                .col #{transition.delay} seconds
-
-
 
 

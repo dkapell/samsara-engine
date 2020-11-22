@@ -12,7 +12,7 @@ block content
     if checkPermission('admin')
         .row
             .form-inline
-                a.btn.btn-outline-primary.mr-2.mt-2(role="button" href='/run/' + run.id + '/edit')
+                a.btn.btn-outline-info.mr-2.mt-2(role="button" href='/run/' + run.id + '/edit')
                     i.fas.fa-edit
                     |  Edit Run
                 a.btn.btn-outline-danger.mr-3.mt-2.reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)

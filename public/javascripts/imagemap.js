@@ -46,12 +46,14 @@ $(function(){
 
 function showRoom(e){
     $('#room-name').text($(this).attr('data-name'));
+    $(`#area-detail-${$(this).attr('data-area')}`).show();
 }
 
 function clearRoom(e){
     if(!room_idLocked){
         $('#room-name').html('&nbsp;');
     }
+    $(`#area-detail-${$(this).attr('data-area')}`).hide();
 }
 
 function toggleLock(e){

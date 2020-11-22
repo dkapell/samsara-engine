@@ -12,6 +12,10 @@ $(function(){
         showMapGroup();
     });
     showMapGroup();
+
+    $('.area-detail-card').hide();
+    $('.map-highlight').on('mouseover', showMapArea);
+    $('.map-highlight').on('mouseout', hideMapArea);
 });
 
 async function deleteItem(e){
@@ -31,4 +35,17 @@ function showMapGroup(e){
     } else {
         $('#map-group').hide();
     }
+}
+
+
+function showMapArea(e){
+    const $this = $(this);
+    const areaId = $this.attr('data-area');
+    $(`#area-${areaId}`).mouseover();
+}
+
+function hideMapArea(e){
+    const $this = $(this);
+    const areaId = $this.attr('data-area');
+    $(`#area-${areaId}`).mouseout();
 }

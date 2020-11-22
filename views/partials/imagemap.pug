@@ -1,25 +1,27 @@
 mixin imagemap(imagemap, rooms)
     .row.my-1
-        .col-sm-6.offset-sm-3
+        .col
             .lead.text-center#room-name &nbsp;
 
     .row.my-1
-        image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
-        map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
-            - let areaId = 0;
-            while areaId < imagemap.map.length
-                - let area = imagemap.map[areaId]
-                - let name = _.findWhere(area.actions, {type:'room'})?rooms[_.findWhere(area.actions, {type:'room'}).room_id].name:'None'
-                area(
-                    shape=area.shape,
-                    coords=area.coords,
-                    data-name=name,
-                    data-imagemap-id=imagemap.id
-                    data-area=areaId
-                    href='#',
-                    target="_self"
-                )
-                - areaId++;
+        .col
+            image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+            map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
+                - let areaId = 0;
+                while areaId < imagemap.map.length
+                    - let area = imagemap.map[areaId]
+                    - let name = _.findWhere(area.actions, {type:'room'})?rooms[_.findWhere(area.actions, {type:'room'}).room_id].name:'None'
+                    area(
+                        id=`area-${areaId}`,
+                        shape=area.shape,
+                        coords=area.coords,
+                        data-name=name,
+                        data-imagemap-id=imagemap.id
+                        data-area=areaId
+                        href='#',
+                        target="_self"
+                    )
+                    - areaId++;
 
 mixin area(area, id, rooms)
     .list-group-item(id=`area-${id}`)
@@ -60,7 +62,7 @@ mixin area(area, id, rooms)
 
 
 mixin action(action, areaId, actionId, rooms)
-    .action-row(id=`action-${areaId}-${actionId}`)
+    .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}`)
         .form-row.my-1
             label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
             .col-md-2
@@ -120,7 +122,7 @@ mixin action(action, areaId, actionId, rooms)
             input.col-md-1.form-control(
                 type="number",
                 placeholder="Delay",
-                name="gamestate[map][${areaId}][actions][${actionId}][delay]",
+                name=`gamestate[map][${areaId}][actions][${actionId}][delay]`,
                 id=`gamestate_map_area-${areaId}-action-${actionId}-delay`,
                 value=action.delay?action.delay:0)
             label.col-md-2.col-form-label(
@@ -128,7 +130,7 @@ mixin action(action, areaId, actionId, rooms)
             ) Player Group
             .col-md-3
                 select.custom-select(
-                    name="gamestate[map][${areaId}][actions][${actionId}][group_id]"
+                    name=`gamestate[map][${areaId}][actions][${actionId}][group_id]`
                     id=`gamestate_map_area-${areaId}-action-${actionId}-group_id`,
                     class=actionId!=='new'?'select2':'',
                 )
@@ -141,4 +143,26 @@ mixin action(action, areaId, actionId, rooms)
 
 
 
-
+mixin areaCard(areaId, area, gamestates, rooms)
+    .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
+        .card-header #{area.name}
+        ul.list-group.list-group-flush
+            for action in area.actions
+                .list-group-item
+                    case action.type
+                        when 'room'
+                            strong.mr-1 Open Room
+                            i #{rooms[action.room_id].name}
+                        when 'text'
+                            strong.mr-1 Display Text
+                            | ${action.content}
+                        when 'transition'
+                            strong.mr-1 Transition to state
+                            i.mr-1 #{gamestates[action.to_state_id].name}
+                            if action.group_id
+                                | for
+                                i.mx-1 #{player_groups[action.group_id].name}
+                            if action.delay
+                                | after #{moment.duration(action.delay, "seconds").humanize()}
+                            else
+                                | immediately

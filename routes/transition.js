@@ -49,6 +49,9 @@ async function showNew(req, res, next){
     };
 
     res.locals.csrfToken = req.csrfToken();
+    if (req.query.from_state_id){
+        res.locals.transition.from_state_id = Number(req.query.from_state_id);
+    }
     if (_.has(req.session, 'transitionData')){
         res.locals.transition = req.session.transitionData;
         delete req.session.transitionData;

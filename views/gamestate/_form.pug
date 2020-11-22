@@ -1,19 +1,39 @@
+include ../partials/imagemap
 .form-group
     label.control-label(for="gamestate_name") Name
     input.form-control(type="text",placeholder="Name",name="gamestate[name]",value=gamestate.name,id='gamestate_name',required)
     div.invalid-feedback Please choose a valid name
 
 .form-group
-    label.control-label(for="gamestate_imagemap_id") Imagemap
-    select.custom-select.select2(name="gamestate[imagemap_id]",id="gamestate_imagemap_id")
-        option(selected=!gamestate.imagemap_id value="-1") None
-        for imagemap in imagemaps
-            option(value=imagemap.id selected=gamestate.imagemap_id===imagemap.id)= imagemap.name
+    label.control-label(for="gamestate_image_id") Image
+    select.custom-select.select2#gamestate_image_id(
+        name="gamestate[image_id]",
+        data-placeholder="Select Image, if any"
+    )
+        option(selected=!gamestate.image_id value="-1") None
+        for image in images
+            option(value=image.id selected=gamestate.image_id===image.id)= image.name
 
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="gamestate[allow_codes]", id="gamestate_allow_codes", checked=gamestate.allow_codes)
-        label.custom-control-label(for="gamestate_allow_codes") Allow Code Entry
+.form-group#map-group
+    label.control-label.w-100#map-heading(for="gamestate_map", data-toggle="collapse" data-target="#map-container" aria-expanded="true") Map
+        span.float-right.pl-2
+            i.fa.fa-chevron-up
+            i.fa.fa-chevron-down
+
+
+    .div#map-container.collapse.show(aria-labelledby="map-heading")
+        .list-group#gamestate_map
+
+            - let i = 0;
+            each area in gamestate.map
+                +area(area, i, rooms)
+                - i++;
+            +area({}, 'new', rooms)
+
+        .col.text-right.mt-2
+            button.btn.btn-outline-success#add-area-btn
+                i.fa.fa-plus
+                |  Add Area
 
 .form-group
     .custom-control.custom-switch

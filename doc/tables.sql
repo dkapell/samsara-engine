@@ -65,13 +65,13 @@ create table gamestates (
     id serial,
     name varchar(255) not null,
     description text,
-    imagemap_id int,
-    allow_codes boolean,
     special     boolean default false,
     start       boolean default false,
+    image_id    int not null,
+    map         jsonb default '[]'::jsonb,
     primary key (id),
-    CONSTRAINT gamestate_imagemap_fk FOREIGN KEY (imagemap_id)
-        REFERENCES "imagemaps" (id) MATCH SIMPLE
+    CONSTRAINT gamestate_image_fk FOREIGN KEY (image_id)
+        REFERENCES "images" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 

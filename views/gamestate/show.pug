@@ -30,12 +30,6 @@ block content
         .col.border-primary.border.rounded.p-2(style='min-height:200px')
             +gamestate(gamestate, rooms)
 
-    if gamestate.imagemap_id
-        .row.my-2
-            label.col-sm-2.col-form-label(for="room-display") Imagemap Room
-            .col-sm-6
-                input.form-control#room-display(type="text")
-
     if gamestate.rooms.length
         h4.my-2 Code-only Rooms
         ul

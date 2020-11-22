@@ -37,3 +37,9 @@ table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
 map, image {
     outline: none;
 }
+
+[aria-expanded="true"] .fa-chevron-up,
+[aria-expanded="false"] .fa-chevron-down,
+[aria-expanded="true"] .expand-text {
+    display:none;
+}

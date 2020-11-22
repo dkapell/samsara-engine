@@ -11,7 +11,7 @@ block content
                 tr
                     th
                     th(data-priority="1") Name
-                    th(data-priority="2") Imagemap
+                    th(data-priority="2") Image
                     th(data-priority="4") Allow Codes
                     th(data-priority="3") Non-Map Rooms
                     if checkPermission('creator')
@@ -28,18 +28,27 @@ block content
                             if gamestate.special
                                 span.badge.badge-info.ml-2 Special
                         td
-                            if gamestate.imagemap
-                                = gamestate.imagemap.name
+                            if gamestate.image_id
+                                = gamestate.image.name
                             else
                                 i None
                         td= gamestate.allow_codes?'Yes':'No'
                         td= _.pluck(gamestate.rooms, 'name').join(', ')
                         if checkPermission('creator')
                             td.text-right
+                                a.btn.btn-outline-success.btn-sm.mr-1.action-btn(
+                                    role="button",
+                                    href=`/gamestate/new?clone=${gamestate.id}`,
+                                    title="Copy"
+                                    data-toggle="tooltip"
+                                )
+                                    i.fas.fa-copy.fa-fw
                                 a.btn.btn-outline-danger.btn-sm.delete-btn(
                                     role="button",
                                     url=`/gamestate/${gamestate.id}`,
                                     data-back='/gamestate'
+                                    data-toggle="tooltip"
+                                    title="Delete"
                                 )
                                     i.fas.fa-trash.fa-fw
 

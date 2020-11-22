@@ -25,11 +25,5 @@ block content
                 each room, key in validation.unused.rooms
                     li=room.name
 
-        if _.keys(validation.unused.imagemaps).length
-            h4
-                a.text-warning(href='/imagemap') Imagemaps
-            ul
-                each imagemap, key in validation.unused.imagemaps
-                    li=imagemap.name
     if !hasErrors
         h3.text-success No Issues Found

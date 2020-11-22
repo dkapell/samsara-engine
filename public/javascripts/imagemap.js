@@ -81,27 +81,27 @@ function addArea(e){
     const $new = $('#area-new').clone();
     const id = nextIndex++;
 
-    $new.find('#imagemap_map_area_room_id-new')
+    $new.find('#gamestate_map_area_room_id-new')
         .attr('required', true)
-        .attr('id', 'imagemap_map_area_room_id-new-' + id)
-        .attr('name', `imagemap[map][new-${id}][room_id]`);
-    $new.find('label [for=imagemap_map_area_room_id-new]')
-        .attr('for', 'imagemap_map_area_room_id-new-' + id);
+        .attr('id', 'gamestate_map_area_room_id-new-' + id)
+        .attr('name', `gamestate[map][new-${id}][room_id]`);
+    $new.find('label [for=gamestate_map_area_room_id-new]')
+        .attr('for', 'gamestate_map_area_room_id-new-' + id);
 
-    $new.find('#imagemap_map_area_coords-new')
+    $new.find('#gamestate_map_area_coords-new')
         .attr('required', true)
-        .attr('id', 'imagemap_map_area_coords-new-' + id)
-        .attr('name', `imagemap[map][new-${id}][coords]`);
-    $new.find('label [for=imagemap_map_area_coords-new]')
-        .attr('for', 'imagemap_map_area_coords-new-' + id);
+        .attr('id', 'gamestate_map_area_coords-new-' + id)
+        .attr('name', `gamestate[map][new-${id}][coords]`);
+    $new.find('label [for=gamestate_map_area_coords-new]')
+        .attr('for', 'gamestate_map_area_coords-new-' + id);
 
 
-    $new.find('#imagemap_map_area_shape-new')
+    $new.find('#gamestate_map_area_shape-new')
         .attr('required', true)
-        .attr('id', 'imagemap_map_area_shape-new-' + id)
-        .attr('name', `imagemap[map][new-${id}][shape]`);
-    $new.find('label [for=imagemap_map_area_shape-new]')
-        .attr('for', 'imagemap_map_area_shape-new-' + id);
+        .attr('id', 'gamestate_map_area_shape-new-' + id)
+        .attr('name', `gamestate[map][new-${id}][shape]`);
+    $new.find('label [for=gamestate_map_area_shape-new]')
+        .attr('for', 'gamestate_map_area_shape-new-' + id);
 
     $new.find('.remove-area-btn').confirmation({
         title: 'Delete this Area'
@@ -116,7 +116,7 @@ function addArea(e){
         minimumResultsForSearch: 6,
         width:'resolve'
     });
-    $new.appendTo('#imagemap_map');
+    $new.appendTo('#gamestate_map');
     $new.show();
 }
 
@@ -163,26 +163,26 @@ function addAction(e){
     $new.attr('id', `action-${areaId}-new-${id}`);
 
     console.log('cloning ' + areaId + ': ' + id);
-    console.log($new.find('#imagemap_map_area-new-action-new-type'));
+    console.log($new.find('#gamestate_map_area-new-action-new-type'));
 
-    $new.find('#imagemap_map_area-new-action-new-type')
+    $new.find('#gamestate_map_area-new-action-new-type')
         .attr('required', true)
-        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-type`)
-        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][type]`);
-    $new.find('label [for=imagemap_map_area-new-action-new-type]')
-        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-type`);
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-type`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][type]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-type]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-type`);
 
-    $new.find('#imagemap_map_area-new-action-new-room_id')
-        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-room_id`)
-        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][room_id]`);
-    $new.find('label [for=imagemap_map_area-new-action-new-room_id]')
-        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-room_id`);
+    $new.find('#gamestate_map_area-new-action-new-room_id')
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-room_id`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][room_id]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-room_id]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-room_id`);
 
-    $new.find('#imagemap_map_area-new-action-new-content')
-        .attr('id', `imagemap_map_area-${areaId}-action-new-${id}-content`)
-        .attr('name', `imagemap[map][${areaId}][actions][new-${id}][content]`);
-    $new.find('label [for=imagemap_map_area-new-action-new-content]')
-        .attr('for', `imagemap_map_area-${areaId}-action-new-${id}-content`);
+    $new.find('#gamestate_map_area-new-action-new-content')
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-content`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][content]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-content]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-content`);
 
     $new.find('.remove-action-btn').confirmation({
         title: 'Delete this Action'

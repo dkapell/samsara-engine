@@ -2,11 +2,11 @@ include ./imagemap
 
 mixin gamestate(gamestate, rooms)
     .lead=gamestate.description
-    if gamestate.imagemap
+    if gamestate.image_id
         .row.my-2
             .col.text-center
-                +imagemap(gamestate.imagemap, rooms)
-    if gamestate.allow_codes && gamestate.rooms.length
+                +imagemap(gamestate, rooms)
+    if gamestate.rooms.length
         .row.my-3
             .col
                 form#code-form

@@ -8,7 +8,7 @@ const models = {
     room: require('./room')
 };
 
-const tableFields = ['name', 'description', 'imagemap_id', 'allow_codes', 'start', 'special'];
+const tableFields = ['name', 'description', 'image_id', 'start', 'special', 'map'];
 
 
 exports.get = async function(id){

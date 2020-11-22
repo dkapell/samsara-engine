@@ -25,11 +25,11 @@ mixin imagemap(imagemap, rooms)
 mixin area(area, id, rooms)
     .list-group-item(id=`area-${id}`)
         .form-row.mb-3
-            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="imagemap_map_area_shape-" + id ) Shape
+            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_shape-" + id ) Shape
             .col-md-2
                 select.custom-select(
-                    name=`imagemap[map][${id}][shape]`,
-                    id=`imagemap_map_area_shape-${id}`,
+                    name=`gamestate[map][${id}][shape]`,
+                    id=`gamestate_map_area_shape-${id}`,
                     class=id!=='new'?'select2':'',
                     data-placeholder="Select Shape"
                     required=id!== 'new'
@@ -37,12 +37,12 @@ mixin area(area, id, rooms)
                     option
                     for shape in ['rect', 'circle', 'poly']
                         option(value=shape selected=area.shape===shape)= shape
-            label.col-md-1.d-md-none.d-lg-block.col-form-label(for=`imagemap_map_area_coords-${id}` ) Coords
+            label.col-md-1.d-md-none.d-lg-block.col-form-label(for=`gamestate_map_area_coords-${id}` ) Coords
             .col
                 input.form-control(
-                    name=`imagemap[map][${id}][coords]`,
+                    name=`gamestate[map][${id}][coords]`,
                     value=area.coords,
-                    id=`imagemap_map_area_coords-${id}`,
+                    id=`gamestate_map_area_coords-${id}`,
                     placeholder="Coordinates",
                     required=id!== 'new'
                 )
@@ -62,22 +62,22 @@ mixin area(area, id, rooms)
 
 mixin action(action, areaId, actionId, rooms)
     .form-row.my-1.action-row(id=`action-${areaId}-${actionId}`)
-        label.col-md-1.col-form-label(for=`imagemap_map_area-${areaId}-action-${actionId}-type`) Action
+        label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
         .col-md-2
             select.custom-select.action-type-select(
-                name=`imagemap[map][${areaId}][actions][${actionId}][type]`,
-                id=`imagemap_map_area-${areaId}-action-${actionId}-type`,
+                name=`gamestate[map][${areaId}][actions][${actionId}][type]`,
+                id=`gamestate_map_area-${areaId}-action-${actionId}-type`,
                 class=actionId!=='new'?'select2':'',
                 data-placeholder="Type",
             )
                 option
                 for type in ['room', 'text']
                     option(value=type, selected=action.type === type)= type
-        label.col-md-2.col-form-label.action-room(for=`imagemap_map_area-${areaId}-action-${actionId}-room_id` ) Room
+        label.col-md-2.col-form-label.action-room(for=`gamestate_map_area-${areaId}-action-${actionId}-room_id` ) Room
         .col-md-6.action-room
             select.custom-select(
-                name=`imagemap[map][${areaId}][actions][${actionId}][room_id]`,
-                id=`imagemap_map_area-${areaId}-action-${actionId}-room_id`,
+                name=`gamestate[map][${areaId}][actions][${actionId}][room_id]`,
+                id=`gamestate_map_area-${areaId}-action-${actionId}-room_id`,
                 class=actionId!=='new'?'select2':'',
                 data-placeholder="Select Room",
             )
@@ -86,11 +86,11 @@ mixin action(action, areaId, actionId, rooms)
                     option(value=room.id selected=action.room_id && Number(action.room_id)===room.id)= room.name
 
 
-        label.col-md-2.col-form-label.action-text(for=`imagemap_map_area-${areaId}-action-${actionId}-content` ) Display Text
-        .col-md.action-text
+        label.col-md-2.col-form-label.action-text(for=`gamestate_map_area-${areaId}-action-${actionId}-content` ) Display Text
+        .col-md-6.action-text
                 textarea.form-control(
-                    name=`imagemap[map][${areaId}][actions][${actionId}][content]`,
-                    id=`imagemap_map_area-${areaId}-action-${actionId}-content`,
+                    name=`gamestate[map][${areaId}][actions][${actionId}][content]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-content`,
                     rows=3
                 )
                     = action.content

@@ -2,7 +2,7 @@ extends ../layout
 
 block content
     .row
-        .col-sm-8.offset-sm-2
+        .col
             .card
                 .card-header= 'Edit Gamestate: ' + gamestate.name
                 .card-body
@@ -14,3 +14,5 @@ block content
 
 append scripts
     script(src='/javascripts/validator.js')
+    script(src='/javascripts/imagemap.js')
+    script(src='/javascripts/gamestate.js')

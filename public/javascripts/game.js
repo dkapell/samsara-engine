@@ -1,6 +1,8 @@
 let currentGameState = 0;
 let refreshInterval = null;
+let textTimeout = null;
 $(function(){
+    $('#game-text').hide();
     fetchGamePage();
     refreshInterval = setInterval(fetchGamePage, 2000);
 });
@@ -76,7 +78,14 @@ function performActions(actions){
             window.open(action.url, '_blank');
         } else if (action.action === 'reload'){
             fetchGamePage();
-        } // add display text
+        } else if (action.action === 'display'){
+            $('#game-text').html(action.content);
+            $('#game-text').show();
+            clearTimeout(textTimeout);
+            if (action.duration){
+                textTimeout = setTimeout(hideText, action.duration * 1000);
+            }
+        }
     }
 }
 
@@ -104,4 +113,8 @@ function showRoom(e){
 
 function clearRoom(e){
     $('#room-name').html('&nbsp;');
+}
+
+function hideText(e){
+    $('#game-text').hide();
 }

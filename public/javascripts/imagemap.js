@@ -190,6 +190,12 @@ function addAction(e){
     $new.find('label [for=gamestate_map_area-new-action-new-content]')
         .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-content`);
 
+    $new.find('#gamestate_map_area-new-action-new-duration')
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-duration`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][duration]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-duration]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-duration`);
+
     $new.find('#gamestate_map_area-new-action-new-to_state_id')
         .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-to_state_id`)
         .attr('name', `gamestate[map][${areaId}][actions][new-${id}][to_state_id]`);

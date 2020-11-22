@@ -141,7 +141,17 @@ mixin action(action, areaId, actionId, rooms)
                             selected=action.group_id && Number(action.group_id)===room.id
                         )= player_group.name
 
-
+        .form-row.my-1.action-text
+            label.col-md-2.offset-md-3.col-form-label(
+                for=`gamestate_map_area-${areaId}-action-${actionId}-duration`
+            ) Duration in Seconds
+            input.col-md-1.form-control(
+                type="number",
+                placeholder="Duration",
+                name=`gamestate[map][${areaId}][actions][${actionId}][duration]`,
+                id=`gamestate_map_area-${areaId}-action-${actionId}-duration`,
+                value=action.duration?action.duration:0)
+            .col-md-2.form-text ( 0 for unlimited )
 
 mixin areaCard(areaId, area, gamestates, rooms)
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
@@ -155,7 +165,8 @@ mixin areaCard(areaId, area, gamestates, rooms)
                             i #{rooms[action.room_id].name}
                         when 'text'
                             strong.mr-1 Display Text
-                            | ${action.content}
+                            br
+                            | #{action.content}
                         when 'transition'
                             strong.mr-1 Transition to state
                             i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}

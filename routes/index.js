@@ -3,6 +3,7 @@ const config = require('config');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
+const gameValidator = require('../lib/gameValidator');
 
 
 /* GET home page. */
@@ -85,7 +86,7 @@ async function checkArea(req, res, next){
 
 async function validateGame(req, res, next){
     res.locals.siteSection = 'config';
-    res.locals.validation = await gameEngine.validate();
+    res.locals.validation = await gameValidator.validate();
     res.render('game/validate');
 }
 

@@ -1,7 +1,7 @@
 mixin players(players)
     - moment.relativeTimeThreshold('ss', 0);
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm#players-table
             thead
                 tr
                     th
@@ -35,4 +35,19 @@ mixin players(players)
                             else
                                 i Unknown
                         td.text-right
+                            a.btn.btn-outline-info.mr-1.btn-sm.player-advance-btn(
+                                role="button",
+                                url=`/player/${user.id}/advance`,
+                                data-csrf=csrfToken,
+                                data-back=`/run/${user.player.run_id}`
+                            ) Advance
+                            a.btn.btn-success.mr-1.btn-sm.player-advance-btn-confirm(
+                                role="button",
+                                url=`/player/${user.id}/advance`,
+                                data-csrf=csrfToken,
+                                data-back=`/run/${user.player.run_id}`
+                            )
+                                o.fa.fa-check
+                            a.btn.btn-danger.mr-1.btn-sm.player-advance-btn-cancel(role="button")
+                                o.fa.fa-times
                             a.btn.btn-outline-warning.btn-sm(role=button href=`/player/${user.id}/assume`) Assume

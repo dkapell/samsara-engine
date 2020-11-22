@@ -59,6 +59,18 @@ function revertPlayer(req, res, next){
     res.redirect('/');
 }
 
+async function advance(req, res, next){
+    try{
+        const user = await req.models.user.get(req.params.id);
+        if (!user){
+            throw new Error ('User not found');
+        }
+        await gameEngine.nextState(user.id);
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
 const router = express.Router();
 
 router.use(function(req, res, next){
@@ -69,6 +81,7 @@ router.use(function(req, res, next){
 router.get('/', permission('gm'), list);
 router.get('/revert', revertPlayer);
 router.get('/:id/assume', permission('gm'), assumePlayer);
+router.put('/:id/advance', permission('gm'), advance);
 
 
 module.exports = router;

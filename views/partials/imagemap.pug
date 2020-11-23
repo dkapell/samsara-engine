@@ -10,12 +10,11 @@ mixin imagemap(imagemap, rooms)
                 - let areaId = 0;
                 while areaId < imagemap.map.length
                     - let area = imagemap.map[areaId]
-                    - let name = _.findWhere(area.actions, {type:'room'})?rooms[_.findWhere(area.actions, {type:'room'}).room_id].name:'None'
                     area(
                         id=`area-${areaId}`,
                         shape=area.shape,
                         coords=area.coords,
-                        data-name=name,
+                        data-name=area.name,
                         data-imagemap-id=imagemap.id
                         data-area=areaId
                         href='#',
@@ -24,8 +23,18 @@ mixin imagemap(imagemap, rooms)
                     - areaId++;
 
 mixin area(area, id, rooms)
-    .list-group-item(id=`area-${id}`)
+    .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
+            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
+            .col-md-6
+                input.form-control.area-name(
+                    id=`gamestate_map_area_name-${id}`,
+                    name=`gamestate[map][${id}][name]`,
+                    value=area.name,
+                    data-updated='self',
+                    placeholder="Area Name.  Leave empty to calculate from actions",
+                    required=id!== 'new'
+                )
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_shape-" + id ) Shape
             .col-md-2
                 select.custom-select(
@@ -38,6 +47,12 @@ mixin area(area, id, rooms)
                     option
                     for shape in ['rect', 'circle', 'poly']
                         option(value=shape selected=area.shape===shape)= shape
+            .col-md-2.text-right
+                button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
+                    i.fa.fa-plus
+                button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
+                    i.fa.fa-trash
+        .form-row.mb-3
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for=`gamestate_map_area_coords-${id}` ) Coords
             .col
                 input.form-control(
@@ -48,11 +63,7 @@ mixin area(area, id, rooms)
                     required=id!== 'new'
                 )
 
-            .col-md-2.text-right
-                button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
-                    i.fa.fa-plus
-                button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
-                    i.fa.fa-trash
+
 
         if _.isArray(area.actions)
             - let actionId = 0;
@@ -79,7 +90,7 @@ mixin action(action, areaId, actionId, rooms)
 
             label.col-md-2.col-form-label.action-room(for=`gamestate_map_area-${areaId}-action-${actionId}-room_id` ) Room
             .col-md-6.action-room
-                select.custom-select(
+                select.custom-select.room-select(
                     name=`gamestate[map][${areaId}][actions][${actionId}][room_id]`,
                     id=`gamestate_map_area-${areaId}-action-${actionId}-room_id`,
                     class=actionId!=='new'?'select2':'',
@@ -154,6 +165,7 @@ mixin action(action, areaId, actionId, rooms)
             .col-md-2.form-text ( 0 for unlimited )
 
 mixin areaCard(areaId, area, gamestates, rooms)
+    - moment.relativeTimeThreshold('ss', 0);
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
         .card-header #{area.name}
         ul.list-group.list-group-flush

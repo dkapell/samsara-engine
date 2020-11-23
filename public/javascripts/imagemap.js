@@ -42,6 +42,10 @@ $(function(){
         showAction($(this).closest('.action-row'));
     });
 
+    $('.room-select').on('select2:selecting', getOldRoomName);
+    $('.room-select').on('change', updateAreaName);
+
+
 });
 
 function showRoom(e){
@@ -83,6 +87,13 @@ function addArea(e){
     const $new = $('#area-new').clone();
     const id = nextIndex++;
     $new.attr('id', `area-new-${id}`);
+
+    $new.find('#gamestate_map_area_name-new')
+        .attr('required', true)
+        .attr('id', 'gamestate_map_area_name-new-' + id)
+        .attr('name', `gamestate[map][new-${id}][name]`);
+    $new.find('label [for=gamestate_map_area_name-new]')
+        .attr('for', 'gamestate_map_area_name-new-' + id);
 
     $new.find('#gamestate_map_area_room_id-new')
         .attr('required', true)
@@ -232,4 +243,18 @@ function addAction(e){
     $new.appendTo($this.closest('.list-group-item'));
     $new.show();
     showAction($new);
+}
+
+function getOldRoomName(e){
+    const $this = $(this);
+    $this.attr('data-old-name', $this.find(':selected').text());
+}
+
+function updateAreaName(e){
+    const $this = $(this);
+    const name =  $this.find(':selected').text();
+    const $nameField = $this.closest('.area-config').find('.area-name');
+    if ($nameField.val() === $this.attr('data-old-name')){
+        $nameField.val(name);
+    }
 }

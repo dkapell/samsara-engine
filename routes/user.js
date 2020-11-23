@@ -148,7 +148,7 @@ async function update(req, res, next){
                 player.run_id = Number(user.player.run_id);
                 player.character = user.player.character;
                 player.gamestate_id =  Number(user.player.gamestate_id);
-                player.group_id = Number(user.player.group_id)?Number(user.player.group_id):null
+                player.group_id = Number(user.player.group_id)?Number(user.player.group_id):null;
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({

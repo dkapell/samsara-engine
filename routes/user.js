@@ -32,13 +32,14 @@ async function list(req, res, next){
 
 async function showNew(req, res, next){
     try{
+        const startState = await req.models.gamestate.getStart();
         res.locals.user = {
             name: null,
             email: null,
             type: 'none',
             player: {
                 run_id: (await req.models.run.getCurrent()).id,
-                game_state: 'initial',
+                gamestate_id: startState.id,
                 group_id: null,
                 character: null
             }
@@ -72,13 +73,14 @@ async function showEdit(req, res, next){
 
     try{
         const user = await req.models.user.get(id);
+        const startState = await req.models.gamestate.getStart();
         if (user.type === 'player'){
             user.player = await req.models.player.getByUserId(id);
         }
         if (!user.player){
             user.player = {
                 run_id: (await req.models.run.getCurrent()).id,
-                gamestate_id: null,
+                gamestate_id: startState.id,
                 character: null
             };
         }
@@ -109,16 +111,18 @@ async function create(req, res, next){
 
     req.session.userData = user;
 
+    console.log(JSON.stringify(user, null, 2));
+
     try{
         const id = await req.models.user.create(user);
         if (user.type === 'player'){
             await req.models.player.create({
                 user_id:id,
-                run_id:user.player.run_id,
-                gamestate_id:user.player.gamestate_id,
+                run_id:Number(user.player.run_id),
+                gamestate_id:Number(user.player.gamestate_id),
                 prev_gamestate_id:null,
                 character: user.player.character,
-                group_id: user.player.group_id?user.player.group_id:null
+                group_id: user.player.group_id?Number(user.player.group_id):null
 
             });
         }
@@ -143,11 +147,11 @@ async function update(req, res, next){
         if (user.type === 'player'){
             const player = await req.models.player.getByUserId(id);
             if (player){
-                player.run_id = user.player.run_id;
+                player.run_id = Number(user.player.run_id);
                 player.character = user.player.character;
-                player.gamestate_id =  user.player.gamestate_id;
+                player.gamestate_id =  Number(user.player.gamestate_id);
                 if (Number(user.player.group_id)){
-                    player.group_id = user.player.group_id;
+                    player.group_id = Number(user.player.group_id);
                 } else {
                     player.group_id = null;
                 }

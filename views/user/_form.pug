@@ -23,7 +23,7 @@ fieldset#player_fields
     .form-group
         label.control-label(for="user_group_id") Player Group
         select.form-control.select2(name="user[player][group_id]",id="user_group_id")
-            option(value=0 selected=!user.player.group) None
+            option(value=0 selected=!user.player.group_id) None
             for group in player_groups
                 option(value=group.id selected=user.player.group_id===group.id)= group.name
 
@@ -33,11 +33,14 @@ fieldset#player_fields
 
     .form-group
         label.control-label(for="user_gamestate_id") Game State
-        select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id")
-            option(selected disabled value="") Select Gamestate
+        select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id" data-placeholder="Select Gamestate")
+            option
             for gamestate in gamestates
                 option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
 
 .form-group
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'
     a.btn.btn-link(href="/user") Cancel
+
+-console.log(user)
+-console.log(gamestates)

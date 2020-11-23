@@ -48,6 +48,7 @@ async function show(req, res, next){
                 return user;
             })
         );
+        res.locals.player_groups = await req.models.player_group.list();
         res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
         res.locals.csrfToken = req.csrfToken();

@@ -19,7 +19,7 @@ mixin players(players)
                         td.dtr-expand
                         if runs
                             td= runs[user.player.run_id].name
-                        td= user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped'
+                        td= user.player.group_id?_.findWhere(player_groups, {id: user.player.group_id}).name:'Ungrouped'
                         td= user.name
                         td= user.player.character
                         td= user.email

@@ -12,7 +12,6 @@ block content
                     th
                     th(data-priority="1") Name
                     th(data-priority="2") Image
-                    th(data-priority="4") Allow Codes
                     th(data-priority="3") Non-Map Links
                     if checkPermission('creator')
                         th
@@ -34,7 +33,6 @@ block content
                                 = gamestate.image.name
                             else
                                 i None
-                        td= gamestate.allow_codes?'Yes':'No'
                         td= _.pluck(gamestate.links, 'name').join(', ')
                         if checkPermission('creator')
                             td.text-right

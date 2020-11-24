@@ -54,7 +54,7 @@ async function show(req, res, next){
             ],
             current: gamestate.name
         };
-        res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
+        res.locals.links = _.indexBy(await req.models.link.list(), 'id');
         res.render('gamestate/show');
     } catch(err){
         next(err);
@@ -101,7 +101,7 @@ async function showNew(req, res, next){
         }
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
-        res.locals.rooms = await req.models.room.list();
+        res.locals.links = await req.models.link.list();
         res.locals.player_groups = await req.models.player_group.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
@@ -116,7 +116,7 @@ async function showEdit(req, res, next){
 
     try{
         const gamestate = await req.models.gamestate.get(id);
-        gamestate.rooms = _.pluck(gamestate.rooms, 'id').map(id => {return id.toString();});
+        gamestate.links = _.pluck(gamestate.links, 'id').map(id => {return id.toString();});
         res.locals.gamestate = gamestate;
         if (_.has(req.session, 'gamestateData')){
             res.locals.gamestate = req.session.gamestateData;
@@ -132,7 +132,7 @@ async function showEdit(req, res, next){
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.player_groups = await req.models.player_group.list();
         res.locals.images = await req.models.image.list();
-        res.locals.rooms = await req.models.room.list();
+        res.locals.links = await req.models.link.list();
         res.render('gamestate/edit');
     } catch(err){
         next(err);
@@ -151,10 +151,10 @@ async function create(req, res, next){
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
-    if (!gamestate.rooms){
-        gamestate.rooms = [];
-    } else if(!_.isArray(gamestate.rooms)){
-        gamestate.rooms = [gamestate.rooms];
+    if (!gamestate.links){
+        gamestate.links = [];
+    } else if(!_.isArray(gamestate.links)){
+        gamestate.links = [gamestate.links];
     }
     gamestate.map = await imagemapHelper.parseMap(gamestate.map);
 
@@ -189,10 +189,10 @@ async function update(req, res, next){
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
-    if (!gamestate.rooms){
-        gamestate.rooms = [];
-    } else if(!_.isArray(gamestate.rooms)){
-        gamestate.rooms = [gamestate.rooms];
+    if (!gamestate.links){
+        gamestate.links = [];
+    } else if(!_.isArray(gamestate.links)){
+        gamestate.links = [gamestate.links];
     }
 
     gamestate.map = await imagemapHelper.parseMap(gamestate.map);

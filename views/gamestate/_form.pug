@@ -26,9 +26,9 @@ include ../partials/imagemap
 
             - let i = 0;
             each area in gamestate.map
-                +area(area, i, rooms)
+                +area(area, i, links)
                 - i++;
-            +area({}, 'new', rooms)
+            +area({}, 'new', links)
 
         .col.text-right.mt-2
             button.btn.btn-outline-success#add-area-btn
@@ -56,15 +56,14 @@ include ../partials/imagemap
         = gamestate.description
 
 .form-group
-    label.control-label(for="gamestate_rooms") Additional Rooms
-    select.custom-select.select2(multiple, name="gamestate[rooms]",id="gamestate_rooms")
-        for room in rooms.filter(room => {return room.code} )
-                -continue
-            option(value=room.id selected=_.indexOf(gamestate.rooms, room.id.toString()) !== -1)= room.name
+    label.control-label(for="gamestate_links") Additional Links
+    select.custom-select.select2(multiple, name="gamestate[links]",id="gamestate_links")
+        for link in links.filter(link => {return link.code} )
+            option(value=link.id selected=_.indexOf(gamestate.links, link.id.toString()) !== -1)= link.name
 
 .form-group
     button.btn.btn-primary(type="submit")= gamestate.id?'Update':'Create'
     a.btn.btn-link(href="/gamestate") Cancel
 
 
-+action({}, 'new', 'new', rooms)
++action({}, 'new', 'new', links)

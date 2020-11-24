@@ -3,14 +3,14 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 
-async function getRoom(req, res, next){
+async function getLink(req, res, next){
     const id = req.params.id;
     if (!id){
         return res.status(404);
     }
     try{
-        res.locals.room = await req.models.room.get(id);
-        res.render('room/stub');
+        res.locals.link = await req.models.link.get(id);
+        res.render('link/stub');
     } catch (err) {
         next(err);
     }
@@ -18,6 +18,6 @@ async function getRoom(req, res, next){
 
 const router = express.Router();
 
-router.get('/:id', csrf(), getRoom);
+router.get('/:id', csrf(), getLink);
 
 module.exports = router;

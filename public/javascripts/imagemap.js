@@ -1,5 +1,5 @@
 /* global _ */
-let room_idLocked = false;
+let link_idLocked = false;
 let nextIndex = 0;
 const nextActions = {};
 $(function(){
@@ -14,8 +14,8 @@ $(function(){
         fillOpacity: 0.2,
     });
     $('area').on('click', toggleLock);
-    $('area').on('mouseover', showRoom);
-    $('area').on('mouseout', clearRoom);
+    $('area').on('mouseover', showLink);
+    $('area').on('mouseout', clearLink);
 
     // For Form
     $('.remove-area-btn').confirmation({
@@ -33,7 +33,7 @@ $(function(){
     $('.delete-btn').confirmation({
         title: 'Delete this item'
     }).on('click', deleteItem);
-    $('.action-room').hide();
+    $('.action-link').hide();
     $('.action-text').hide();
 
     showAllActions();
@@ -42,20 +42,20 @@ $(function(){
         showAction($(this).closest('.action-row'));
     });
 
-    $('.room-select').on('select2:selecting', getOldRoomName);
-    $('.room-select').on('change', updateAreaName);
+    $('.link-select').on('select2:selecting', getOldLinkName);
+    $('.link-select').on('change', updateAreaName);
 
 
 });
 
-function showRoom(e){
-    $('#room-name').text($(this).attr('data-name'));
+function showLink(e){
+    $('#link-name').text($(this).attr('data-name'));
     $(`#area-detail-${$(this).attr('data-area')}`).show();
 }
 
-function clearRoom(e){
-    if(!room_idLocked){
-        $('#room-name').html('&nbsp;');
+function clearLink(e){
+    if(!link_idLocked){
+        $('#link-name').html('&nbsp;');
     }
     $(`#area-detail-${$(this).attr('data-area')}`).hide();
 }
@@ -63,7 +63,7 @@ function clearRoom(e){
 function toggleLock(e){
     e.preventDefault();
     e.stopPropagation();
-    room_idLocked = !room_idLocked;
+    link_idLocked = !link_idLocked;
 }
 
 function removeArea(e){
@@ -95,12 +95,12 @@ function addArea(e){
     $new.find('label [for=gamestate_map_area_name-new]')
         .attr('for', 'gamestate_map_area_name-new-' + id);
 
-    $new.find('#gamestate_map_area_room_id-new')
+    $new.find('#gamestate_map_area_link_id-new')
         .attr('required', true)
-        .attr('id', 'gamestate_map_area_room_id-new-' + id)
-        .attr('name', `gamestate[map][new-${id}][room_id]`);
-    $new.find('label [for=gamestate_map_area_room_id-new]')
-        .attr('for', 'gamestate_map_area_room_id-new-' + id);
+        .attr('id', 'gamestate_map_area_link_id-new-' + id)
+        .attr('name', `gamestate[map][new-${id}][link_id]`);
+    $new.find('label [for=gamestate_map_area_link_id-new]')
+        .attr('for', 'gamestate_map_area_link_id-new-' + id);
 
     $new.find('#gamestate_map_area_coords-new')
         .attr('required', true)
@@ -153,12 +153,12 @@ function showAllActions(){
 
 function showAction($row) {
     const type = $row.find('.action-type-select').val();
-    $row.find('.action-room').hide();
+    $row.find('.action-link').hide();
     $row.find('.action-text').hide();
     $row.find('.action-transition').hide();
     switch(type){
-        case 'room':
-            $row.find('.action-room').show();
+        case 'link':
+            $row.find('.action-link').show();
             break;
         case 'text':
             $row.find('.action-text').show();
@@ -189,11 +189,11 @@ function addAction(e){
     $new.find('label [for=gamestate_map_area-new-action-new-type]')
         .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-type`);
 
-    $new.find('#gamestate_map_area-new-action-new-room_id')
-        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-room_id`)
-        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][room_id]`);
-    $new.find('label [for=gamestate_map_area-new-action-new-room_id]')
-        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-room_id`);
+    $new.find('#gamestate_map_area-new-action-new-link_id')
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-link_id`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][link_id]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-link_id]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-link_id`);
 
     $new.find('#gamestate_map_area-new-action-new-content')
         .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-content`)
@@ -245,7 +245,7 @@ function addAction(e){
     showAction($new);
 }
 
-function getOldRoomName(e){
+function getOldLinkName(e){
     const $this = $(this);
     $this.attr('data-old-name', $this.find(':selected').text());
 }

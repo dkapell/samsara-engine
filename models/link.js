@@ -11,7 +11,7 @@ const tableFields = ['name', 'code', 'description', 'url', 'gm', 'active'];
 
 
 exports.get = async function(id){
-    const query = 'select * from rooms where id = $1';
+    const query = 'select * from links where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -20,7 +20,7 @@ exports.get = async function(id){
 };
 
 exports.getByCode = async function(code){
-    const query = 'select * from rooms where UPPER(code) = UPPER($1)';
+    const query = 'select * from links where UPPER(code) = UPPER($1)';
     const result = await database.query(query, [code]);
     if (result.rows.length){
         return result.rows[0];
@@ -29,7 +29,7 @@ exports.getByCode = async function(code){
 };
 
 exports.list = async function(){
-    const query = 'select * from rooms order by name';
+    const query = 'select * from links order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -49,7 +49,7 @@ exports.create = async function(data, cb){
         }
     }
 
-    let query = 'insert into rooms (';
+    let query = 'insert into links (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -72,7 +72,7 @@ exports.update = async function(id, data, cb){
         }
     }
 
-    let query = 'update rooms set ';
+    let query = 'update links set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -80,7 +80,7 @@ exports.update = async function(id, data, cb){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from rooms where id = $1';
+    const query = 'delete from links where id = $1';
     await database.query(query, [id]);
 };
 

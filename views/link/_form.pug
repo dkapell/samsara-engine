@@ -1,0 +1,32 @@
+.form-group
+    label.control-label(for="link_name") Name
+    input.form-control(type="text",placeholder="Name",name="link[name]",value=link.name,id='link_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="link_code") Code
+    input.form-control(type="text", placeholder="Code", name="link[code]",id="link_code",value=link.code)
+
+.form-group
+    label.control-label(for="link_url") Zoom URL
+    input.form-control(type="text", placeholder="URL", name="link[url]",id="link_url",value=link.url,required)
+
+.form-group
+    label.control-label(for="link_gm") GM
+    input.form-control(type="text", placeholder="GM Name", name="link[gm]",id="link_gm",value=link.gm)
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="link[active]", id="link_active", checked=link.active)
+        label.custom-control-label(for="link_active") Active
+
+.form-group
+    label.control-label(for="link_description") Description
+    textarea.form-control(name="link[description]",id="link_description",rows=3)
+        = link.description
+
+.form-group
+    button.btn.btn-primary(type="submit")= link.id?'Update':'Create'
+    a.btn.btn-link(href="/link") Cancel
+
+

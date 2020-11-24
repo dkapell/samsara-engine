@@ -13,7 +13,7 @@ block content
                     th(data-priority="1") Name
                     th(data-priority="2") Image
                     th(data-priority="4") Allow Codes
-                    th(data-priority="3") Non-Map Rooms
+                    th(data-priority="3") Non-Map Links
                     if checkPermission('creator')
                         th
 
@@ -35,7 +35,7 @@ block content
                             else
                                 i None
                         td= gamestate.allow_codes?'Yes':'No'
-                        td= _.pluck(gamestate.rooms, 'name').join(', ')
+                        td= _.pluck(gamestate.links, 'name').join(', ')
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-success.btn-sm.mr-1.action-btn(

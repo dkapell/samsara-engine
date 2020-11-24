@@ -1,9 +1,9 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/room/new')
+    a.btn.btn-outline-success(href='/link/new')
         span(class="fa fa-plus")
-        |  New Room
+        |  New #{config.get('game.linkName')}
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
@@ -18,21 +18,21 @@ block content
                         th
 
             tbody
-                for room in rooms
-                    tr(class='clickable-row', data-click-object='room' data-click-id=room.id)
+                for link in links
+                    tr(class='clickable-row', data-click-object='link' data-click-id=link.id)
                         td.dtr-expand
                         td
-                            a(href='/room/' + room.id)= room.name
-                        td= room.code
-                        td= room.url
-                        td= room.gm
-                        td= room.active?'Yes':'No'
+                            a(href='/link/' + link.id)= link.name
+                        td= link.code
+                        td= link.url
+                        td= link.gm
+                        td= link.active?'Yes':'No'
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-danger.btn-sm.delete-btn(
                                     role="button",
-                                    url=`/room/${room.id}`,
-                                    data-back='/room'
+                                    url=`/link/${link.id}`,
+                                    data-back='/link'
                                 )
                                     i.fas.fa-trash.fa-fw
 

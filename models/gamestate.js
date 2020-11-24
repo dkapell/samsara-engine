@@ -5,7 +5,7 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
-    room: require('./room')
+    link: require('./link')
 };
 
 const tableFields = ['name', 'description', 'image_id', 'start', 'special', 'map', 'template'];
@@ -15,7 +15,7 @@ exports.get = async function(id){
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return fillRooms(result.rows[0]);
+        return fillLinks(result.rows[0]);
     }
     return;
 };
@@ -24,7 +24,7 @@ exports.getStart = async function(){
     const query = 'select * from gamestates where start = true limit 1';
     const result = await database.query(query);
     if (result.rows.length){
-        return fillRooms(result.rows[0]);
+        return fillLinks(result.rows[0]);
     }
     return;
 };
@@ -32,13 +32,13 @@ exports.getStart = async function(){
 exports.list = async function(){
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillRooms));
+    return Promise.all(result.rows.map(fillLinks));
 };
 
 exports.listSpecial = async function(){
     const query = 'select * from gamestates where start = true or special = true order by start desc nulls last, name';
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillRooms));
+    return Promise.all(result.rows.map(fillLinks));
 };
 
 exports.create = async function(data, cb){
@@ -64,8 +64,8 @@ exports.create = async function(data, cb){
 
     const result = await database.query(query, queryData);
     const id = result.rows[0].id;
-    if (_.has(data, 'rooms')){
-        await saveRooms(id, data.rooms);
+    if (_.has(data, 'links')){
+        await saveLinks(id, data.links);
     }
     return id;
 };
@@ -88,8 +88,8 @@ exports.update = async function(id, data, cb){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    if (_.has(data, 'rooms')){
-        await saveRooms(id, data.rooms);
+    if (_.has(data, 'links')){
+        await saveLinks(id, data.links);
     }
 };
 
@@ -98,27 +98,27 @@ exports.delete = async  function(id, cb){
     await database.query(query, [id]);
 };
 
-async function fillRooms(gamestate){
-    const query = 'select * from gamestate_rooms where gamestate_id = $1';
+async function fillLinks(gamestate){
+    const query = 'select * from gamestate_links where gamestate_id = $1';
     const result = await database.query(query, [gamestate.id]);
-    gamestate.rooms = await Promise.all(
-        result.rows.map( async gamestateRoom => {
-            return models.room.get(gamestateRoom.room_id);
+    gamestate.links = await Promise.all(
+        result.rows.map( async gamestateLink => {
+            return models.link.get(gamestateLink.link_id);
         })
     );
     return gamestate;
 }
 
-async function saveRooms(gamestate_id, rooms){
-    const deleteQuery = 'delete from gamestate_rooms where gamestate_id = $1';
-    const insertQuery = 'insert into gamestate_rooms (gamestate_id, room_id) values ($1, $2)';
+async function saveLinks(gamestate_id, links){
+    const deleteQuery = 'delete from gamestate_links where gamestate_id = $1';
+    const insertQuery = 'insert into gamestate_links (gamestate_id, link_id) values ($1, $2)';
     await database.query(deleteQuery, [gamestate_id]);
     return Promise.all(
-        rooms.map(room => {
-            if (_.isObject(room)){
-                return database.query(insertQuery, [gamestate_id, room.id]);
+        links.map(link => {
+            if (_.isObject(link)){
+                return database.query(insertQuery, [gamestate_id, link.id]);
             } else {
-                return database.query(insertQuery, [gamestate_id, room]);
+                return database.query(insertQuery, [gamestate_id, link]);
             }
         })
     );

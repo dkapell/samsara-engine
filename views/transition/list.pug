@@ -13,7 +13,7 @@ block content
                     th From
                     th To
                     th Player Group
-                    th Room
+                    th Link
                     th Delay
                     if checkPermission('creator')
                         th
@@ -32,8 +32,8 @@ block content
                             else
                                 i All
                         td
-                            if transition.room_id
-                                = transition.room.name
+                            if transition.link_id
+                                = transition.link.name
                             else
                                 i Manual
                         td #{transition.delay} Seconds

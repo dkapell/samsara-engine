@@ -1,12 +1,12 @@
 include ./imagemap
 
-mixin gamestate(gamestate, rooms)
+mixin gamestate(gamestate, links)
     .lead=gamestate.description
     if gamestate.image_id
         .row.my-2
             .col.text-center
-                +imagemap(gamestate, rooms)
-    if gamestate.rooms.length
+                +imagemap(gamestate, links)
+    if gamestate.links.length
         .row.my-3
             .col
                 form#code-form
@@ -37,9 +37,9 @@ mixin transition(transition, gamestates, player_groups)
                                 | #{transition.name}
                                 i.fa.fa-search.ml-1
                         when 'gamestate'
-                            if transition.room_id
+                            if transition.link_id
                                strong.mr-1 Code:
-                               i.ml-1 #{rooms[transition.room_id].code}
+                               i.ml-1 #{links[transition.link_id].code}
                             else
                                 strong Manual
 

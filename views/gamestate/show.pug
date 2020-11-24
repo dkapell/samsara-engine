@@ -33,22 +33,22 @@ block content
     h4.my-2 Player View
     .row.my-2
         .col-md-8.border-primary.border.rounded(style='min-height:200px;')
-            +gamestate(gamestate, rooms)
+            +gamestate(gamestate, links)
         .col-md-4.d-none.d-md-block
             - let areaId = 0;
             while areaId < gamestate.map.length
-                +areaCard(areaId, gamestate.map[areaId], gamestates, rooms, player_groups)
+                +areaCard(areaId, gamestate.map[areaId], gamestates, links, player_groups)
                 - areaId++;
 
-    if gamestate.rooms.length
+    if gamestate.links.length
         .row.my-2
             .col
-                h4 Code-only Rooms
+                h4 Code-only Links
                 ul.list-unstyled
-                    for room in gamestate.rooms
+                    for link in gamestate.links
                         li
-                            strong.mr-1 #{room.name}
-                            | (Code: #{room.code})
+                            strong.mr-1 #{link.name}
+                            | (Code: #{link.code})
 
     if gamestate.transitions.from.length
         .row.my-2

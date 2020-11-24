@@ -15,7 +15,7 @@ create table users (
     PRIMARY KEY (id)
 );
 
-create table rooms (
+create table links (
     id          serial,
     name        varchar(80) not null,
     code        varchar(20) unique,
@@ -65,15 +65,15 @@ create table gamestates (
 
 insert into gamestates (name) values ('Initial');
 
-create table gamestate_rooms(
+create table gamestate_links(
     gamestate_id int not null,
-    room_id int not null,
-    primary key (gamestate_id, room_id),
+    link_id int not null,
+    primary key (gamestate_id, link_id),
     CONSTRAINT gsr_gamestate_fk FOREIGN KEY (gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT gsr_room_fk FOREIGN KEY (room_id)
-        REFERENCES "rooms" (id) MATCH SIMPLE
+    CONSTRAINT gsr_link_fk FOREIGN KEY (link_id)
+        REFERENCES "links" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
@@ -82,7 +82,7 @@ create table transitions(
     from_state_id int not null,
     to_state_id int not null,
     group_id int,
-    room_id int,
+    link_id int,
     delay int default 0,
     primary key(id),
     CONSTRAINT transitions_from_fk FOREIGN KEY (from_state_id)
@@ -94,8 +94,8 @@ create table transitions(
     CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
         REFERENCES "player_groups" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
-     CONSTRAINT transitions_room_fk FOREIGN KEY (room_id)
-        REFERENCES "rooms" (id) MATCH SIMPLE
+     CONSTRAINT transitions_link_fk FOREIGN KEY (link_id)
+        REFERENCES "links" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 

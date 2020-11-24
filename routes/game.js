@@ -10,7 +10,7 @@ async function getGamePage(req, res, next){
         if (req.user && (req.user.type === 'player' || (req.session.assumed_user && req.session.assumed_user.type === 'player'))){
             const gamestate = await gameEngine.getGameState(req.session.assumed_user?req.session.assumed_user.id:req.user.id);
             res.locals.gamestate = gamestate;
-            res.locals.rooms = _.indexBy(await req.models.room.list(), 'id');
+            res.locals.links = _.indexBy(await req.models.link.list(), 'id');
             res.set('x-game-state', gamestate.current.id);
             if (gamestate.current.start){
                 res.set('x-game-refresh', config.get('game.waitingRefreshTime'));
@@ -27,7 +27,7 @@ async function getGamePage(req, res, next){
     }
 }
 
-async function getRoom(req, res, next){
+async function getLink(req, res, next){
     const code = req.params.code;
     try {
         if (req.user && (req.user.type === 'player' || (req.session.assumed_user && req.session.assumed_user.type === 'player'))){
@@ -35,13 +35,13 @@ async function getRoom(req, res, next){
             const result = await gameEngine.openCode(code, user.id);
 
             if(!result){
-                throw new Error('Room not found');
+                throw new Error(config.get('game.linkName') + ' not found');
             }
 
-            if (result.room.url === 'stub'){
-                return res.json({success:true, actions:[ {action:'load', url:'/stub/' + result.room.id}]});
+            if (result.link.url === 'stub'){
+                return res.json({success:true, actions:[ {action:'load', url:'/stub/' + result.link.id}]});
             } else {
-                return res.json({success:true, actions: [ {action:'load', url:result.room.url}]});
+                return res.json({success:true, actions: [ {action:'load', url:result.link.url}]});
             }
         } else {
             throw new Error('You are not a player');
@@ -49,7 +49,7 @@ async function getRoom(req, res, next){
     } catch (err){
         console.trace(err);
         let retry = false;
-        if (err.message === 'Room is not active'){
+        if (err.message === config.get('game.linkName') + ' is not active'){
             retry = true;
         }
         return res.json({success:false, error:err.message, retry:retry});
@@ -73,7 +73,7 @@ async function checkArea(req, res, next){
     } catch(err){
         console.trace(err);
         let retry = false;
-        if (err.message === 'Room is not active'){
+        if (err.message === config.get('game.linkName') + ' is not active'){
             retry = true;
         }
         return res.json({success:false, error:err.message, retry:retry});
@@ -91,7 +91,7 @@ async function validateGame(req, res, next){
 const router = express.Router();
 
 router.get('/', getGamePage);
-router.get('/code/:code', permission('player'), getRoom);
+router.get('/code/:code', permission('player'), getLink);
 router.get('/area/:id', permission('player'), checkArea);
 router.get('/validator', permission('gm'), validateGame);
 

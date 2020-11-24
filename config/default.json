@@ -21,6 +21,7 @@
     "game": {
         "refreshTime": 1000,
         "waitingRefreshTime": 5000,
-        "nonplayerRefreshTime": 5000
+        "nonplayerRefreshTime": 5000,
+        "linkName": "Room"
     }
 }

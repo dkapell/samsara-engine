@@ -17,7 +17,6 @@ async function fetchGamePage(){
             throw new Error ('Got a bad response');
         }
         const siteRefreshTime = response.headers.get('x-game-refresh');
-        console.log(siteRefreshTime);
         if (siteRefreshTime){
             refreshTime = siteRefreshTime;
         } else {
@@ -59,19 +58,19 @@ function prepImageMap(){
         fillColor: '000000',
         fillOpacity: 0.2,
     });
-    $('area').on('click', clickRoom);
-    $('area').on('mouseover', showRoom);
-    $('area').on('mouseout', clearRoom);
+    $('area').on('click', clickLink);
+    $('area').on('mouseover', showLink);
+    $('area').on('mouseout', clearLink);
 }
 
 async function submitCodeForm(e){
     e.preventDefault();
     $('#code-feedback').hide();
     const code = $('#code-entry').val();
-    checkRoom(code);
+    checkLink(code);
 }
 
-async function clickRoom(e){
+async function clickLink(e){
     e.preventDefault();
     e.stopPropagation();
     const areaId = ($(this).attr('data-area'));
@@ -101,7 +100,7 @@ function performActions(actions){
     }
 }
 
-async function checkRoom(code){
+async function checkLink(code){
     const response = await fetch('/game/code/'+ code);
     const data = await response.json();
     if (!data.success){
@@ -119,12 +118,12 @@ async function checkRoom(code){
     performActions(data.actions);
 }
 
-function showRoom(e){
-    $('#room-name').text($(this).attr('data-name'));
+function showLink(e){
+    $('#Link-name').text($(this).attr('data-name'));
 }
 
-function clearRoom(e){
-    $('#room-name').html('&nbsp;');
+function clearLink(e){
+    $('#Link-name').html('&nbsp;');
 }
 
 function hideText(e){

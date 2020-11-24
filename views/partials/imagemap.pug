@@ -1,7 +1,7 @@
-mixin imagemap(imagemap, rooms)
+mixin imagemap(imagemap, links)
     .row.my-1
         .col
-            .lead.text-center#room-name &nbsp;
+            .lead.text-center#link-name &nbsp;
 
     .row.my-1
         .col
@@ -22,7 +22,7 @@ mixin imagemap(imagemap, rooms)
                     )
                     - areaId++;
 
-mixin area(area, id, rooms)
+mixin area(area, id, links)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
@@ -68,11 +68,11 @@ mixin area(area, id, rooms)
         if _.isArray(area.actions)
             - let actionId = 0;
             for action of area.actions
-                +action(action, id, actionId, rooms)
+                +action(action, id, actionId, links)
                 - actionId++
 
 
-mixin action(action, areaId, actionId, rooms)
+mixin action(action, areaId, actionId, links)
     .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}`)
         .form-row.my-1
             label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
@@ -84,21 +84,21 @@ mixin action(action, areaId, actionId, rooms)
                     data-placeholder="Type",
                 )
                     option
-                    for type in ['room', 'text', 'transition']
+                    for type in ['link', 'text', 'transition']
                         option(value=type, selected=action.type === type)= type
 
 
-            label.col-md-2.col-form-label.action-room(for=`gamestate_map_area-${areaId}-action-${actionId}-room_id` ) Room
-            .col-md-6.action-room
-                select.custom-select.room-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][room_id]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-room_id`,
+            label.col-md-2.col-form-label.action-link(for=`gamestate_map_area-${areaId}-action-${actionId}-link_id` ) Link
+            .col-md-6.action-link
+                select.custom-select.link-select(
+                    name=`gamestate[map][${areaId}][actions][${actionId}][link_id]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-link_id`,
                     class=actionId!=='new'?'select2':'',
-                    data-placeholder="Select Room",
+                    data-placeholder="Select Link",
                 )
                     option
-                    for room in rooms
-                        option(value=room.id selected=action.room_id && Number(action.room_id)===room.id)= room.name
+                    for link in links
+                        option(value=link.id selected=action.link_id && Number(action.link_id)===link.id)= link.name
 
 
             label.col-md-2.col-form-label.action-text(for=`gamestate_map_area-${areaId}-action-${actionId}-content` ) Display Text
@@ -149,7 +149,7 @@ mixin action(action, areaId, actionId, rooms)
                     for player_group in player_groups
                         option(
                             value=player_group.id
-                            selected=action.group_id && Number(action.group_id)===room.id
+                            selected=action.group_id && Number(action.group_id)===link.id
                         )= player_group.name
 
         .form-row.my-1.action-text
@@ -164,7 +164,7 @@ mixin action(action, areaId, actionId, rooms)
                 value=action.duration?action.duration:0)
             .col-md-2.form-text ( 0 for unlimited )
 
-mixin areaCard(areaId, area, gamestates, rooms)
+mixin areaCard(areaId, area, gamestates, links)
     - moment.relativeTimeThreshold('ss', 0);
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
         .card-header #{area.name}
@@ -172,9 +172,9 @@ mixin areaCard(areaId, area, gamestates, rooms)
             for action in area.actions
                 .list-group-item
                     case action.type
-                        when 'room'
-                            strong.mr-1 Open Room
-                            i #{rooms[action.room_id].name}
+                        when 'link'
+                            strong.mr-1 Open Link
+                            i #{links[action.link_id].name}
                         when 'text'
                             strong.mr-1 Display Text
                             br

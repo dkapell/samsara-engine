@@ -4,12 +4,12 @@ block content
     .row
         .col-sm-8.offset-sm-2
             .card
-                .card-header= 'Edit Room: ' + room.name
+                .card-header Edit #{config.get('game.linkName')}: #{link.name}
                 .card-body
-                    form.form.needs-validation(method="POST" action="/room/" + room.id novalidate)
+                    form.form.needs-validation(method="POST" action="/link/" + link.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='room[id]',value=room.id)
+                        input(type="hidden", name='link[id]',value=link.id)
                         include ./_form.pug
 
 append scripts

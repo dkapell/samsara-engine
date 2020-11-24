@@ -149,7 +149,7 @@ mixin action(action, areaId, actionId, links)
                     for player_group in player_groups
                         option(
                             value=player_group.id
-                            selected=action.group_id && Number(action.group_id)===link.id
+                            selected=action.group_id && Number(action.group_id)===player_group.id
                         )= player_group.name
 
         .form-row.my-1.action-text

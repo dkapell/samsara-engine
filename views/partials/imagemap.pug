@@ -184,7 +184,7 @@ mixin areaCard(areaId, area, gamestates, links)
                             i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}
                             if action.group_id
                                 | for
-                                i.mx-1 #{player_groups[Number(action.group_id)].name}
+                                i.mx-1 #{_.findWhere(player_groups, {id: action.group_id}).name}
                             if action.delay
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else

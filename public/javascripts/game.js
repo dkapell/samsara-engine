@@ -119,11 +119,11 @@ async function checkLink(code){
 }
 
 function showLink(e){
-    $('#Link-name').text($(this).attr('data-name'));
+    $('#link-name').text($(this).attr('data-name'));
 }
 
 function clearLink(e){
-    $('#Link-name').html('&nbsp;');
+    $('#link-name').html('&nbsp;');
 }
 
 function hideText(e){

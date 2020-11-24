@@ -183,6 +183,8 @@ mixin areaCard(areaId, area, gamestates, links)
                             strong.mr-1 Transition to state
                             i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}
                             if action.group_id
+                                br
+                            if action.group_id
                                 | for
                                 i.mx-1 #{_.findWhere(player_groups, {id: action.group_id}).name}
                             if action.delay

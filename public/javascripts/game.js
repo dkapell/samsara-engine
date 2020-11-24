@@ -1,10 +1,12 @@
 let currentGameState = 0;
 let refreshInterval = null;
 let textTimeout = null;
+let defaulRefreshTime = 1000;
+let maxRefreshTime = 30000;
+let refreshTime = defaulRefreshTime;
 $(function(){
     $('#game-text').hide();
     fetchGamePage();
-    refreshInterval = setInterval(fetchGamePage, 2000);
 });
 
 async function fetchGamePage(){
@@ -12,9 +14,14 @@ async function fetchGamePage(){
     try{
         const response = await fetch('/game');
         if(!response.ok){
-            console.log('Got a bad response');
-            clearInterval(refreshInterval);
-            return;
+            throw new Error ('Got a bad response');
+        }
+        const siteRefreshTime = response.headers.get('x-game-refresh');
+        console.log(siteRefreshTime);
+        if (siteRefreshTime){
+            refreshTime = siteRefreshTime;
+        } else {
+            refreshTime = defaulRefreshTime;
         }
         const gameState = response.headers.get('x-game-state');
         if (gameState !== currentGameState){
@@ -33,8 +40,13 @@ async function fetchGamePage(){
         }
     } catch (e){
         console.log(e);
-        clearInterval(refreshInterval);
+        refreshTime = refreshTime * 2;
+        if (refreshTime > maxRefreshTime){
+            refreshTime = maxRefreshTime;
+        }
+
     }
+    refreshInterval = setTimeout(fetchGamePage, refreshTime);
 }
 
 function prepImageMap(){

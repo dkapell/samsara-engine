@@ -58,7 +58,8 @@ include ../partials/imagemap
 .form-group
     label.control-label(for="gamestate_rooms") Additional Rooms
     select.custom-select.select2(multiple, name="gamestate[rooms]",id="gamestate_rooms")
-        for room in rooms
+        for room in rooms.filter(room => {return room.code} )
+                -continue
             option(value=room.id selected=_.indexOf(gamestate.rooms, room.id.toString()) !== -1)= room.name
 
 .form-group

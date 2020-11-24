@@ -90,10 +90,10 @@ function validate(data){
     if (! validator.isLength(data.name, 2, 80)){
         return false;
     }
-    if (! validator.isLength(data.code, 2, 20)){
+    if (data.code && ! validator.isLength(data.code, 2, 20)){
         return false;
     }
-    if (data.url !== 'stub' && data.url !== 'none' && !validator.isURL(data.url)){
+    if (data.url !== 'stub' && !validator.isURL(data.url)){
         return false;
     }
 

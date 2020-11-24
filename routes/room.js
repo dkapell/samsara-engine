@@ -72,6 +72,9 @@ async function create(req, res, next){
     const room = req.body.room;
 
     req.session.roomData = room;
+    if (room.code === ''){
+        room.code = null;
+    }
 
     try{
         await req.models.room.create(room);
@@ -90,6 +93,9 @@ async function update(req, res, next){
     req.session.roomData = room;
     if (!_.has(room, 'active')){
         room.active = false;
+    }
+    if (room.code === ''){
+        room.code = null;
     }
 
     try {

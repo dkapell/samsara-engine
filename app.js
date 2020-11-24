@@ -28,6 +28,7 @@ const imageRouter = require('./routes/image');
 const stubRouter = require('./routes/roomStub');
 const gamestateRouter = require('./routes/gamestate');
 const transitionRouter = require('./routes/transition');
+const gameRouter = require('./routes/game');
 
 const app = express();
 
@@ -155,6 +156,7 @@ app.use('/image', imageRouter);
 app.use('/stub', stubRouter);
 app.use('/gamestate', gamestateRouter);
 app.use('/transition', transitionRouter);
+app.use('/game', gameRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

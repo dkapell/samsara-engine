@@ -1,6 +1,6 @@
 /* global _ */
 var Dracula = require('graphdracula');
-
+var pluralize = require('pluralize');
 $(function(){
     renderGraph();
 });
@@ -17,7 +17,9 @@ async function renderGraph(){
         const g = new Dracula.Graph();
 
         for (const state of gamestates.reverse()){
-            g.addNode(state.name);
+            const name = state.player_count?`${state.name} (${pluralize('player', state.player_count, true)})`:state.name;
+            g.addNode(state.name, {label:name});
+
             const transitions = {};
 
             for (const transition of state.transitions){
@@ -28,7 +30,6 @@ async function renderGraph(){
                 const group_name = transition.group_name ? transition.group_name : 'All';
                 transitions[toState.name].push(group_name);
             }
-            console.log(transitions);
             for (const toStateName in transitions){
                 const options = {
                     style: {
@@ -36,9 +37,6 @@ async function renderGraph(){
                         directed: true
                     }
                 };
-
-                console.log(`adding from ${state.name} to ${toStateName} for ${transitions[toStateName].join(', ')}`);
-
                 g.addEdge(state.name, toStateName, options);
             }
         }

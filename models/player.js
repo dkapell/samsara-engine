@@ -28,6 +28,23 @@ exports.getByUserId = async function(user_id){
     return;
 };
 
+exports.find = async function(conditions){
+    const queryParts = [];
+    const queryData = [];
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
+    }
+    let query = 'select * from players';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    const result = await database.query(query, queryData);
+    return result.rows;
+};
+
 exports.list = async function(){
     const query = 'select * from players order by name';
     const result = await database.query(query);

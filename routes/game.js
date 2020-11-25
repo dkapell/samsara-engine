@@ -97,6 +97,7 @@ async function getGraphData(req, res, next){
         res.locals.gamestates = await Promise.all(
             gamestates.map( async gamestate => {
                 gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
+                gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id})).length;
                 return gamestate;
             })
         );

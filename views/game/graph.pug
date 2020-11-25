@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+    .row
+        .col.alert.alert-secondary This is experimental.  You may need to reload a few times to get an accurate graph.
+
+    .row
+        .col.w-100.bg-white#graphContainer(style='height:80vh')
+
+append scripts
+    script(src="/javascripts/bundles/graph.js")

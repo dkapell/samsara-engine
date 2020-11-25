@@ -12,7 +12,7 @@ async function getGamePage(req, res, next){
             res.locals.gamestate = gamestate;
             res.locals.links = _.indexBy(await req.models.link.list(), 'id');
             res.set('x-game-state', gamestate.current.id);
-            if (gamestate.current.start){
+            if (gamestate.current.start || gamestate.current.finish){
                 res.set('x-game-refresh', config.get('game.waitingRefreshTime'));
             } else {
                 res.set('x-game-refresh', config.get('game.refreshTime'));

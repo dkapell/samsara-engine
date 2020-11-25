@@ -36,7 +36,8 @@ exports.list = async function(){
 };
 
 exports.listSpecial = async function(){
-    const query = 'select * from gamestates where start = true or special = true order by start desc nulls last, name';
+    const query = `select * from gamestates where start = true or special = true or finish = true
+        order by start desc nulls last, finish asc nulls first, name`;
     const result = await database.query(query);
     return Promise.all(result.rows.map(fillLinks));
 };

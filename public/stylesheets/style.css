@@ -34,6 +34,7 @@ map, image {
 
 [aria-expanded="true"] .fa-chevron-up,
 [aria-expanded="false"] .fa-chevron-down,
-[aria-expanded="true"] .expand-text {
+[aria-expanded="true"] .expand-text,
+[aria-expanded="false"] .expand-text-shown {
     display:none;
 }

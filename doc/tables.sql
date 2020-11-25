@@ -54,6 +54,7 @@ create table gamestates (
     description text,
     special     boolean default false,
     start       boolean default false,
+    finish      boolean default false,
     image_id    int not null,
     map         jsonb default '[]'::jsonb,
     template    boolean default false,

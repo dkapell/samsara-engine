@@ -68,6 +68,7 @@ async function showNew(req, res, next){
         image_id: null,
         map: [],
         start: false,
+        finish: false,
         special: false,
         template:false,
     };
@@ -145,6 +146,9 @@ async function create(req, res, next){
     if (!_.has(gamestate, 'special')){
         gamestate.special = false;
     }
+    if (!_.has(gamestate, 'finish')){
+        gamestate.special = false;
+    }
     if (!_.has(gamestate, 'template')){
         gamestate.template = false;
     }
@@ -181,6 +185,9 @@ async function update(req, res, next){
     const gamestate = req.body.gamestate;
     req.session.gamestateData = gamestate;
     if (!_.has(gamestate, 'special')){
+        gamestate.special = false;
+    }
+    if (!_.has(gamestate, 'finish')){
         gamestate.special = false;
     }
     if (!_.has(gamestate, 'template')){

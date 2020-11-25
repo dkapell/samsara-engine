@@ -10,6 +10,7 @@ $(function(){
 
     $('#gamestate_image_id').on('change', function(e){
         showMapGroup();
+        showImage();
     });
     showMapGroup();
 
@@ -48,4 +49,14 @@ function hideMapArea(e){
     const $this = $(this);
     const areaId = $this.attr('data-area');
     $(`#area-${areaId}`).mouseout();
+}
+
+function showImage(){
+    const image = $('#gamestate_image_id').val();
+    const url = $('#gamestate_image_id').find(':selected').attr('data-url');
+    if (image === '-1'){
+        $('#gamestate-image').attr('src','');
+    } else {
+        $('#gamestate-image').attr('src',url );
+    }
 }

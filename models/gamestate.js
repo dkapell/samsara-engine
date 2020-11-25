@@ -8,7 +8,7 @@ const models = {
     link: require('./link')
 };
 
-const tableFields = ['name', 'description', 'image_id', 'start', 'special', 'map', 'template'];
+const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template'];
 
 
 exports.get = async function(id){

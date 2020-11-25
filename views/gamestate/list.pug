@@ -28,6 +28,8 @@ block content
                                 span.badge.badge-info.ml-2 Special
                             if gamestate.template
                                 span.badge.badge-warning.ml-2 Template
+                            if gamestate.finish
+                                span.badge.badge-danger.ml-2 End
                         td
                             if gamestate.image_id
                                 = gamestate.image.name

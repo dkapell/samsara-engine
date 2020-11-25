@@ -5,7 +5,9 @@ block content
         .col.alert.alert-secondary Drag and drop the nodes to get a better view.
 
     .row
-        .col.w-100.bg-white#graphContainer(style='height:75vh')
+        .col
+            .w-100.bg-white.rounded-lg.p-4(style='height:75vh;')
+                .m-0.p-0.h-100#graphContainer
 
 append scripts
     script(src="/javascripts/bundles/graph.js")

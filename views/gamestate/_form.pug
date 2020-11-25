@@ -1,27 +1,37 @@
 include ../partials/imagemap
-.form-group
-    label.control-label(for="gamestate_name") Name
-    input.form-control(type="text",placeholder="Name",name="gamestate[name]",value=gamestate.name,id='gamestate_name',required)
-    div.invalid-feedback Please choose a valid name
+.row.my-2
+    .col
+        .row-my-2
+            .col.pl-0
+                .form-group
+                    label.control-label(for="gamestate_name") Name
+                    input.form-control(type="text",placeholder="Name",name="gamestate[name]",value=gamestate.name,id='gamestate_name',required)
+                    div.invalid-feedback Please choose a valid name
 
-.form-group
-    label.control-label(for="gamestate_image_id") Image
-    select.custom-select.select2#gamestate_image_id(
-        name="gamestate[image_id]",
-        data-placeholder="Select Image, if any"
-    )
-        option(selected=!gamestate.image_id value="-1") None
-        for image in images
-            option(value=image.id selected=gamestate.image_id===image.id)= image.name
+                .form-group
+                    label.control-label(for="gamestate_image_id") Image
+                    select.custom-select.select2#gamestate_image_id(
+                        name="gamestate[image_id]",
+                        data-placeholder="Select Image, if any"
+                    )
+                        option(selected=!gamestate.image_id value="-1") None
+                        for image in images
+                            option(value=image.id selected=gamestate.image_id===image.id, data-url=image.url)= image.name
+    .col-md-3
+        img.img-fluid#gamestate-image(src=gamestate.image_id?_.findWhere(images, {id: gamestate.image_id}).url:'')
+
 
 .form-group#map-group
-    label.control-label.w-100#map-heading(for="gamestate_map", data-toggle="collapse" data-target="#map-container" aria-expanded="true") Map
+    label.control-label.w-100#map-heading(for="gamestate_map", data-toggle="collapse" data-target="#map-container" aria-expanded="false") Map
+        .badge.badge-info.ml-1 #{gamestate.map.length} #{gamestate.map.length === 1?'item':'items'}
+        i.expand-text-shown.ml-4 (click to hide configuration)
+        i.expand-text.ml-4 (click to show configuration)
         span.float-right.pl-2
             i.fa.fa-chevron-up
             i.fa.fa-chevron-down
 
 
-    .div#map-container.collapse.show(aria-labelledby="map-heading")
+    .div#map-container.collapse(aria-labelledby="map-heading")
         .list-group#gamestate_map
 
             - let i = 0;
@@ -35,20 +45,31 @@ include ../partials/imagemap
                 i.fa.fa-plus
                 |  Add Area
 
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="gamestate[start]", id="gamestate_start", checked=gamestate.start disabled=gamestate.start)
-        label.custom-control-label(for="gamestate_start") Start State
 
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="gamestate[special]", id="gamestate_special", checked=gamestate.special)
-        label.custom-control-label(for="gamestate_special") Special State
 
-.form-group
-    .custom-control.custom-switch
-        input.custom-control-input(type="checkbox", name="gamestate[template]", id="gamestate_template", checked=gamestate.template)
-        label.custom-control-label(for="gamestate_template") is a Template
+fieldset.mb-2
+    label Gamestate Options
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[start]", id="gamestate_start", checked=gamestate.start disabled=gamestate.start)
+                label.custom-control-label(for="gamestate_start") Start State
+
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[special]", id="gamestate_special", checked=gamestate.special)
+                label.custom-control-label(for="gamestate_special") Special State
+
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[finish]", id="gamestate_finish", checked=gamestate.finish)
+                label.custom-control-label(for="gamestate_finish") End/Finish State
+
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[template]", id="gamestate_template", checked=gamestate.template)
+                label.custom-control-label(for="gamestate_template") is a Template
 
 .form-group
     label.control-label(for="gamestate_description") Description (Player Facing)

@@ -16,28 +16,33 @@ async function renderGraph(){
 
         const g = new Dracula.Graph();
 
+        const transitions = {};
+
         for (const state of gamestates.reverse()){
             const name = state.player_count?`${state.name} (${pluralize('player', state.player_count, true)})`:state.name;
             g.addNode(state.name, {label:name});
-
-            const transitions = {};
+            transitions[state.name] = {};
 
             for (const transition of state.transitions){
                 const toState = _.findWhere(gamestates, {id: transition.to_state_id});
-                if (!_.has(transitions, toState.name)){
-                    transitions[toState.name] = [];
+
+                if (!_.has(transitions[state.name], toState.name)){
+                    transitions[state.name][toState.name] = [];
                 }
                 const group_name = transition.group_name ? transition.group_name : 'All';
-                transitions[toState.name].push(group_name);
+                transitions[state.name][toState.name].push(group_name);
             }
-            for (const toStateName in transitions){
+        }
+
+        for (const fromStateName in transitions){
+            for (const toStateName in transitions[fromStateName]){
                 const options = {
                     style: {
-                        label: transitions[toStateName].join(', '),
+                        label: transitions[fromStateName][toStateName].join(', '),
                         directed: true
                     }
                 };
-                g.addEdge(state.name, toStateName, options);
+                g.addEdge(fromStateName, toStateName, options);
             }
         }
 

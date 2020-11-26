@@ -77,7 +77,6 @@ async function clickLink(e){
     const response = await fetch('/game/area/'+ areaId);
     const data = await response.json();
     if (!data.success){
-        console.log(data);
         return;
     }
     performActions(data.actions);

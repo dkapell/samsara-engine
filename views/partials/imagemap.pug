@@ -4,8 +4,8 @@ mixin imagemap(imagemap, links)
             .lead.text-center#link-name &nbsp;
 
     .row.my-1
-        .col
-            image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id )
+        .col.h-50
+            image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id, style='max-height:60vh')
             map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
                 - let areaId = 0;
                 while areaId < imagemap.map.length

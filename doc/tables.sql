@@ -33,7 +33,7 @@ create table runs (
     primary key(id)
 );
 
-create table player_groups (
+create table groups (
     id          serial,
     name        varchar(80) not null unique,
     description text
@@ -93,7 +93,7 @@ create table transitions(
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
-        REFERENCES "player_groups" (id) MATCH SIMPLE
+        REFERENCES "groups" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
      CONSTRAINT transitions_link_fk FOREIGN KEY (link_id)
         REFERENCES "links" (id) MATCH SIMPLE
@@ -104,7 +104,6 @@ create table players (
     id          serial,
     user_id     int,
     run_id      int,
-    group_id    int,
     character   varchar(255),
     gamestate_id int,
     prev_gamestate_id int,
@@ -116,9 +115,6 @@ create table players (
     CONSTRAINT players_run_fk FOREIGN KEY (run_id)
         REFERENCES "runs" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT players_group_fk FOREIGN KEY (group_id)
-        REFERENCES "player_groups" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL,
     CONSTRAINT players_gamestate_fk FOREIGN KEY (gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
@@ -126,3 +122,15 @@ create table players (
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
 );
+
+create table player_groups(
+    player_id int not null,
+    group_id int not null,
+    CONSTRAINT player_fk FOREIGN KEY (player_id)
+        REFERENCES "players" (id) match simple
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT group_fk FOREIGN KEY (group_id)
+        REFERENCES "groups" (id) match simple
+        ON UPDATE NO ACTION ON DELETE SET NULL
+)
+

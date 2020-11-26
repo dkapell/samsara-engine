@@ -1,7 +1,9 @@
 $(function(){
-    $('.table-sorted').DataTable({
+    const ordering = [];
+    const dataTable = $('.table-sorted').DataTable({
         paging: false,
         fixedHeader: true,
+        saveState: true,
         responsive: {
             details: {
                 type: 'column'
@@ -13,6 +15,18 @@ $(function(){
             targets:   0
         } ],
     });
+
+    dataTable.columns().every( function( i ) {
+        var header = this.header();
+        if ( $(header).is( '[data-order]' ) ) {
+            var dataOrder = $(header).attr( 'data-order' );
+            var theOrder = [ i, dataOrder ];
+            ordering.push( theOrder );
+        }
+    });
+    if( ordering.length > 0 ) {
+        dataTable.order( ordering ).draw();
+    }
 
     $('.clickable-row').on('click.data-table', function(e){
         e.preventDefault();

@@ -23,7 +23,7 @@ async function list(req, res, next){
         );
         res.locals.gamestates = await req.models.gamestate.list();
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
-        res.locals.player_groups = _.indexBy(await req.models.player_group.list(), 'id');
+        res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
         res.render('user/list', { pageTitle: 'Users' });
     } catch (err){
         next(err);
@@ -40,12 +40,12 @@ async function showNew(req, res, next){
             player: {
                 run_id: (await req.models.run.getCurrent()).id,
                 gamestate_id: startState.id,
-                group_id: null,
+                groups: [],
                 character: null
             }
         };
         res.locals.runs = await req.models.run.list();
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.gamestates = await req.models.gamestate.list();
         res.locals.breadcrumbs = {
             path: [
@@ -85,7 +85,7 @@ async function showEdit(req, res, next){
             };
         }
         res.locals.runs = await req.models.run.list();
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.gamestates = await req.models.gamestate.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
@@ -114,13 +114,18 @@ async function create(req, res, next){
     try{
         const id = await req.models.user.create(user);
         if (user.type === 'player'){
+            if (!user.player.groups){
+                user.player.groups = [];
+            } else if(!_.isArray(user.player.groups)){
+                user.player.groups = [user.player.groups];
+            }
             await req.models.player.create({
                 user_id:id,
                 run_id:Number(user.player.run_id),
                 gamestate_id:Number(user.player.gamestate_id),
                 prev_gamestate_id:null,
                 character: user.player.character,
-                group_id: Number(user.player.group_id)?Number(user.player.group_id):null
+                groups: user.player.groups
 
             });
         }
@@ -144,18 +149,23 @@ async function update(req, res, next){
         delete req.session.userData;
         if (user.type === 'player'){
             const player = await req.models.player.getByUserId(id);
+            if (!user.player.groups){
+                user.player.groups = [];
+            } else if(!_.isArray(user.player.groups)){
+                user.player.groups = [user.player.groups];
+            }
             if (player){
                 player.run_id = Number(user.player.run_id);
                 player.character = user.player.character;
                 player.gamestate_id =  Number(user.player.gamestate_id);
-                player.group_id = Number(user.player.group_id)?Number(user.player.group_id):null;
+                player.groups = user.player.groups;
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({
                     user_id:id,
                     run_id:user.player.run_id,
                     game_state:user.player.game_state,
-                    group_id: Number(user.player.group_id)?Number(user.player.group_id):null
+                    groups: user.player.groups
                 });
             }
         }

@@ -19,15 +19,12 @@ async function list(req, res, next){
         res.locals.users = await Promise.all(
             players.map( async user => {
                 user.gamestate = await gameEngine.getGameState(user.id);
-                if (user.gamestate.player.group_id){
-                    user.gamestate.player.group = await req.models.player_group.get(user.gamestate.player.group_id);
-                }
                 user.player = user.gamestate.player;
                 return user;
             })
         );
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
-        res.locals.player_groups = _.indexBy(await req.models.player_group.list(), 'id');
+        res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
 
         res.render('player/list', { pageTitle: 'Players' });
     } catch (err){

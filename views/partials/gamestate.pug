@@ -14,16 +14,33 @@ mixin gamestate(gamestate, links)
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
 
 
-mixin transition(transition, gamestates, player_groups)
+mixin transition(transition, gamestates, groups, current)
     - const fromState = _.findWhere(gamestates, {id: transition.from_state_id});
     - const toState = _.findWhere(gamestates, {id: transition.to_state_id});
     - moment.relativeTimeThreshold('ss', 0);
 
     .card.m-1
         .card-header
-            | #{fromState.name}
+            if current.id !== fromState.id
+                a(href=`/gamestate/${fromState.id}`)= fromState.name
+            else
+                | #{fromState.name}
             i.fas.fa-arrow-right.fa-fw.mx-1
-            | #{toState.name}
+            if current.id !== toState.id
+                a(href=`/gamestate/${toState.id}`)= toState.name
+            else
+                | #{toState.name}
+
+            if transition.type === 'gamestate' && checkPermission('creator')
+                .float-right
+                    a.btn.btn-sm.btn-outline-info(
+                        role=button,
+                        href=`/transition/${transition.id}`
+                        data-toggle="tooltip"
+                        title="Edit Transition"
+                    )
+                        i.fa.fa-edit
+
         .card-body
             dl.row.py-0.my-0
                 dt.col-5 Source
@@ -53,7 +70,7 @@ mixin transition(transition, gamestates, player_groups)
                 dt.col-5 Player Group
                 dd.col-7
                     if transition.group_id
-                        = _.findWhere(player_groups, {id: transition.group_id}).name
+                        = _.findWhere(groups, {id: transition.group_id}).name
                     else
                         i All
 

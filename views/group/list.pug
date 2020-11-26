@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/player_group/new')
+    a.btn.btn-outline-success(href='/group/new')
         span(class="fa fa-plus")
         |  New Player Group
     .table-responsive
@@ -9,22 +9,22 @@ block content
             thead
                 tr
                     th
-                    th Name
+                    th(data-order='asc') Name
                     th Description
                     th
 
             tbody
-                for player_group in player_groups
-                    tr(class='clickable-row', data-click-object='player_group' data-click-id=player_group.id)
+                for group in groups
+                    tr(class='clickable-row', data-click-object='group' data-click-id=group.id)
                         td.dtr-expand
                         td
-                            a(href='/player_group/' + player_group.id)= player_group.name
-                        td= player_group.description
+                            a(href='/group/' + group.id)= group.name
+                        td= group.description
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(
                                 role="button",
-                                url=`/player_group/${player_group.id}`,
-                                data-back='/player_group'
+                                url=`/group/${group.id}`,
+                                data-back='/group'
                             )
                                 i.fas.fa-trash.fa-fw
 

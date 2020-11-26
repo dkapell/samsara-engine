@@ -5,16 +5,17 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
+    group: require('./group')
 };
 
-const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'group_id', 'statetime', 'character'];
+const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character'];
 
 
 exports.get = async function(id){
     const query = 'select * from players where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        return fillGroups(result.rows[0]);
     }
     return;
 };
@@ -23,7 +24,7 @@ exports.getByUserId = async function(user_id){
     const query = 'select * from players where user_id = $1';
     const result = await database.query(query, [user_id]);
     if (result.rows.length){
-        return result.rows[0];
+        return fillGroups(result.rows[0]);
     }
     return;
 };
@@ -42,19 +43,19 @@ exports.find = async function(conditions){
         query += ' where ' + queryParts.join(' and ');
     }
     const result = await database.query(query, queryData);
-    return result.rows;
+    return Promise.all(result.rows.map(fillGroups));
 };
 
 exports.list = async function(){
     const query = 'select * from players order by name';
     const result = await database.query(query);
-    return result.rows;
+    return Promise.all(result.rows.map(fillGroups));
 };
 
 exports.listByRunId = async function(run_id){
     const query = 'select * from players where run_id = $1';
     const result = await database.query(query, [run_id]);
-    return result.rows;
+    return Promise.all(result.rows.map(fillGroups));
 };
 
 exports.create = async function(data){
@@ -79,7 +80,11 @@ exports.create = async function(data){
     query += ') returning id';
 
     const result = await database.query(query, queryData);
-    return result.rows[0].id;
+    const id = result.rows[0].id;
+    if (_.has(data, 'groups')){
+        await saveGroups(id, data.groups);
+    }
+    return id;
 };
 
 exports.update = async function(id, data){
@@ -100,6 +105,10 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+
+    if (_.has(data, 'groups')){
+        await saveGroups(id, data.groups);
+    }
 };
 
 exports.delete = async  function(id, cb){
@@ -115,8 +124,33 @@ exports.updateState = async function(id, gamestate_id, cb){
     await exports.update(id, player);
 };
 
-function validate(data){
+async function fillGroups(player){
+    const query = 'select * from player_groups where player_id = $1';
+    const result = await database.query(query, [player.id]);
+    player.groups = await Promise.all(
+        result.rows.map( async playerGroup => {
+            return models.group.get(playerGroup.group_id);
+        })
+    );
+    return player;
+}
 
+async function saveGroups(player_id, groups){
+    const deleteQuery = 'delete from player_groups where player_id = $1';
+    const insertQuery = 'insert into player_groups (player_id, group_id) values ($1, $2)';
+    await database.query(deleteQuery, [player_id]);
+    return Promise.all(
+        groups.map(group => {
+            if (_.isObject(group)){
+                return database.query(insertQuery, [player_id, group.id]);
+            } else {
+                return database.query(insertQuery, [player_id, group]);
+            }
+        })
+    );
+}
+
+function validate(data){
 
     return true;
 }

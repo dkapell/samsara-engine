@@ -46,7 +46,7 @@ async function show(req, res, next){
         };
         res.locals.gamestate = gamestate;
         res.locals.gamestates = gamestates;
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -103,7 +103,7 @@ async function showNew(req, res, next){
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
         res.locals.links = await req.models.link.list();
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
     } catch (err){
@@ -131,7 +131,7 @@ async function showEdit(req, res, next){
             current: 'Edit: ' + gamestate.name
         };
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.images = await req.models.image.list();
         res.locals.links = await req.models.link.list();
         res.render('gamestate/edit');

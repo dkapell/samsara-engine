@@ -41,14 +41,11 @@ async function show(req, res, next){
                 if (!user.gamestate){
                     return user;
                 }
-                if (user.gamestate.player.group_id){
-                    user.gamestate.player.group = await req.models.player_group.get(user.gamestate.player.group_id);
-                }
                 user.player = user.gamestate.player;
                 return user;
             })
         );
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
         res.locals.csrfToken = req.csrfToken();

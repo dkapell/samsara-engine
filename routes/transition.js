@@ -21,7 +21,7 @@ async function list(req, res, next){
                     transition.link = await req.models.link.get(transition.link_id);
                 }
                 if(transition.group_id){
-                    transition.player_group = await req.models.player_group.get(transition.group_id);
+                    transition.group = await req.models.group.get(transition.group_id);
                 }
                 return transition;
             })
@@ -52,6 +52,9 @@ async function showNew(req, res, next){
     if (req.query.from_state_id){
         res.locals.transition.from_state_id = Number(req.query.from_state_id);
     }
+    if (req.query.to_state_id){
+        res.locals.transition.to_state_id = Number(req.query.to_state_id);
+    }
     if (_.has(req.session, 'transitionData')){
         res.locals.transition = req.session.transitionData;
         delete req.session.transitionData;
@@ -59,7 +62,7 @@ async function showNew(req, res, next){
     try{
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.links = await req.models.link.list();
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.render('transition/new');
     } catch (err){
         next(err);
@@ -86,7 +89,7 @@ async function showEdit(req, res, next){
         };
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.links = await req.models.link.list();
-        res.locals.player_groups = await req.models.player_group.list();
+        res.locals.groups = await req.models.group.list();
         res.render('transition/edit');
     } catch(err){
         next(err);

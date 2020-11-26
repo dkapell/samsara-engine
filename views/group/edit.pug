@@ -4,12 +4,12 @@ block content
     .row
         .col-sm-8.offset-sm-2
             .card
-                .card-header= 'Edit Player Group: ' + player_group.name
+                .card-header= 'Edit Player Group: ' + group.name
                 .card-body
-                    form.form.needs-validation(method="POST" action="/player_group/" + player_group.id novalidate)
+                    form.form.needs-validation(method="POST" action="/group/" + group.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='player_group[id]',value=player_group.id)
+                        input(type="hidden", name='group[id]',value=group.id)
                         include ./_form.pug
 
 append scripts

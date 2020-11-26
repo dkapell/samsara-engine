@@ -146,11 +146,11 @@ mixin action(action, areaId, actionId, links)
                     class=actionId!=='new'?'select2':'',
                 )
                     option(selected=!action.group_id value="-1") All
-                    for player_group in player_groups
+                    for group in groups
                         option(
-                            value=player_group.id
-                            selected=action.group_id && Number(action.group_id)===player_group.id
-                        )= player_group.name
+                            value=group.id
+                            selected=action.group_id && Number(action.group_id)===group.id
+                        )= group.name
 
         .form-row.my-1.action-text
             label.col-md-2.offset-md-3.col-form-label(
@@ -186,7 +186,7 @@ mixin areaCard(areaId, area, gamestates, links)
                                 br
                             if action.group_id
                                 | for
-                                i.mx-1 #{_.findWhere(player_groups, {id: action.group_id}).name}
+                                i.mx-1 #{_.findWhere(groups, {id: action.group_id}).name}
                             if action.delay
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else

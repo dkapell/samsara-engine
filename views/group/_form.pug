@@ -1,0 +1,15 @@
+.form-group
+    label.control-label(for="group_name") Name
+    input.form-control(type="text",placeholder="Name",name="group[name]",value=group.name,id='group_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="group_description") Description
+    textarea.form-control(name="group[description]",id="group_description",rows=3)
+        = group.description
+
+.form-group
+    button.btn.btn-primary(type="submit")= group.id?'Update':'Create'
+    a.btn.btn-link(href="/group") Cancel
+
+

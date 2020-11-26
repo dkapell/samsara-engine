@@ -37,7 +37,7 @@ block content
         .col-md-4.d-none.d-md-block
             - let areaId = 0;
             while areaId < gamestate.map.length
-                +areaCard(areaId, gamestate.map[areaId], gamestates, links, player_groups)
+                +areaCard(areaId, gamestate.map[areaId], gamestates, links, groups)
                 - areaId++;
 
     if gamestate.links.length
@@ -54,17 +54,36 @@ block content
         .row.my-2
             .col
                 h4.my-2 Transitions From #{gamestate.name}
+                    if checkPermission('creator')
+                        a.btn.btn-outline-success.btn-sm.mx-2(
+                            href=`/transition/new?from_state_id=${gamestate.id}`
+                            role="button"
+                            data-toggle="tooltip"
+                            title=`New Transition from<br>${gamestate.name}`
+                            data-html="true"
+                        )
+                            span(class="fa fa-plus")
+
                 .row.row-cols-1.row-cols-md-2.row-cols-lg-3
                     for transition in gamestate.transitions.from
-                        +transition(transition, gamestates, player_groups)
+                        +transition(transition, gamestates, groups, gamestate)
 
     if gamestate.transitions.to.length
         .row.my-2
             .col
                 h4.my-2 Transitions To #{gamestate.name}
+                    if checkPermission('creator')
+                        a.btn.btn-outline-success.btn-sm.mx-2(
+                            href=`/transition/new?to_state_id=${gamestate.id}`
+                            role="button"
+                            data-toggle="tooltip"
+                            title=`New Transition to<br>${gamestate.name}`
+                            data-html="true"
+                        )
+                            span(class="fa fa-plus")
                 .row.row-cols-1.row-cols-md-2.row-cols-lg-3
                     for transition in gamestate.transitions.to
-                        +transition(transition, gamestates, player_groups)
+                        +transition(transition, gamestates, groups, gamestate)
 
 
 

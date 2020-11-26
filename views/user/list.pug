@@ -9,11 +9,11 @@ block content
             thead
                 tr
                     th
-                    th Name
+                    th(data-order='asc') Name
                     th Email
                     th Type
                     th Run
-                    th Group
+                    th Group(s)
                     th Character
                     th
 
@@ -26,7 +26,7 @@ block content
                         td= user.email
                         td= capitalize(user.type)
                         td= user.type === 'player'?runs[user.player.run_id].name:''
-                        td= user.type === 'player'?user.player.group_id?player_groups[user.player.group_id].name:'Ungrouped':''
+                        td= user.type === 'player'?_.pluck(user.player.groups, 'name').join(', '):'Ungrouped'
                         td= user.type === 'player'?user.player.character:''
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(

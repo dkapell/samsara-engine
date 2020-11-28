@@ -1,5 +1,6 @@
 {
     "app": {
+        "name": "SAMSARA_NAME",
         "dbURL": "DATABASE_URL",
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",

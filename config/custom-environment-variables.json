@@ -17,9 +17,7 @@
             "tokenURL": "INTERCODE_TOKEN_URL",
             "clientID": "INTERCODE_OAUTH_CLIENT_ID",
             "clientSecret": "INTERCODE_OAUTH_CLIENT_SECRET",
-            "callbackURL": "INTERCODE_CALLBACK_URL",
-            "graphqlURL": "INTERCODE_GRAPHQL_URL",
-            "eventName": "INTERCODE_EVENT_NAME"
+            "callbackURL": "INTERCODE_CALLBACK_URL"
         }
     },
     "aws": {

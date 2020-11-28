@@ -20,10 +20,8 @@
             "clientID": null,
             "clientSecret": null,
             "callbackURL": "http://localhost:3000/auth/intercode/callback",
-            "scope": "public openid read_profile",
-            "passReqToCallback": true,
-            "graphqlURL": "graphqlURL",
-            "eventName": "Intercode Event"
+            "scope": "public openid",
+            "passReqToCallback": true
         }
     },
     "aws": {

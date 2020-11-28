@@ -11,13 +11,13 @@ const config = require('config');
 const flash = require('express-flash');
 const redis = require('redis');
 const moment = require('moment');
+const jwt_decode = require('jwt-decode');
 const methodOverride = require('method-override');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const OAuth2Strategy = require('passport-oauth2').Strategy;
 
 const models = require('./lib/models');
 const permission = require('./lib/permission');
-const Intercode = require('./lib/intercode');
 
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
@@ -137,7 +137,7 @@ if (config.get('auth.intercode.clientID')){
         async function(req, accessToken, refreshToken, profile, cb) {
             try{
                 const user = await models.user.findOrCreate({
-                    name: profile.name_without_nickname,
+                    name: profile.name,
                     intercode_id: profile.id,
                     email: profile.email
                 });
@@ -149,11 +149,8 @@ if (config.get('auth.intercode.clientID')){
         });
 
     intercodeStrategy.userProfile = function (token, cb) {
-        var intercode = new Intercode(token);
-        intercode.getProfile(function(err, data){
-            if (err) { return cb(err); }
-            cb(null, data.myProfile);
-        });
+        const decoded = jwt_decode(token);
+        return cb(null, decoded.user);
     };
 
     passport.use('intercode', intercodeStrategy);

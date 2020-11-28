@@ -8,6 +8,9 @@ const router = express.Router();
 
 
 router.get('/login', function(req, res, next){
+    if (req.user){
+        return res.redirect('/');
+    }
     if (!config.get('auth.intercode.clientID')){
         return res.redirect('/auth/google');
     }

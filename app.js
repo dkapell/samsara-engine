@@ -13,9 +13,11 @@ const redis = require('redis');
 const moment = require('moment');
 const methodOverride = require('method-override');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const OAuth2Strategy = require('passport-oauth2').Strategy;
 
 const models = require('./lib/models');
 const permission = require('./lib/permission');
+const Intercode = require('./lib/intercode');
 
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
@@ -110,10 +112,11 @@ passport.deserializeUser(async function(id, cb) {
     }
 });
 
+const googleConfig = config.get('auth.google');
 passport.use(new GoogleStrategy({
-    clientID: config.get('auth.clientID'),
-    clientSecret: config.get('auth.clientSecret'),
-    callbackURL: config.get('auth.callbackURL')
+    clientID: config.get('auth.google.clientID'),
+    clientSecret: config.get('auth.google.clientSecret'),
+    callbackURL: config.get('auth.google.callbackURL')
 },
 async function(accessToken, refreshToken, profile, cb) {
     try{
@@ -128,6 +131,33 @@ async function(accessToken, refreshToken, profile, cb) {
     }
 })
 );
+
+if (config.get('auth.intercode.clientID')){
+    const intercodeStrategy =  new OAuth2Strategy( config.get('auth.intercode'),
+        async function(req, accessToken, refreshToken, profile, cb) {
+            try{
+                const user = await models.user.findOrCreate({
+                    name: profile.name_without_nickname,
+                    intercode_id: profile.id,
+                    email: profile.email
+                });
+                req.session.accessToken = accessToken;
+                cb(null, user);
+            } catch (err) {
+                cb(err);
+            }
+        });
+
+    intercodeStrategy.userProfile = function (token, cb) {
+        var intercode = new Intercode(token);
+        intercode.getProfile(function(err, data){
+            if (err) { return cb(err); }
+            cb(null, data.myProfile);
+        });
+    };
+
+    passport.use('intercode', intercodeStrategy);
+}
 
 
 // Set common helpers for the view

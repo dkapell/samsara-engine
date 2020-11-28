@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+    .col-lg-6.offset-lg-3
+        .card
+            .card-header
+                h5 Log in to #{config.get('app.name')}
+            .card-body.p-4
+                p.card-text This site uses your email address to identify you. You can use any offered authentication method regardless of what you have used previously. as long as your email remains the same.  If your email changes, please contact the GMs of #{config.get('app.name')}
+                a.btn.btn-block.btn-lg.btn-primary(href="/auth/google") Log in with your Google Account
+                    if config.get('auth.intercode.clientID')
+                        a.btn.btn-block.btn-lg.btn-primary.mt-3(href="/auth/intercode") Log in with your #{config.get('auth.intercode.eventName')} Account
+

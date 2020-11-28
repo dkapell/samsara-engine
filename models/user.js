@@ -8,7 +8,7 @@ const models = {
     player: require('./player')
 };
 
-const tableFields = ['name', 'email', 'google_id', 'type'];
+const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
 
 
 exports.get = async function(id){
@@ -24,19 +24,29 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByEmail = async function(text){
-    const query = 'select * from users where email = $1';
-    const result = await database.query(query, [text]);
-    if (result.rows.length){
-        return result.rows[0];
+exports.find = async function(conditions){
+    const queryParts = [];
+    const queryData = [];
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
     }
-    return;
+    let query = 'select * from users';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    query += ' order by name';
+    const result = await database.query(query, queryData);
+    return result.rows;
+
 };
-exports.getByGoogleId = async function(text){
-    const query = 'select * from users where google_id = $1';
-    const result = await database.query(query, [text]);
-    if (result.rows.length){
-        return result.rows[0];
+
+exports.findOne = async function(conditions){
+    const results = await exports.find(conditions);
+    if (results.length){
+        return results[0];
     }
     return;
 };
@@ -98,7 +108,12 @@ exports.delete = async  function(id, cb){
 };
 
 exports.findOrCreate = async function(data, cb){
-    let user = await exports.getByGoogleId(data.google_id);
+    let user = null;
+    if (data.google_id){
+        user = await exports.findOne({google_id: data.google_id});
+    } else if (data.intercode_id){
+        user = await exports.findOne({intercode_id: data.intercode_id});
+    }
     if (user) {
         for (const field in data){
             if (_.has(user, field)){
@@ -109,7 +124,7 @@ exports.findOrCreate = async function(data, cb){
         return await exports.get(user.id);
 
     } else {
-        user = await exports.getByEmail(data.email);
+        user = await exports.findOne({email: data.email});
 
         if (user) {
             for (const field in data){

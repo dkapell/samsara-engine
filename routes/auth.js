@@ -6,6 +6,15 @@ const permission = require('../lib/permission');
 
 const router = express.Router();
 
+
+router.get('/login', function(req, res, next){
+    if (!config.get('auth.intercode.clientID')){
+        return res.redirect('/auth/google');
+    }
+    res.render('auth/login');
+});
+
+
 // GET /auth/google
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  The first step in Google authentication will involve
@@ -13,6 +22,23 @@ const router = express.Router();
 //   will redirect the user back to this application at /auth/google/callback
 router.get('/google',
     passport.authenticate('google', { scope: [ 'email', 'profile' ]  }));
+
+if (config.get('auth.intercode.clientID')){
+    router.get('/intercode', passport.authenticate('intercode'));
+
+    router.get('/intercode/callback',
+        passport.authenticate('intercode', { failureRedirect: '/login' }),
+        function(req, res) {
+            // Successful authentication, redirect home.
+            if (_.has(req.session, 'backto')){
+                const backto = req.session.backto;
+                delete req.session.backto;
+                res.redirect(backto);
+            } else {
+                res.redirect('/');
+            }
+        });
+}
 
 // GET /auth/google/callback
 //   Use passport.authenticate() as route middleware to authenticate the

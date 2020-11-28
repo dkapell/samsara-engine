@@ -9,9 +9,22 @@
         "secureOnly": false
     },
     "auth": {
-        "clientID": "clientID",
-        "clientSecret": "clientSecret",
-        "callbackURL": "http://localhost:3000/auth/google/callback"
+        "google": {
+            "clientID": "clientID",
+            "clientSecret": "clientSecret",
+            "callbackURL": "http://localhost:3000/auth/google/callback"
+        },
+        "intercode":{
+            "authorizationURL": "authorizationURL",
+            "tokenURL": "tokenURL",
+            "clientID": null,
+            "clientSecret": null,
+            "callbackURL": "http://localhost:3000/auth/intercode/callback",
+            "scope": "public openid read_profile",
+            "passReqToCallback": true,
+            "graphqlURL": "graphqlURL",
+            "eventName": "Intercode Event"
+        }
     },
     "aws": {
         "accessKeyId": "accessKeyId",

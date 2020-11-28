@@ -7,9 +7,20 @@
         "secureOnly": "SECURE_ONLY"
     },
     "auth": {
-        "clientID": "GOOGLE_CLIENT_ID",
-        "clientSecret": "GOOGLE_CLIENT_SECRET",
-        "callbackURL": "CALLBACK_URL"
+        "google": {
+            "clientID": "GOOGLE_CLIENT_ID",
+            "clientSecret": "GOOGLE_CLIENT_SECRET",
+            "callbackURL": "CALLBACK_URL"
+        },
+        "intercode":{
+            "authorizationURL": "INTERCODE_URL",
+            "tokenURL": "INTERCODE_TOKEN_URL",
+            "clientID": "INTERCODE_OAUTH_CLIENT_ID",
+            "clientSecret": "INTERCODE_OAUTH_CLIENT_SECRET",
+            "callbackURL": "INTERCODE_CALLBACK_URL",
+            "graphqlURL": "INTERCODE_GRAPHQL_URL",
+            "eventName": "INTERCODE_EVENT_NAME"
+        }
     },
     "aws": {
         "accessKeyId": "AWS_ACCESSKEY",

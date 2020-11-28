@@ -11,6 +11,7 @@ create table users (
     name        varchar(80),
     email       varchar(100),
     google_id   varchar(500),
+    intercode_id varchar(500),
     type        user_type default none,
     PRIMARY KEY (id)
 );

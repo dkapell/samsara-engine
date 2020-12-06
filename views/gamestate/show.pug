@@ -1,6 +1,8 @@
 extends ../layout
 
 include ../partials/gamestate
+include ../partials/imagemap
+
 
 block content
     .row.my-3
@@ -33,7 +35,7 @@ block content
     h4.my-2 Player View
     .row.my-2
         .col-md-8.border-primary.border.rounded(style='min-height:200px;')
-            +gamestate(gamestate, links)
+            +gamestate(gamestate)
         .col-md-4.d-none.d-md-block
             - let areaId = 0;
             while areaId < gamestate.map.length

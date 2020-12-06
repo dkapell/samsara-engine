@@ -1,51 +1,82 @@
+/* global pageTemplate */
 let currentGameState = 0;
-let refreshInterval = null;
 let textTimeout = null;
-let defaulRefreshTime = 1000;
-let maxRefreshTime = 30000;
-let refreshTime = defaulRefreshTime;
+let ws = null;
+const reconnectInterval = 5000;
+let reconnectTimeout = null;
+
 $(function(){
     $('#game-text').hide();
-    fetchGamePage();
+    openWebSocket();
 });
 
-async function fetchGamePage(){
+function openWebSocket(){
+    var HOST = location.origin.replace(/^http/, 'ws');
+    ws = new WebSocket(HOST);
+    clearTimeout(reconnectTimeout);
 
-    try{
-        const response = await fetch('/game');
-        if(!response.ok){
-            throw new Error ('Got a bad response');
-        }
-        const siteRefreshTime = response.headers.get('x-game-refresh');
-        if (siteRefreshTime){
-            refreshTime = siteRefreshTime;
-        } else {
-            refreshTime = defaulRefreshTime;
-        }
-        const gameState = response.headers.get('x-game-state');
-        if (gameState !== currentGameState){
-            currentGameState = gameState;
-            const content = await response.text();
-            $('#game-content').html(content);
-            $('#code-feedback').hide();
-            $('#code-form').on('submit', submitCodeForm);
-            $('#code-entry').on('change keyup copy paste cut', function() {
-                if (!this.value) {
-                    $(this).removeClass('is-invalid');
+    ws.onmessage = async function (event) {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        switch(data.action){
+            case 'show default': await renderDefault(); break;
+            case 'show page': renderPage(data.gamestate); break;
+            case 'load':  window.open(data.url, '_blank'); break;
+            case 'display': showText(data); break;
+            case 'code error':
+                $('#code-entry').addClass('is-invalid');
+                if (!data.retry){
+                    $('#code-entry').val('');
                 }
-            });
-            prepImageMap();
-
-        }
-    } catch (e){
-        console.log(e);
-        refreshTime = refreshTime * 2;
-        if (refreshTime > maxRefreshTime){
-            refreshTime = maxRefreshTime;
+                $('#code-feedback').text(data.error);
+                $('#code-feedback').show();
+                break;
         }
 
+        if (data.codeAccept){
+            $('#code-entry').removeClass('is-invalid');
+            $('#code-entry').val('');
+        }
+    };
+
+    ws.onclose = function(){
+        ws = null;
+        reconnectTimeout = setTimeout(openWebSocket, 5000);
+    };
+}
+
+async function renderDefault(){
+    const response = await fetch('/game');
+    if(!response.ok){
+        throw new Error ('Got a bad response');
     }
-    refreshInterval = setTimeout(fetchGamePage, refreshTime);
+    const content = await response.text();
+    $('#game-content').html(content);
+}
+
+function renderPage(gamestate){
+    if (currentGameState !== gamestate.id){
+        currentGameState = gamestate.id;
+        const rendered = pageTemplate({gamestate: gamestate});
+        $('#game-content').html(rendered);
+        $('#code-feedback').hide();
+        $('#code-form').on('submit', submitCodeForm);
+        $('#code-entry').on('change keyup copy paste cut', function() {
+            if (!this.value) {
+                $(this).removeClass('is-invalid');
+            }
+        });
+        prepImageMap();
+    }
+}
+
+function showText(data){
+    $('#game-text').html(data.content);
+    $('#game-text').show();
+    clearTimeout(textTimeout);
+    if (data.duration){
+        textTimeout = setTimeout(hideText, data.duration * 1000);
+    }
 }
 
 function prepImageMap(){
@@ -58,70 +89,36 @@ function prepImageMap(){
         fillColor: '000000',
         fillOpacity: 0.2,
     });
-    $('area').on('click', clickLink);
-    $('area').on('mouseover', showLink);
-    $('area').on('mouseout', clearLink);
+    $('area').on('click', clickArea);
+    $('area').on('mouseover', showAreaName);
+    $('area').on('mouseout', clearAreaName);
 }
 
-async function submitCodeForm(e){
+function submitCodeForm(e){
     e.preventDefault();
     $('#code-feedback').hide();
     const code = $('#code-entry').val();
-    checkLink(code);
+    ws.send(JSON.stringify({
+        action:'code',
+        code: code
+    }));
 }
 
-async function clickLink(e){
+function clickArea(e){
     e.preventDefault();
     e.stopPropagation();
     const areaId = ($(this).attr('data-area'));
-    const response = await fetch('/game/area/'+ areaId);
-    const data = await response.json();
-    if (!data.success){
-        return;
-    }
-    performActions(data.actions);
+    ws.send(JSON.stringify({
+        action:'area',
+        areaId: areaId
+    }));
 }
 
-function performActions(actions){
-    for (const action of actions){
-        if (action.action === 'load'){
-            window.open(action.url, '_blank');
-        } else if (action.action === 'reload'){
-            fetchGamePage();
-        } else if (action.action === 'display'){
-            $('#game-text').html(action.content);
-            $('#game-text').show();
-            clearTimeout(textTimeout);
-            if (action.duration){
-                textTimeout = setTimeout(hideText, action.duration * 1000);
-            }
-        }
-    }
-}
-
-async function checkLink(code){
-    const response = await fetch('/game/code/'+ code);
-    const data = await response.json();
-    if (!data.success){
-        $('#code-entry').addClass('is-invalid');
-        if (!data.retry){
-            console.log('clear');
-            $('#code-entry').val('');
-        }
-        $('#code-feedback').text(data.error);
-        $('#code-feedback').show();
-        return;
-    }
-    $('#code-entry').removeClass('is-invalid');
-    $('#code-entry').val('');
-    performActions(data.actions);
-}
-
-function showLink(e){
+function showAreaName(e){
     $('#link-name').text($(this).attr('data-name'));
 }
 
-function clearLink(e){
+function clearAreaName(e){
     $('#link-name').html('&nbsp;');
 }
 

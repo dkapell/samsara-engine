@@ -1,12 +1,33 @@
-include ./imagemap
-
-mixin gamestate(gamestate, links)
+mixin gamestate(gamestate)
     .lead=gamestate.description
     if gamestate.image_id
         .row.my-2
             .col.text-center
-                +imagemap(gamestate, links)
-    if gamestate.links.length
+
+                .row.my-1
+                    .col
+                        .lead.text-center#link-name &nbsp;
+
+                .row.my-1
+                    .col.h-50
+                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
+                        map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
+                            - let areaId = 0;
+                            while areaId < gamestate.map.length
+                                - let area = gamestate.map[areaId]
+                                area(
+                                    id=`area-${areaId}`,
+                                    shape=area.shape,
+                                    coords=area.coords,
+                                    data-name=area.name,
+                                    data-gamestate-id=gamestate.id
+                                    data-area=areaId
+                                    href='#',
+                                    target="_self"
+                                )
+                                - areaId++;
+
+    if gamestate.showCode || (gamestate.links && gamestate.links.length)
         .row.my-3
             .col
                 form#code-form

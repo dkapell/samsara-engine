@@ -1,2 +1,3 @@
 public/javascripts/vendor/*.js
 public/javascripts/bundles/*.js
+public/javascripts/templates/*.js

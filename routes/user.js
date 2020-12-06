@@ -168,6 +168,7 @@ async function update(req, res, next){
                     groups: user.player.groups
                 });
             }
+            await req.app.locals.gameServer.sendGameState(id);
         }
         req.flash('success', 'Updated User ' + user.name);
         res.redirect('/user');

@@ -21,6 +21,8 @@ mixin players(players)
                             td= runs[user.player.run_id].name
                         td= user.player.groups.length?_.pluck(user.player.groups, 'name').join(', '):'Ungrouped'
                         td= user.name
+                            if (user.connections)
+                                .badge.badge-success.ml-2 Connected
                         td= user.player.character
                         td= user.email
                         td

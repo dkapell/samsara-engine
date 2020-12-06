@@ -62,7 +62,10 @@ async function advance(req, res, next){
         if (!user){
             throw new Error ('User not found');
         }
-        await gameEngine.nextState(user.id);
+        const changed = await gameEngine.nextState(user.id);
+        if (changed){
+            await req.app.locals.gameServer.sendGameState(user.id);
+        }
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

@@ -44,3 +44,4 @@ output
 doc/scratchspace
 
 public/javascripts/bundles
+public/javascripts/templates

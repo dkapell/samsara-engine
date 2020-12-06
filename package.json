@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "bundle": "./node_modules/browserify/bin/cmd.js public/javascripts/graph.js -o public/javascripts/bundles/graph.js",
+    "bundle": "bash scripts/compile.sh",
     "postinstall": "npm run bundle"
   },
   "dependencies": {
     "async": "^3.2.0",
     "aws-sdk": "^2.788.0",
     "browserify": "^17.0.0",
+    "bufferutil": "^4.0.2",
     "config": "^3.3.2",
     "connect-redis": "^5.0.0",
     "cookie-parser": "~1.4.4",
@@ -32,9 +33,13 @@
     "pg": "^8.3.3",
     "pluralize": "^8.0.0",
     "pug": "^3.0.0",
+    "pug-cli": "^1.0.0-alpha6",
     "raphael": "^2.3.0",
     "redis": "^3.0.2",
     "underscore": "^1.11.0",
-    "validator": "^13.1.17"
+    "utf-8-validate": "^5.0.3",
+    "uuid": "^8.3.1",
+    "validator": "^13.1.17",
+    "ws": "^7.4.1"
   }
 }

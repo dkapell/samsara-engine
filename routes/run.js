@@ -42,9 +42,11 @@ async function show(req, res, next){
                     return user;
                 }
                 user.player = user.gamestate.player;
+                user.connections = _.keys(req.app.locals.gameServer.clients[player.user_id]).length;
                 return user;
             })
         );
+        res.locals.siteSection='admin';
         res.locals.groups = await req.models.group.list();
         res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
@@ -171,7 +173,8 @@ async function resetRun(req, res, next){
         const initialState = await req.models.gamestate.getStart();
         await Promise.all(
             players.map( async player => {
-                return gameEngine.changeState(player.user_id, initialState.id, 0);
+                await gameEngine.changeState(player.user_id, initialState.id, 0);
+                return req.app.locals.gameServer.sendGameState(player.user_id);
             })
         );
         res.json({success:true});
@@ -192,7 +195,8 @@ async function updateAllPlayers(req, res, next){
         if (!state) { throw new Error('State not found'); }
         await Promise.all(
             players.map( async player => {
-                return gameEngine.changeState(player.user_id, state.id, 0);
+                await gameEngine.changeState(player.user_id, state.id, 0);
+                return req.app.locals.gameServer.sendGameState(player.user_id);
             })
         );
         res.json({success:true});
@@ -211,7 +215,11 @@ async function advanceAll(req, res, next){
         const players = await req.models.player.listByRunId(req.params.id);
         await Promise.all(
             players.map( async player => {
-                return gameEngine.nextState(player.user_id);
+                const changed = await gameEngine.nextState(player.user_id);
+                if (changed){
+                    await req.app.locals.gameServer.sendGameState(player.user_id);
+                }
+                return;
             })
         );
         res.json({success:true});

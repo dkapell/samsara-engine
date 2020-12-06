@@ -19,6 +19,8 @@ const OAuth2Strategy = require('passport-oauth2').Strategy;
 const models = require('./lib/models');
 const permission = require('./lib/permission');
 
+const app = express();
+
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/user');
 const authRouter = require('./routes/auth');
@@ -31,8 +33,6 @@ const stubRouter = require('./routes/linkStub');
 const gamestateRouter = require('./routes/gamestate');
 const transitionRouter = require('./routes/transition');
 const gameRouter = require('./routes/game');
-
-const app = express();
 
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
@@ -86,7 +86,9 @@ if (config.get('app.sessionType') === 'redis'){
     sessionConfig.resave = true;
 }
 
-app.use(session(sessionConfig));
+const sessionParser = session(sessionConfig);
+app.locals.sessionParser = sessionParser;
+app.use(sessionParser);
 app.use(flash());
 
 app.use(function(req, res, next){
@@ -170,7 +172,6 @@ app.use(function(req, res, next){
     };
     next();
 });
-
 
 app.use('/', indexRouter);
 app.use('/user', userRouter);

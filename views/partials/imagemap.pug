@@ -1,27 +1,3 @@
-mixin imagemap(imagemap, links)
-    .row.my-1
-        .col
-            .lead.text-center#link-name &nbsp;
-
-    .row.my-1
-        .col.h-50
-            image.map.mx-auto.img-fluid(src=imagemap.image.url, usemap='#imagemap-' + imagemap.id, style='max-height:60vh')
-            map(name= 'imagemap-' + imagemap.id, id=`imagemap-${imagemap.id}` )
-                - let areaId = 0;
-                while areaId < imagemap.map.length
-                    - let area = imagemap.map[areaId]
-                    area(
-                        id=`area-${areaId}`,
-                        shape=area.shape,
-                        coords=area.coords,
-                        data-name=area.name,
-                        data-imagemap-id=imagemap.id
-                        data-area=areaId
-                        href='#',
-                        target="_self"
-                    )
-                    - areaId++;
-
 mixin area(area, id, links)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
@@ -67,7 +43,7 @@ mixin area(area, id, links)
 
         if _.isArray(area.actions)
             - let actionId = 0;
-            for action of area.actions
+            for action in area.actions
                 +action(action, id, actionId, links)
                 - actionId++
 

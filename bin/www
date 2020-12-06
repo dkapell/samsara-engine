@@ -5,6 +5,7 @@
  */
 
 var app = require('../app');
+var GameServer = require('../lib/GameServer')
 var debug = require('debug')('ritual-larp:server');
 var http = require('http');
 
@@ -22,12 +23,21 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
+ * Create Websockets Server.
+ */
+
+var gameServer = new GameServer(server, app);
+app.locals.gameServer = gameServer;
+
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
 
 /**
  * Normalize a port into a number, string, or false.

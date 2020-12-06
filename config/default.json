@@ -34,5 +34,8 @@
         "waitingRefreshTime": 5000,
         "nonplayerRefreshTime": 5000,
         "linkName": "Room"
+    },
+    "webSocket": {
+        "pingInterval": 30000
     }
 }

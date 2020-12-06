@@ -25,6 +25,9 @@
         "accessKeyId": "AWS_ACCESSKEY",
         "secretKey": "AWS_SECRET",
         "imageBucket": "IMAGE_BUCKET"
+    },
+    "webSocket": {
+        "pingInterval": "PING_INTERVAL"
     }
 
 }

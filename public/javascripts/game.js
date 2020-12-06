@@ -17,7 +17,6 @@ function openWebSocket(){
 
     ws.onmessage = async function (event) {
         const data = JSON.parse(event.data);
-        console.log(data);
         switch(data.action){
             case 'show default': await renderDefault(); break;
             case 'show page': renderPage(data.gamestate); break;

@@ -34,17 +34,19 @@ block content
             a.btn.btn-outline-info.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
                     i.fas.fa-arrow-right.pr-1
                     | Advance All
+            if (_.pluck(users, 'connections').reduce((o, e) => {o += e; return o }, 0))
+                a.btn.btn-outline-info.ml-2.mt-2(
+                    role="button"
+                    data-toggle="modal"
+                    data-target="#toastModal"
+                    data-type="run"
+                    data-run=run.id
+                )
+                    i.fas.fa-comment.pr-1
+                    | Message All
+                    .badge.badge-light.ml-1=_.pluck(users, 'connections').filter(e => {return e;}).length
+                    .sr-only Connected Users
 
-            a.btn.btn-outline-info.ml-2.mt-2(
-                role="button"
-                data-toggle="modal"
-                data-target="#toastModal"
-                data-type="run"
-                data-run=run.id
-
-            )
-                i.fas.fa-comment.pr-1
-                | Message All
 
 
     h3.my-2 Players

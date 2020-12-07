@@ -27,7 +27,8 @@
         "imageBucket": "IMAGE_BUCKET"
     },
     "webSocket": {
-        "pingInterval": "PING_INTERVAL"
+        "pingInterval": "PING_INTERVAL",
+        "debug": "WEBSOCKET_DEBUG"
     }
 
 }

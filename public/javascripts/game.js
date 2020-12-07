@@ -13,6 +13,7 @@ $(function(){
 function openWebSocket(){
     var HOST = location.origin.replace(/^http/, 'ws');
     ws = new WebSocket(HOST);
+
     clearTimeout(reconnectTimeout);
 
     ws.onmessage = async function (event) {
@@ -42,15 +43,26 @@ function openWebSocket(){
         ws = null;
         reconnectTimeout = setTimeout(openWebSocket, 5000);
     };
+
 }
 
 async function renderDefault(){
-    const response = await fetch('/game');
-    if(!response.ok){
-        throw new Error ('Got a bad response');
+    try{
+        const response = await fetch('/game');
+        if(!response.ok){
+            throw new Error ('Got a bad response');
+        }
+        const content = await response.text();
+        $('#game-content').html(content);
+    } catch (err){
+        const $err = $('<div>')
+            .addClass('alert')
+            .addClass('alert-danger')
+            .text('Could not connect to game, please try again in a short while.  If this problem persists, please contact the GMs');
+
+
+        $('#game-content').html($err);
     }
-    const content = await response.text();
-    $('#game-content').html(content);
 }
 
 function renderPage(gamestate){

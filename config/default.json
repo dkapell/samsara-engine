@@ -33,6 +33,7 @@
         "linkName": "Room"
     },
     "webSocket": {
-        "pingInterval": 30000
+        "pingInterval": 30000,
+        "debug": false
     }
 }

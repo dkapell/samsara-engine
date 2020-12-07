@@ -68,6 +68,7 @@ router.get('/logout',
         req.logout();
         delete req.session.accessToken;
         delete req.session.gm_mode;
+        delete req.session.assumed_user;
         res.redirect('/');
     });
 

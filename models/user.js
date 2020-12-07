@@ -5,7 +5,9 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
-    player: require('./player')
+    player: require('./player'),
+    run: require('./run'),
+    gamestate: require('./gamestate')
 };
 
 const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
@@ -57,7 +59,7 @@ exports.list = async function(){
     return result.rows;
 };
 
-exports.create = async function(data, cb){
+exports.create = async function(data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -82,7 +84,7 @@ exports.create = async function(data, cb){
     return result.rows[0].id;
 };
 
-exports.update = async function(id, data, cb){
+exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -102,12 +104,12 @@ exports.update = async function(id, data, cb){
     await database.query(query, queryData);
 };
 
-exports.delete = async  function(id, cb){
+exports.delete = async  function(id){
     const query = 'delete from users where id = $1';
     await database.query(query, [id]);
 };
 
-exports.findOrCreate = async function(data, cb){
+exports.findOrCreate = async function(data){
     let user = null;
     if (data.google_id){
         user = await exports.findOne({google_id: data.google_id});
@@ -137,8 +139,21 @@ exports.findOrCreate = async function(data, cb){
 
         } else {
             const id = await exports.create(data);
+            if (data.type === 'player'){
+                const run = await models.run.getCurrent();
+                const gamestate = await models.gamestate.getStart();
+                await models.player.create({
+                    user_id:id,
+                    run_id: run.id,
+                    gamestate_id: gamestate.id,
+                    prev_gamestate_id: null,
+                    character: null,
+                    groups: []
 
-            return await exports.get(id, cb);
+                });
+            }
+
+            return await exports.get(id);
         }
     }
 };

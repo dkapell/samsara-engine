@@ -30,7 +30,8 @@
         "imageBucket": "imageBucket"
     },
     "game": {
-        "linkName": "Room"
+        "linkName": "Room",
+        "defaultToPlayer": false
     },
     "webSocket": {
         "pingInterval": 30000,

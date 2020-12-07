@@ -125,8 +125,10 @@ async function(accessToken, refreshToken, profile, cb) {
         const user = await models.user.findOrCreate({
             name: profile.displayName,
             google_id: profile.id,
-            email: profile.emails[0].value
+            email: profile.emails[0].value,
+            type: config.get('game.defaultToPlayer')?'player':'none'
         });
+
         cb(null, user);
     } catch (err) {
         cb(err);
@@ -141,7 +143,8 @@ if (config.get('auth.intercode.clientID')){
                 const user = await models.user.findOrCreate({
                     name: profile.name,
                     intercode_id: profile.id,
-                    email: profile.email
+                    email: profile.email,
+                    type: config.get('game.defaultToPlayer')?'player':'none'
                 });
                 req.session.accessToken = accessToken;
                 cb(null, user);

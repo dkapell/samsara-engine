@@ -21,6 +21,9 @@
             "callbackURL": "INTERCODE_CALLBACK_URL"
         }
     },
+    "game": {
+        "defaultToPlayer": "DEFAULT_TO_PLAYER"
+    },
     "aws": {
         "accessKeyId": "AWS_ACCESSKEY",
         "secretKey": "AWS_SECRET",

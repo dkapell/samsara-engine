@@ -1,0 +1,7 @@
+.toast(role="alert" aria-live="assertive" aria-atomic="true", id=`toast-${id}`)
+    .toast-header
+        i.fas.fa-exclamation-circle.mr-2.text-info
+        strong.mr-auto= from
+        button.ml-2.mb-1.close(type="button" data-dismiss="toast" aria-label="Close")
+            span(aria-hidden="true") &times;
+    .toast-body= message

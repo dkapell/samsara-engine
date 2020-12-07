@@ -40,12 +40,28 @@ mixin players(players)
                             else
                                 i Unknown
                         td.text-right
+                            if (user.connections)
+                                a.btn.btn-outline-info.btn-sm.mx-1.player-message-btn(
+                                    role="button"
+                                    data-toggle="modal"
+                                    data-target="#toastModal"
+                                    data-type="user"
+                                    data-user=user.id
+                                    data-name=user.name
+                                    title="Message User"
+                                )
+                                    i.fas.fa-comment
+
                             a.btn.btn-outline-info.mr-1.btn-sm.player-advance-btn(
                                 role="button",
                                 url=`/player/${user.id}/advance`,
                                 data-csrf=csrfToken,
                                 data-back=`/run/${user.player.run_id}`
-                            ) Advance
+                                data-toggle="tooltip"
+                                title="Advance User State"
+                            )
+                                i.fas.fa-arrow-right
+
                             a.btn.btn-success.mr-1.btn-sm.player-advance-btn-confirm(
                                 role="button",
                                 url=`/player/${user.id}/advance`,
@@ -55,4 +71,31 @@ mixin players(players)
                                 o.fa.fa-check
                             a.btn.btn-danger.mr-1.btn-sm.player-advance-btn-cancel(role="button")
                                 o.fa.fa-times
-                            a.btn.btn-outline-warning.btn-sm(role=button href=`/player/${user.id}/assume`) Assume
+                            a.btn.btn-outline-warning.btn-sm(
+                                role="button"
+                                href=`/player/${user.id}/assume`
+                                data-toggle="tooltip"
+                                title="Assume User"
+                                )
+                                i.fas.fa-user-secret
+
+    .modal.fade#toastModal(role="dialog" tabindex="-1" aria-labelledby="toastModalLabel" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title#toastModalLabel Send Message to Player
+                    button.close#dismissLoginModal(type="button", data-dismiss="modal" area-label="Close")
+                        span(aria-hidden="true") &times;
+                .modal-body
+                    .form
+                        .form-group
+                            label.col-form-label(for="toastText") Message:
+                            textarea.form-control#toastText
+                        .form-group
+                            .custom-control.custom-switch
+                                input.custom-control-input#toastAutohide(type="checkbox", checked=true)
+                                label.custom-control-label(for="toastAutohide") Autohide after 30 seconds
+                .modal-footer
+                    button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+                    button.btn.btn-primary#toastSend(type="button",data-csrf=csrfToken ) Send Message
+

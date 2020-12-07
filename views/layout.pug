@@ -120,6 +120,10 @@ html(lang="en")
                         - else
                             li.nav-item
                                 a.nav-link(href='#' data-toggle="modal" data-target="#loginModal") Login
+        .container-fluid
+            .float-right(aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px; z-index:9999")
+                #toastHolder(style="position: absolute; top: 0; right: 0; min-width:350px")
+
         - if(breadcrumbs)
             .container(role="breadcrumbs")
                 nav(aria-label='breadcrumb')

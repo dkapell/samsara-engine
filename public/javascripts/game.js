@@ -1,4 +1,4 @@
-/* global pageTemplate */
+/* global pageTemplate toastTemplate */
 let currentGameState = 0;
 let textTimeout = null;
 let ws = null;
@@ -23,6 +23,7 @@ function openWebSocket(){
             case 'show page': renderPage(data.gamestate); break;
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display': showText(data); break;
+            case 'toast': showToast(data); break;
             case 'code error':
                 $('#code-entry').addClass('is-invalid');
                 if (!data.retry){
@@ -79,6 +80,20 @@ function renderPage(gamestate){
         });
         prepImageMap();
     }
+}
+
+function showToast(data){
+    const toast = toastTemplate(data);
+    $('#toastHolder').append(toast);
+    const options = {
+        autohide: false
+    };
+    if (data.duration){
+        options.autohide = true;
+        options.delay = data.duration;
+    }
+    $(`#toast-${data.id}`).toast(options);
+    $(`#toast-${data.id}`).toast('show');
 }
 
 function showText(data){

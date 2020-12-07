@@ -14,26 +14,37 @@ block content
 
             if checkPermission('admin')
                 a.btn.btn-outline-info.mr-2.mt-2(role="button" href='/run/' + run.id + '/edit')
-                    i.fas.fa-edit
-                    |  Edit Run
+                    i.fas.fa-edit.pr-1
+                    | Edit Run
 
                 a.btn.btn-outline-danger.mr-3.mt-2#reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
-                    i.fas.fa-sync
-                    |  Reset Run
+                    i.fas.fa-sync.pr-1
+                    | Reset Run
 
                 .input-group.mt-2.mr-2
                     .input-group-prepend.border-warning
-                        .input-group-text.border-warning Send all Players to:
-                    select.custom-select.border-warning.select2#run-update-state(data-placeholder='Pick State' style='min-width:150px')
+                        .input-group-text.border-warning Send all to:
+                    select.custom-select.border-warning.select2.input-sm#run-update-state(data-placeholder='Pick State' style='min-width:150px')
                         option
                         for gamestate in gamestates
                             option(value=gamestate.id)= gamestate.name
                     .input-group-append
                         button.btn.btn-warning#state-update-btn(type="button", url=`/run/${run.id}/stateChange`, data-csrf=csrfToken) Go
 
-            a.btn.btn-outline-info.mr-3.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
-                    i.fas.fa-arrow-right
-                    |  Advance All Players
+            a.btn.btn-outline-info.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+                    i.fas.fa-arrow-right.pr-1
+                    | Advance All
+
+            a.btn.btn-outline-info.ml-2.mt-2(
+                role="button"
+                data-toggle="modal"
+                data-target="#toastModal"
+                data-type="run"
+                data-run=run.id
+
+            )
+                i.fas.fa-comment.pr-1
+                | Message All
 
 
     h3.my-2 Players

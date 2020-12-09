@@ -117,6 +117,7 @@ exports.findOrCreate = async function(data){
         user = await exports.findOne({intercode_id: data.intercode_id});
     }
     if (user) {
+        delete data.type;
         for (const field in data){
             if (_.has(user, field)){
                 user[field] = data[field];
@@ -129,6 +130,7 @@ exports.findOrCreate = async function(data){
         user = await exports.findOne({email: data.email});
 
         if (user) {
+            delete data.type;
             for (const field in data){
                 if (_.has(user, field)){
                     user[field] = data[field];

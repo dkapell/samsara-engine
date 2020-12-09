@@ -229,20 +229,19 @@ async function advanceAll(req, res, next){
 }
 
 async function toastAll(req, res, next){
+
     try{
         const run = await req.models.run.get(req.params.id);
         if (!run){
             throw new Error ('Run not found');
         }
         const players = await req.models.player.listByRunId(req.params.id);
-        await Promise.all(
-            players.map( async player => {
-                await req.app.locals.gameServer.sendToast(req.body.message, {
-                    duration: req.body.duration,
-                    userId: player.user_id
-                });
-            })
-        );
+        for(const player of players){
+            req.app.locals.gameServer.sendToast(req.body.message, {
+                duration: req.body.duration,
+                userId: player.user_id
+            });
+        }
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

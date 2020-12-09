@@ -41,9 +41,15 @@ create table groups (
     primary key (id),
 );
 
+
 create table images (
     id  serial,
     name varchar(255) not null,
+    display_name varchar(255),
+    is_gamestate boolean default true,
+    is_popup boolean default false,
+    is_inventory boolean default false,
+    type image_type not null default 'gamestate',
     description text,
     status varchar(20) default 'new' not null,
     primary key (id)

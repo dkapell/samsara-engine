@@ -32,7 +32,7 @@ block content
                                 span.badge.badge-danger.ml-2 End
                         td
                             if gamestate.image_id
-                                = gamestate.image.name
+                                = gamestate.image.display_name?gamestate.image.display_name:gamestate.image.name
                             else
                                 i None
                         td= _.pluck(gamestate.links, 'name').join(', ')

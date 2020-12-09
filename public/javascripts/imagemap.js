@@ -49,21 +49,27 @@ $(function(){
 });
 
 function showLink(e){
-    $('#link-name').text($(this).attr('data-name'));
-    $(`#area-detail-${$(this).attr('data-area')}`).show();
+    if(!link_idLocked){
+        $('#link-name').text($(this).attr('data-name'));
+        $(`#area-detail-${$(this).attr('data-area')}`).show();
+    }
 }
 
 function clearLink(e){
     if(!link_idLocked){
         $('#link-name').html('&nbsp;');
+        $(`#area-detail-${$(this).attr('data-area')}`).hide();
     }
-    $(`#area-detail-${$(this).attr('data-area')}`).hide();
 }
 
 function toggleLock(e){
     e.preventDefault();
     e.stopPropagation();
     link_idLocked = !link_idLocked;
+    if (!link_idLocked){
+        $('.area-detail-card').hide();
+        $(`#area-detail-${$(this).attr('data-area')}`).show();
+    }
 }
 
 function removeArea(e){
@@ -156,6 +162,7 @@ function showAction($row) {
     $row.find('.action-link').hide();
     $row.find('.action-text').hide();
     $row.find('.action-transition').hide();
+    $row.find('.action-image').hide();
     switch(type){
         case 'link':
             $row.find('.action-link').show();
@@ -165,6 +172,9 @@ function showAction($row) {
             break;
         case 'transition':
             $row.find('.action-transition').show();
+            break;
+        case 'image':
+            $row.find('.action-image').show();
             break;
 
     }
@@ -224,6 +234,12 @@ function addAction(e){
         .attr('name', `gamestate[map][${areaId}][actions][new-${id}][group_id]`);
     $new.find('label [for=gamestate_map_area-new-action-new-group_id]')
         .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-group_id`);
+
+    $new.find('#gamestate_map_area-new-action-new-image_id')
+        .attr('id', `gamestate_map_area-${areaId}-action-new-${id}-image_id`)
+        .attr('name', `gamestate[map][${areaId}][actions][new-${id}][image_id]`);
+    $new.find('label [for=gamestate_map_area-new-action-new-image_id]')
+        .attr('for', `gamestate_map_area-${areaId}-action-new-${id}-image_id`);
 
     $new.find('.remove-action-btn').confirmation({
         title: 'Delete this Action'

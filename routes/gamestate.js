@@ -46,6 +46,7 @@ async function show(req, res, next){
         };
         res.locals.gamestate = gamestate;
         res.locals.gamestates = gamestates;
+        res.locals.images = await req.models.image.list();
         res.locals.groups = await req.models.group.list();
         res.locals.breadcrumbs = {
             path: [
@@ -147,7 +148,7 @@ async function create(req, res, next){
         gamestate.special = false;
     }
     if (!_.has(gamestate, 'finish')){
-        gamestate.special = false;
+        gamestate.finish = false;
     }
     if (!_.has(gamestate, 'template')){
         gamestate.template = false;
@@ -188,7 +189,7 @@ async function update(req, res, next){
         gamestate.special = false;
     }
     if (!_.has(gamestate, 'finish')){
-        gamestate.special = false;
+        gamestate.finish = false;
     }
     if (!_.has(gamestate, 'template')){
         gamestate.template = false;

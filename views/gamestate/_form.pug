@@ -15,8 +15,8 @@ include ../partials/imagemap
                         data-placeholder="Select Image, if any"
                     )
                         option(selected=!gamestate.image_id value="-1") None
-                        for image in images
-                            option(value=image.id selected=gamestate.image_id===image.id, data-url=image.url)= image.name
+                        for image in images.filter(i=>{return i.is_gamestate})
+                            option(value=image.id selected=gamestate.image_id===image.id, data-url=image.url)= image.display_name?image.display_name:image.name
     .col-md-3
         img.img-fluid#gamestate-image(src=gamestate.image_id?_.findWhere(images, {id: gamestate.image_id}).url:'')
 

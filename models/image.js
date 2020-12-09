@@ -8,13 +8,13 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'status'];
+const tableFields = ['name', 'display_name', 'description', 'status', 'is_gamestate', 'is_popup', 'is_inventory'];
 
 exports.get = async function(id){
     const query = 'select * from images where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return makeURL(result.rows[0]);
+        return postProcess(result.rows[0]);
     }
     return;
 };
@@ -22,12 +22,36 @@ exports.get = async function(id){
 exports.list = async function(){
     const query = 'select * from images order by name';
     const result = await database.query(query);
-    return result.rows.map(makeURL);
+    return result.rows.map(postProcess);
+};
+
+exports.find = async function(conditions){
+    const queryParts = [];
+    const queryData = [];
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
+    }
+    let query = 'select * from images';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    query += ' order by name';
+    const result = await database.query(query, queryData);
+    return result.rows.map(postProcess);
 };
 
 exports.create = async function(data, cb){
     if (! validate(data)){
         throw new Error('Invalid Data');
+    }
+    if (_.has(data, 'type')){
+        if(!_.isArray(data.type)){
+            data.type = [data.type];
+        }
+        data.type = data.type.sort((a,b)=>{return a.localecompare(b);});
     }
     const queryFields = [];
     const queryData = [];
@@ -54,6 +78,15 @@ exports.update = async function(id, data, cb){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
+
+    if (_.has(data, 'type')){
+        if(!_.isArray(data.type)){
+            data.type = [data.type];
+        }
+        data.type = data.type.sort((a,b)=>{return b.localeCompare(a);});
+    }
+
+
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){
@@ -84,7 +117,7 @@ function validate(data){
     return true;
 }
 
-function makeURL(image){
+function postProcess(image){
     const key = ['images', image.id, image.name].join('/');
     image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
     return image;

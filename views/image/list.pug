@@ -5,14 +5,14 @@ block content
         a.btn.btn-outline-success(href='/image/new')
             span(class="fa fa-plus")
             |  New Image
-    ul.list-unstyled.my-3
+    ul.list-unstyled.my-3.border-bottom
         for image in images
-            .media.my-1.py-2.border-bottom.border-top.border-light
+            .media.my-1.py-2.border-top.border-light
                 .col-4
                     img.mr-3.img-fluid(src=image.url)
                 .media-body.col
                     if checkPermission('creator')
-                        a.btn.btn-outline-danger.btn-sm.delete-btn.float-right(
+                        a.btn.btn-outline-danger.btn-sm.delete-btn.float-right.ml-2(
                             role="button",
                             url=`/image/${image.id}`,
                             data-back='/image'
@@ -21,10 +21,16 @@ block content
                     h5.mt-0.mb-1
                         if checkPermission('creator')
 
-                            a(href='/image/' + image.id)= image.name
+                            a(href='/image/' + image.id)= image.display_name?image.display_name:image.name
                         else
                             =image.name
                         .badge.badge-primary.ml-2=image.status
+                        if image.is_popup
+                            .badge.badge-info.float-right.mx-1 Popup
+                        if image.is_inventory
+                            .badge.badge-info.float-right.mx-1 Inventory
+                        if image.is_gamestate
+                            .badge.badge-info.float-right.mx-1 Gamestate
 
                     p= image.description
 

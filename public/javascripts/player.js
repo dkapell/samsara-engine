@@ -8,6 +8,7 @@ $(function(){
     $('.player-message-btn').tooltip();
 
     $('#toastModal').on('show.bs.modal', showToastModal);
+    $('#toastModal').on('shown.bs.modal', (e) => {$('#toastText').focus();});
     $('#toastSend').on('click', sendToast);
 });
 
@@ -63,7 +64,6 @@ function showToastModal(event){
         $('#toastSend').attr('data-run', runId);
     }
     $('#toastSend').attr('data-type', type);
-
 }
 
 async function sendToast(e){

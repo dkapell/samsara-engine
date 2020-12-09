@@ -15,8 +15,32 @@ block content
                                 input(type="hidden", name="_method",  value="PUT")
                                 input(type="hidden", name='_csrf',value=csrfToken)
                                 input(type="hidden", name='image[id]',value=image.id)
+
                                 .form-group
-                                    label.control-label(for="image_description") Description
+                                    label.control-label(for="image_display_name") Display Name
+                                    input.form-control(type="text",placeholder="Name",name="image[display_name]",value=image.display_name,id='image_display_name')
+
+
+                                fieldset.mb-2
+                                    label Image Usage
+                                    .row.mb-2
+                                        .col
+                                            .custom-control.custom-switch
+                                                input.custom-control-input#image_is_gamestate(type="checkbox", name="image[is_gamestate]", checked=image.is_gamestate)
+                                                label.custom-control-label(for="image_is_gamestate") Gamestate Image
+
+                                        .col
+                                            .custom-control.custom-switch
+                                                input.custom-control-input#image_is_inventory(type="checkbox", name="image[is_inventory]", checked=image.is_inventory)
+                                                label.custom-control-label(for="image_is_inventory") Inventory Image
+
+                                        .col
+                                            .custom-control.custom-switch
+                                                input.custom-control-input#image_is_popup(type="checkbox", name="image[is_popup]", checked=image.is_popup)
+                                                label.custom-control-label(for="image_is_popup") Pop Up Image
+
+                                .form-group
+                                    label.control-label(for="image_description") Description (Player-visible for Inventory / Popup)
                                     textarea.form-control(name="image[description]",id="image_description",rows=3) #{image.description}
 
 
@@ -27,3 +51,4 @@ block content
 append scripts
     script(src='/javascripts/validator.js')
     script(src='/javascripts/image.js')
+

@@ -60,7 +60,7 @@ mixin action(action, areaId, actionId, links)
                     data-placeholder="Type",
                 )
                     option
-                    for type in ['link', 'text', 'transition']
+                    for type in ['link', 'text', 'transition', 'image']
                         option(value=type, selected=action.type === type)= type
 
 
@@ -98,10 +98,24 @@ mixin action(action, areaId, actionId, links)
                     for gamestate in gamestates
                         option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
 
+            label.col-md-2.col-form-label.action-image(for=`gamestate_map_area-${areaId}-action-${actionId}-image_id` ) Image
+            .col-md-6.action-image
+                select.custom-select(
+                    name=`gamestate[map][${areaId}][actions][${actionId}][image_id]`,
+                    id=`gamestate_map_area-${areaId}-action-${actionId}-image_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Image",
+                )
+                    option
+                    for image in images.filter(i=>{return i.is_popup})
+                        option(value=image.id selected=action.image_id && Number(action.image_id)===image.id)= image.display_name?image.display_name:image.name
+
 
             .col.text-right
                     button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
                         i.fa.fa-trash
+
+
         .form-row.my-1.action-transition
             label.col-md-2.offset-md-3.col-form-label(
                 for=`gamestate_map_area-${areaId}-action-${actionId}-delay`
@@ -167,5 +181,9 @@ mixin areaCard(areaId, area, gamestates, links)
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else
                                 | immediately
+                        when 'image'
+                            strong.mr-1 Display Image
+                            - const image = _.findWhere(images, {id: Number(action.image_id)})
+                            i.mr-1 #{image.display_name?image.display_name:image.name}
                         default
                             | None

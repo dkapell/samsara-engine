@@ -1,4 +1,4 @@
-/* global pageTemplate toastTemplate */
+/* global pageTemplate toastTemplate popupTemplate */
 let currentGameState = 0;
 let textTimeout = null;
 let ws = null;
@@ -24,6 +24,7 @@ function openWebSocket(){
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display': showText(data); break;
             case 'toast': showToast(data); break;
+            case 'image': showPopup('image', data); break;
             case 'code error':
                 $('#code-entry').addClass('is-invalid');
                 if (!data.retry){
@@ -102,6 +103,15 @@ function showText(data){
     clearTimeout(textTimeout);
     if (data.duration){
         textTimeout = setTimeout(hideText, data.duration * 1000);
+    }
+}
+
+function showPopup(type, data){
+    const $modal = $('#popupModal');
+    if (type === 'image'){
+        $modal.find('.modal-title').text(data.name);
+        $modal.find('.modal-body').html(popupTemplate(data));
+        $modal.modal('show');
     }
 }
 

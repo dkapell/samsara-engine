@@ -6,7 +6,20 @@ block content
     .row.my-2
         .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
 
+    .modal.fade#popupModal(role="dialog" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title
+                    button.close#dismissLoginModal(type="button", data-dismiss="modal" area-label="Close")
+                        span(aria-hidden="true") &times;
+                .modal-body
+                .modal-footer
+                    button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+
+
 append scripts
     script(src='/javascripts/game.js')
     script(src='/javascripts/templates/page.js')
     script(src='/javascripts/templates/toast.js')
+    script(src='/javascripts/templates/popup.js')

@@ -192,11 +192,14 @@ async function updateAllPlayers(req, res, next){
         }
         const players = await req.models.player.listByRunId(req.params.id);
         const state = await req.models.gamestate.get(req.body.state_id);
+        let group = false;
         if (!state) { throw new Error('State not found'); }
         await Promise.all(
             players.map( async player => {
-                await gameEngine.changeState(player.user_id, state.id, 0);
-                return req.app.locals.gameServer.sendGameState(player.user_id);
+                if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
+                    await gameEngine.changeState(player.user_id, state.id, 0);
+                    return req.app.locals.gameServer.sendGameState(player.user_id);
+                }
             })
         );
         res.json({success:true});

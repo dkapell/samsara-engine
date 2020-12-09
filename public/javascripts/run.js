@@ -4,7 +4,7 @@ $(function(){
     }).on('click', runAction);
 
     $('#state-update-btn').confirmation({
-        title: 'Update all Players?'
+        title: 'Update multiple Players?'
     }).on('click', updateAll);
 
     $('.next-step-all-btn').confirmation({
@@ -38,6 +38,7 @@ async function updateAll(e){
     const csrf = $this.attr('data-csrf');
     const formData = new FormData();
     const state_id = $('#run-update-state').val();
+    const group_id = $('#run-update-state-group').val();
     if (!state_id || state_id === ''){
         return;
     }
@@ -47,7 +48,10 @@ async function updateAll(e){
             'csrf-token': csrf,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({state_id: state_id})
+        body: JSON.stringify({
+            state_id: state_id,
+            group_id: group_id
+        })
     });
     if($this.attr('data-back')){
         location = $this.attr('data-back');

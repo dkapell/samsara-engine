@@ -19,6 +19,8 @@ $(function(){
     $('.map-highlight').on('mouseout', hideMapArea);
 });
 
+
+
 async function deleteItem(e){
     e.preventDefault();
     const $this = $(this);

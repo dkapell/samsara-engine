@@ -4,6 +4,7 @@ let textTimeout = null;
 let ws = null;
 const reconnectInterval = 5000;
 let reconnectTimeout = null;
+let areaTimers = {};
 
 $(function(){
     $('#game-text').hide();
@@ -125,6 +126,7 @@ function prepImageMap(){
         fillColor: '000000',
         fillOpacity: 0.2,
     });
+    $('.imageHolder').on('click', showAreas);
     $('area').on('click', clickArea);
     $('area').on('mouseover', showAreaName);
     $('area').on('mouseout', clearAreaName);
@@ -151,13 +153,44 @@ function clickArea(e){
 }
 
 function showAreaName(e){
-    $('#link-name').text($(this).attr('data-name'));
+    const areaId = $(this).data('area');
+    $('#link-name').text($(this).data('name'));
+
+    if (areaTimers[areaId]){
+        clearTimeout(areaTimers[areaId]);
+        delete areaTimers[areaId];
+    }
 }
 
 function clearAreaName(e){
     $('#link-name').html('&nbsp;');
+    const $area = $(this);
+    const data = $area.data('maphilight') || {};
+    data.alwaysOn = false;
+    $area.data('maphilight', data).trigger('alwaysOn.maphilight');
 }
 
 function hideText(e){
     $('#game-text').hide();
 }
+
+function showAreas(e){
+    e.preventDefault();
+    for (const area in areaTimers){
+        clearTimeout(areaTimers[area]);
+    }
+    areaTimers = {};
+    $('area').each(function(i) {
+        const $area = $(this);
+        const areaId = $area.data('area');
+        var data = $area.data('maphilight') || {};
+        data.alwaysOn = true;
+        $area.data('maphilight', data).trigger('alwaysOn.maphilight');
+        const timeout = setTimeout(function(){
+            data.alwaysOn = false;
+            $area.data('maphilight', data).trigger('alwaysOn.maphilight');
+        }, 2000);
+        areaTimers[areaId] = timeout;
+    });
+}
+

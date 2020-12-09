@@ -9,7 +9,7 @@ mixin gamestate(gamestate)
                         .lead.text-center#link-name &nbsp;
 
                 .row.my-1
-                    .col.h-50
+                    .col.h-50.imageHolder
                         image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
                         map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
                             - let areaId = 0;
@@ -23,7 +23,8 @@ mixin gamestate(gamestate)
                                     data-gamestate-id=gamestate.id
                                     data-area=areaId
                                     href='#',
-                                    target="_self"
+                                    target="_self",
+                                    data-maphilight='{}'
                                 )
                                 - areaId++;
 

@@ -171,10 +171,10 @@ async function create(req, res, next){
                 await req.models.gamestate.update(current.id, current);
             }
         }
-        await req.models.gamestate.create(gamestate);
+        const id = await req.models.gamestate.create(gamestate);
         delete req.session.gamestateData;
         req.flash('success', 'Created Gamestate ' + gamestate.name);
-        res.redirect('/gamestate');
+        res.redirect(`/gamestate/${id}`);
     } catch (err) {
         req.flash('error', err.toString());
         return res.redirect('/gamestate/new');
@@ -217,10 +217,10 @@ async function update(req, res, next){
         await req.models.gamestate.update(id, gamestate);
         delete req.session.gamestateData;
         req.flash('success', 'Updated Gamestate ' + gamestate.name);
-        res.redirect('/gamestate');
+        res.redirect(`/gamestate/${id}`);
     } catch(err) {
         req.flash('error', err.toString());
-        return (res.redirect('/gamestate/'+id));
+        return (res.redirect(`/gamestate/${id}/edit`));
 
     }
 }

@@ -1,0 +1,19 @@
+.form-group
+    label.control-label(for="document_name") Name
+    input.form-control(type="text",placeholder="Name",name="document[name]",value=document.name,id='document_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="document_description") Description
+    textarea.form-control#document_description(name="document[description]",rows=3)
+        = document.description
+
+.form-group
+    label.control-label(for="document_content") Content
+    +htmlEditor('document_content', 'document[content]', 10, 500, document.content)
+
+.form-group
+    button.btn.btn-primary(type="submit")= document.id?'Update':'Create'
+    a.btn.btn-link(href="/document") Cancel
+
+

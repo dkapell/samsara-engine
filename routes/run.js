@@ -46,7 +46,9 @@ async function show(req, res, next){
                 return user;
             })
         );
-        res.locals.siteSection='admin';
+        if (res.locals.run.current){
+            res.locals.siteSection='gm';
+        }
         res.locals.groups = await req.models.group.list();
         res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
@@ -116,11 +118,11 @@ async function create(req, res, next){
             await req.models.run.update(current.id, current);
         }
 
-        await req.models.run.create(run);
+        const id = await req.models.run.create(run);
 
         delete req.session.runData;
         req.flash('success', 'Created Run ' + run.name);
-        res.redirect('/run');
+        res.redirect(`/run/${id}/`);
     } catch (err) {
         req.flash('error', err.toString());
         return res.redirect('/run/new');
@@ -144,10 +146,10 @@ async function update(req, res, next){
         await req.models.run.update(id, run);
         delete req.session.runData;
         req.flash('success', 'Updated run ' + run.name);
-        res.redirect('/run');
+        res.redirect(`/run/${id}/`);
     } catch(err) {
         req.flash('error', err.toString());
-        return (res.redirect('/run/'+id));
+        return (res.redirect(`/run/${id}/edit`));
 
     }
 }

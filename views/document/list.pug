@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+    if checkPermission('creator')
+        a.btn.btn-outline-success(href='/document/new')
+            span(class="fa fa-plus")
+            |  New Document
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th(data-order='asc') Name
+                    th Description
+                    if checkPermission('creator')
+                        th
+
+            tbody
+                for document in documents
+                    tr(class='clickable-row', data-click-object='document' data-click-id=document.id)
+                        td.dtr-expand
+                        td
+                            a(href='/document/' + document.id)= document.name
+                        td= document.description
+                        if checkPermission('creator')
+                            td.text-right
+                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                    role="button",
+                                    url=`/document/${document.id}`,
+                                    data-back='/document'
+                                )
+                                    i.fas.fa-trash.fa-fw
+
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

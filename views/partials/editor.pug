@@ -1,0 +1,77 @@
+mixin htmlEditor(id, name, rows, size, contents)
+    ul.nav.nav-tabs(id=`${id}-edit-tabs` role="tablist")
+        li.nav-item(role="presentation")
+            a.nav-link(active
+                id=`${id}-code-tab`
+                data-toggle="tab"
+                href=`#${id}-code`
+                role="tab"
+                aria-controls=`${id}-code`
+                aria-selected="true"
+            ) HTML
+        li.nav-item(role="presentation")
+            a.nav-link(
+                id=`${id}-preview-tab`
+                data-toggle="tab"
+                href=`#${id}-preview`
+                role="tab"
+                aria-controls=`${id}-preview`
+                aria-selected="false"
+            ) Preview
+    .tab-content.py-2(id=`${id}-editor`)
+        .tab-pane.fade.show.active(
+            id=`${id}-code`
+            role="tabpanel"
+            aria-labelledby=`${id}-code-tab`
+        )
+            textarea.form-control.editor(
+                id= id
+                rows= rows
+                name= name
+                data-size= size
+                data-type= 'html'
+            )
+                = contents
+
+        .tab-pane.fade.show(
+            id=`${id}-preview`
+            role="tabpanel"
+            aria-labelledby=`${id}-preview-tab`
+        )
+            .card.border-secondary
+                .card-body.overflow-auto.editor-preview(
+                    id=`${id}-preview-frame`
+                    style=`height: ${size-2}px`)
+
+mixin jsEditor(id, name, rows, size, contents)
+    small.form-text Javascript
+    textarea.form-control.editor(
+        id= id
+        rows= rows
+        name= name
+        data-size= size
+        data-type= 'javascript'
+    )
+        = contents
+
+
+append styles
+        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/codemirror.min.css")
+
+append scripts
+    script(src='/javascripts/editor.js')
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/codemirror.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/xml/xml.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/javascript/javascript.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/css/css.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.56.0/mode/htmlmixed/htmlmixed.min.js")
+    script.
+        $(function() {
+            $('.editor').each(function() {
+                const $this = $(this);
+                const id = $this.attr('id');
+                const type = $this.data('type');
+                const size = $this.data('size');
+                renderEditor(id, type, size);
+            });
+        });

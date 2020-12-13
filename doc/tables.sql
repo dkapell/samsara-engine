@@ -160,3 +160,12 @@ create table variables(
     unique(name, public)
 );
 
+create table documents(
+    id serial,
+    name varchar(255) not null,
+    description text,
+    content text,
+    primary key (id)
+);
+
+

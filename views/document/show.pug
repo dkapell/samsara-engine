@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+    .row.my-3
+        h2.d-inline-block Document
+            i.ml-2 #{document.name}
+
+
+    if checkPermission('creator')
+        a.btn.btn-outline-info.mr-2(role="button" href='/document/' + document.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Document
+
+    .row.my-3
+        .col
+            h4 Description
+            p= document.description
+
+    .row.my-3
+        .col
+            h4 Contents
+            .card
+                .card-body.p-2 !{document.content}

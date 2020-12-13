@@ -1,0 +1,38 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/variable/new')
+        span(class="fa fa-plus")
+        |  New Variable
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th(data-order='asc') Name
+                    th Type
+                    th Public
+                    th Default Value
+                    th
+
+            tbody
+                for variable in variables
+                    tr(class='clickable-row', data-click-object='variable' data-click-id=variable.id)
+                        td.dtr-expand
+                        td
+                            a(href='/variable/' + variable.id)= variable.name
+                        td= capitalize(variable.type)
+                        td=variable.public?'Yes':'No'
+                        td=variable.base_value
+                        td.text-right
+                            a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                role="button",
+                                url=`/variable/${variable.id}`,
+                                data-back='/variable'
+                            )
+                                i.fas.fa-trash.fa-fw
+
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

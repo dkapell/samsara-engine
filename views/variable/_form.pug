@@ -1,0 +1,27 @@
+.form-group
+    label.control-label(for="variable_name") Name
+    input.form-control(type="text",placeholder="Name",name="variable[name]",value=variable.name,id='variable_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="variable_type") Type
+    select.custom-select.select2(name="variable[type]",id="variable_type")
+        option
+        for type in ['integer', 'string', 'date', 'boolean']
+            option(value=type selected=variable.type === type)= capitalize(type)
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="variable[public]", id="variable_public", checked=variable.public)
+        label.custom-control-label(for="variable_public") Public (Player-visible)
+
+.form-group
+    label.control-label(for="variable_base_value") Default Value
+    input.form-control(type="text",placeholder="Default Value",name="variable[base_value]",value=variable.base_value,id='variable_base_value',required)
+    div.invalid-feedback Please choose a valid default value
+
+.form-group
+    button.btn.btn-primary(type="submit")= variable.id?'Update':'Create'
+    a.btn.btn-link(href="/variable") Cancel
+
+

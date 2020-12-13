@@ -33,6 +33,7 @@ const stubRouter = require('./routes/linkStub');
 const gamestateRouter = require('./routes/gamestate');
 const transitionRouter = require('./routes/transition');
 const gameRouter = require('./routes/game');
+const variableRouter = require('./routes/variable');
 
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
@@ -188,6 +189,7 @@ app.use('/stub', stubRouter);
 app.use('/gamestate', gamestateRouter);
 app.use('/transition', transitionRouter);
 app.use('/game', gameRouter);
+app.use('/variable', variableRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

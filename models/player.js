@@ -8,7 +8,7 @@ const models = {
     group: require('./group')
 };
 
-const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character'];
+const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character', 'data'];
 
 
 exports.get = async function(id){
@@ -47,7 +47,7 @@ exports.find = async function(conditions){
 };
 
 exports.list = async function(){
-    const query = 'select * from players order by name';
+    const query = 'select * from players';
     const result = await database.query(query);
     return Promise.all(result.rows.map(fillGroups));
 };

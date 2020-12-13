@@ -115,6 +115,7 @@ create table players (
     gamestate_id int,
     prev_gamestate_id int,
     statetime timestamp with time zone DEFAULT now(),
+    data jsonb,
     primary key (id),
     CONSTRAINT players_user_fk FOREIGN KEY (user_id)
         REFERENCES "users" (id) MATCH SIMPLE
@@ -140,4 +141,22 @@ create table player_groups(
         REFERENCES "groups" (id) match simple
         ON UPDATE NO ACTION ON DELETE SET NULL
 )
+
+create type variable_type as ENUM(
+    'integer',
+    'string',
+    'date',
+    'boolean',
+    'object'
+);
+
+create table variables(
+    id serial,
+    name varchar(255) not null,
+    type variable_type not null,
+    public boolean default false,
+    base_value text,
+    primary key (id),
+    unique(name, public)
+);
 

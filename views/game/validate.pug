@@ -18,6 +18,14 @@ block content
             ul
                 each gamestate, key in validation.unused.gamestates
                     li=gamestate.name
+
+        if _.keys(validation.unused.codes).length
+            h4
+                a.text-warning(href='/code') Codes
+            ul
+                each code, key in validation.unused.codes
+                    li=code.code
+
         if _.keys(validation.unused.links).length
             h4
                 a.text-warning(href='/link') Links

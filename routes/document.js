@@ -2,6 +2,7 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
+const validator = require('validator');
 
 /* GET documents listing. */
 async function list(req, res, next){
@@ -24,6 +25,26 @@ async function show(req, res, next){
     try{
         res.locals.document = await req.models.document.get(id);
         res.render('document/show');
+    } catch(err){
+        next(err);
+    }
+}
+
+async function showByCode(req, res, next){
+    const code = req.params.code;
+    res.locals.siteSection='home';
+
+    if (!validator.isUUID(code)){
+        return res.render('document/invalid');
+    }
+    try{
+        const doc = await req.models.document.getByCode(code);
+        if(!doc){
+            return res.render('document/invalid');
+        }
+        res.locals.document = doc;
+
+        res.render('document/page');
     } catch(err){
         next(err);
     }
@@ -124,17 +145,18 @@ async function remove(req, res, next){
     }
 }
 
+
 const router = express.Router();
 
-router.use(permission('gm'));
 router.use(function(req, res, next){
     res.locals.siteSection='config';
     next();
 });
 
-router.get('/', list);
+router.get('/', permission('gm'), list);
 router.get('/new', csrf(), permission('creator'), showNew);
-router.get('/:id', csrf(), show);
+router.get('/code/:code', csrf(), permission('player'), showByCode);
+router.get('/:id', csrf(),permission('gm'), show);
 router.get('/:id/edit', csrf(),  permission('creator'), showEdit);
 router.post('/', csrf(), permission('creator'), create);
 router.put('/:id', csrf(), permission('creator'), update);

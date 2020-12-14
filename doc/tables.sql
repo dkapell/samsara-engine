@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 create type user_type as ENUM(
     'admin',
     'creator',
@@ -163,6 +165,7 @@ create table variables(
 create table documents(
     id serial,
     name varchar(255) not null,
+    code uuid not null default uuid_generate_v4(),
     description text,
     content text,
     primary key (id)

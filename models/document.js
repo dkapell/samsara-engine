@@ -9,7 +9,6 @@ const models = {
 
 const tableFields = ['name', 'description', 'content'];
 
-
 exports.get = async function(id){
     const query = 'select * from documents where id = $1';
     const result = await database.query(query, [id]);
@@ -27,6 +26,16 @@ exports.getByName = async function(name){
     }
     return;
 };
+
+exports.getByCode = async function(uuid){
+    const query = 'select * from documents where code = $1';
+    const result = await database.query(query, [uuid]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
+};
+
 
 exports.list = async function(){
     const query = 'select * from documents order by name';

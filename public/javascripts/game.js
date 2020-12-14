@@ -23,7 +23,13 @@ function openWebSocket(){
             case 'show default': await renderDefault(); break;
             case 'show page': renderPage(data.gamestate); break;
             case 'load':  window.open(data.url, '_blank'); break;
-            case 'display': showText(data); break;
+            case 'display':
+                if (data.location === 'popup'){
+                    showPopup('text', data);
+                } else {
+                    showText(data);
+                }
+                break;
             case 'toast': showToast(data); break;
             case 'image': showPopup('image', data); break;
             case 'code error':
@@ -109,11 +115,9 @@ function showText(data){
 
 function showPopup(type, data){
     const $modal = $('#popupModal');
-    if (type === 'image'){
-        $modal.find('.modal-title').text(data.name);
-        $modal.find('.modal-body').html(popupTemplate(data));
-        $modal.modal('show');
-    }
+    $modal.find('.modal-title').text(data.name);
+    $modal.find('.modal-body').html(popupTemplate(data));
+    $modal.modal('show');
 }
 
 function prepImageMap(){

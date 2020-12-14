@@ -4,16 +4,15 @@ block content
     .row
         .col
             .card
-                .card-header= 'Edit Gamestate: ' + gamestate.name
+                .card-header= 'Edit Code: ' + code.code
                 .card-body
-                    form.form.needs-validation(method="POST" action="/gamestate/" + gamestate.id novalidate)
+                    form.form.needs-validation(method="POST" action="/code/" + code.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='gamestate[id]',value=gamestate.id)
+                        input(type="hidden", name='code[id]',value=code.id)
                         include ./_form.pug
 
 append scripts
     script(src='/javascripts/validator.js')
-    script(src='/javascripts/imagemap.js')
     script(src='/javascripts/gameactions.js')
-    script(src='/javascripts/gamestate.js')
+    script(src='/javascripts/code.js')

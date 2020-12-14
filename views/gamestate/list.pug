@@ -12,7 +12,7 @@ block content
                     th
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Image
-                    th(data-priority="3") Non-Map Links
+                    th(data-priority="3") Codes
                     if checkPermission('creator')
                         th
 
@@ -35,7 +35,7 @@ block content
                                 = gamestate.image.display_name?gamestate.image.display_name:gamestate.image.name
                             else
                                 i None
-                        td= _.pluck(gamestate.links, 'name').join(', ')
+                        td= _.pluck(gamestate.codes, 'code').join(', ')
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-success.btn-sm.mr-1.action-btn(

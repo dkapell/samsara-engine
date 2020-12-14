@@ -1,7 +1,7 @@
 extends ../layout
 
 include ../partials/gamestate
-include ../partials/imagemap
+include ../partials/gameactions
 
 
 block content
@@ -39,18 +39,18 @@ block content
         .col-md-4.d-none.d-md-block
             - let areaId = 0;
             while areaId < gamestate.map.length
-                +areaCard(areaId, gamestate.map[areaId], gamestates, links, groups)
+                +actionsCard(areaId, gamestate.map[areaId])
                 - areaId++;
 
-    if gamestate.links.length
+    if gamestate.codes.length
         .row.my-2
             .col
-                h4 Code-only Links
+                h4 Codes Allowed
                 ul.list-unstyled
-                    for link in gamestate.links
+                    for code in gamestate.codes
                         li
-                            strong.mr-1 #{link.name}
-                            | (Code: #{link.code})
+                            strong.mr-1 #{code.code}
+
 
     if gamestate.transitions.from.length
         .row.my-2

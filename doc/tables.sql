@@ -21,12 +21,19 @@ create table users (
 create table links (
     id          serial,
     name        varchar(80) not null,
-    code        varchar(20) unique,
     description text,
     url         varchar(255) not null,
     gm          varchar(255),
     active      boolean default true,
     primary key (id)
+);
+
+create table codes (
+    id serial,
+    code varchar(20) unique,
+    description text,
+    actions jsonb default '[]'::jsonb,
+    primary key(id)
 );
 
 create table runs (
@@ -75,15 +82,15 @@ create table gamestates (
 
 insert into gamestates (name) values ('Initial');
 
-create table gamestate_links(
+create table gamestate_codes(
     gamestate_id int not null,
-    link_id int not null,
-    primary key (gamestate_id, link_id),
-    CONSTRAINT gsr_gamestate_fk FOREIGN KEY (gamestate_id)
+    code_id int not null,
+    primary key (gamestate_id, code_id),
+    CONSTRAINT gsc_gamestate_fk FOREIGN KEY (gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT gsr_link_fk FOREIGN KEY (link_id)
-        REFERENCES "links" (id) MATCH SIMPLE
+    CONSTRAINT gsc_code_fk FOREIGN KEY (code_id)
+        REFERENCES "codes" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
@@ -164,7 +171,7 @@ create table variables(
 
 create table documents(
     id serial,
-    name varchar(255) not null,
+    name varchar(255) not null unique,
     code uuid not null default uuid_generate_v4(),
     description text,
     content text,

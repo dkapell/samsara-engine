@@ -30,7 +30,7 @@
         "imageBucket": "imageBucket"
     },
     "game": {
-        "linkName": "Room",
+        "linkName": "Link",
         "defaultToPlayer": false
     },
     "webSocket": {

@@ -24,7 +24,6 @@ async function list(req, res, next){
 function showNew(req, res, next){
     res.locals.link = {
         name: null,
-        code: null,
         description: null,
         url: null,
         active: true,

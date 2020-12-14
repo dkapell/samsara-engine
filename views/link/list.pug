@@ -10,10 +10,9 @@ block content
                 tr
                     th
                     th(data-priority="1", data-order='asc') Name
-                    th(data-priority="2") Code
                     th URL
-                    th(data-priority="3") GM
-                    th(data-priority="4") Active
+                    th(data-priority="2") GM
+                    th(data-priority="3") Active
                     if checkPermission('creator')
                         th
 
@@ -23,7 +22,6 @@ block content
                         td.dtr-expand
                         td
                             a(href='/link/' + link.id)= link.name
-                        td= link.code
                         td= link.url
                         td= link.gm
                         td= link.active?'Yes':'No'

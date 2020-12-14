@@ -4,14 +4,13 @@ block content
     .row
         .col
             .card
-                .card-header New Gamestate
+                .card-header New Code
                 .card-body
-                    form.form.needs-validation(method="POST" action="/gamestate" novalidate)
+                    form.form.needs-validation(method="POST" action="/code" novalidate)
                         input(type="hidden", name='_csrf',value=csrfToken)
                         include ./_form.pug
 
 append scripts
     script(src='/javascripts/validator.js')
-    script(src='/javascripts/imagemap.js')
     script(src='/javascripts/gameactions.js')
-    script(src='/javascripts/gamestate.js')
+    script(src='/javascripts/code.js')

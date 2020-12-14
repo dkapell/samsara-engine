@@ -1,0 +1,45 @@
+extends ../layout
+
+block content
+    if checkPermission('creator')
+        a.btn.btn-outline-success(href='/code/new')
+            span(class="fa fa-plus")
+            |  New Code
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    th(data-order='asc') Code
+                    th Description
+                    if checkPermission('creator')
+                        th
+
+            tbody
+                for code in codes
+                    tr(class='clickable-row', data-click-object='code' data-click-id=code.id)
+                        td.dtr-expand
+                        td
+                            a(href='/code/' + code.id)= code.code
+                        td= code.description
+                        if checkPermission('creator')
+                            td.text-right
+                                a.btn.btn-outline-success.btn-sm.mr-1.action-btn(
+                                    role="button",
+                                    href=`/code/new?clone=${code.id}`,
+                                    title="Copy"
+                                    data-toggle="tooltip"
+                                )
+                                    i.fas.fa-copy.fa-fw
+
+                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                    role="button",
+                                    url=`/code/${code.id}`,
+                                    data-back='/code'
+                                )
+                                    i.fas.fa-trash.fa-fw
+
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

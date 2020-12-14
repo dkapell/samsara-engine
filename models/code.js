@@ -7,11 +7,10 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'url', 'gm', 'active'];
-
+const tableFields = ['code', 'description', 'actions'];
 
 exports.get = async function(id){
-    const query = 'select * from links where id = $1';
+    const query = 'select * from codes where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -19,8 +18,18 @@ exports.get = async function(id){
     return;
 };
 
+exports.getByCode = async function(uuid){
+    const query = 'select * from codes where code = $1';
+    const result = await database.query(query, [uuid]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
+};
+
+
 exports.list = async function(){
-    const query = 'select * from links order by name';
+    const query = 'select * from codes order by code';
     const result = await database.query(query);
     return result.rows;
 };
@@ -40,7 +49,7 @@ exports.create = async function(data, cb){
         }
     }
 
-    let query = 'insert into links (';
+    let query = 'insert into codes (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -63,7 +72,7 @@ exports.update = async function(id, data, cb){
         }
     }
 
-    let query = 'update links set ';
+    let query = 'update codes set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -71,17 +80,12 @@ exports.update = async function(id, data, cb){
 };
 
 exports.delete = async  function(id, cb){
-    const query = 'delete from links where id = $1';
+    const query = 'delete from codes where id = $1';
     await database.query(query, [id]);
 };
 
-
-
 function validate(data){
-    if (! validator.isLength(data.name, 2, 80)){
-        return false;
-    }
-    if (data.url !== 'stub' && !validator.isURL(data.url)){
+    if (! validator.isLength(data.code, 2, 80)){
         return false;
     }
 

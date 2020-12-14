@@ -35,6 +35,7 @@ const transitionRouter = require('./routes/transition');
 const gameRouter = require('./routes/game');
 const variableRouter = require('./routes/variable');
 const documentRouter = require('./routes/document');
+const codeRouter = require('./routes/code');
 
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
@@ -192,6 +193,7 @@ app.use('/transition', transitionRouter);
 app.use('/game', gameRouter);
 app.use('/variable', variableRouter);
 app.use('/document', documentRouter);
+app.use('/code', codeRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

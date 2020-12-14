@@ -1,4 +1,4 @@
-mixin area(area, id, links)
+mixin area(area, id)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
@@ -44,18 +44,19 @@ mixin area(area, id, links)
         if _.isArray(area.actions)
             - let actionId = 0;
             for action in area.actions
-                +action(action, id, actionId, links)
+                +action('gamestate_map', `gamestate[map][${id}]`, action, id, actionId)
                 - actionId++
 
 
-mixin action(action, areaId, actionId, links)
-    .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}`)
+
+mixin action(prefix, namePrefix, action, areaId, actionId)
+    .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}` data-prefix=prefix data-nameprefix=namePrefix)
         .form-row.my-1
-            label.col-md-1.col-form-label(for=`gamestate_map_area-${areaId}-action-${actionId}-type`) Action
+            label.col-md-1.col-form-label(for=`${prefix}-${areaId}-action-${actionId}-type`) Action
             .col-md-2
                 select.custom-select.action-type-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][type]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-type`,
+                    name=`${namePrefix}[actions][${actionId}][type]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-type`,
                     class=actionId!=='new'?'select2':'',
                     data-placeholder="Type",
                 )
@@ -64,11 +65,11 @@ mixin action(action, areaId, actionId, links)
                         option(value=type, selected=action.type === type)= type
 
 
-            label.col-md-2.col-form-label.action-link(for=`gamestate_map_area-${areaId}-action-${actionId}-link_id` ) Link
+            label.col-md-2.col-form-label.action-link(for=`${prefix}-${areaId}-action-${actionId}-link_id` ) Link
             .col-md-6.action-link
                 select.custom-select.link-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][link_id]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-link_id`,
+                    name=`${namePrefix}[actions][${actionId}][link_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-link_id`,
                     class=actionId!=='new'?'select2':'',
                     data-placeholder="Select Link",
                 )
@@ -77,20 +78,20 @@ mixin action(action, areaId, actionId, links)
                         option(value=link.id selected=action.link_id && Number(action.link_id)===link.id)= link.name
 
 
-            label.col-md-2.col-form-label.action-text(for=`gamestate_map_area-${areaId}-action-${actionId}-content` ) Display Text
+            label.col-md-2.col-form-label.action-text(for=`${prefix}-${areaId}-action-${actionId}-content` ) Display Text
             .col-md-6.action-text
                     textarea.form-control(
-                        name=`gamestate[map][${areaId}][actions][${actionId}][content]`,
-                        id=`gamestate_map_area-${areaId}-action-${actionId}-content`,
+                        name=`${namePrefix}[actions][${actionId}][content]`,
+                        id=`${prefix}-${areaId}-action-${actionId}-content`,
                         rows=3
                     )
                         = action.content
 
-            label.col-md-2.col-form-label.action-transition(for=`gamestate_map_area-${areaId}-action-${actionId}-to_state_id` ) To State
+            label.col-md-2.col-form-label.action-transition(for=`${prefix}-${areaId}-action-${actionId}-to_state_id` ) To State
             .col-md-6.action-transition
                 select.custom-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][to_state_id]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-to_state_id`,
+                    name=`${namePrefix}[actions][${actionId}][to_state_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-to_state_id`,
                     class=actionId!=='new'?'select2':'',
                     data-placeholder="Select Gamestate",
                 )
@@ -98,11 +99,11 @@ mixin action(action, areaId, actionId, links)
                     for gamestate in gamestates
                         option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
 
-            label.col-md-2.col-form-label.action-image(for=`gamestate_map_area-${areaId}-action-${actionId}-image_id` ) Image
+            label.col-md-2.col-form-label.action-image(for=`${prefix}-${areaId}-action-${actionId}-image_id` ) Image
             .col-md-6.action-image
                 select.custom-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][image_id]`,
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-image_id`,
+                    name=`${namePrefix}[actions][${actionId}][image_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-image_id`,
                     class=actionId!=='new'?'select2':'',
                     data-placeholder="Select Image",
                 )
@@ -118,21 +119,21 @@ mixin action(action, areaId, actionId, links)
 
         .form-row.my-1.action-transition
             label.col-md-2.offset-md-3.col-form-label(
-                for=`gamestate_map_area-${areaId}-action-${actionId}-delay`
+                for=`${prefix}-${areaId}-action-${actionId}-delay`
             ) Delay in Seconds
             input.col-md-1.form-control(
                 type="number",
                 placeholder="Delay",
-                name=`gamestate[map][${areaId}][actions][${actionId}][delay]`,
-                id=`gamestate_map_area-${areaId}-action-${actionId}-delay`,
+                name=`${namePrefix}[actions][${actionId}][delay]`,
+                id=`${prefix}-${areaId}-action-${actionId}-delay`,
                 value=action.delay?action.delay:0)
             label.col-md-2.col-form-label(
-                for=`gamestate_map_area-${areaId}-action-${actionId}-group_id`
+                for=`${prefix}-${areaId}-action-${actionId}-group_id`
             ) Player Group
             .col-md-3
                 select.custom-select(
-                    name=`gamestate[map][${areaId}][actions][${actionId}][group_id]`
-                    id=`gamestate_map_area-${areaId}-action-${actionId}-group_id`,
+                    name=`${namePrefix}[actions][${actionId}][group_id]`
+                    id=`${prefix}-${areaId}-action-${actionId}-group_id`,
                     class=actionId!=='new'?'select2':'',
                 )
                     option(selected=!action.group_id value="-1") All
@@ -144,27 +145,28 @@ mixin action(action, areaId, actionId, links)
 
         .form-row.my-1.action-text
             label.col-md-2.offset-md-3.col-form-label(
-                for=`gamestate_map_area-${areaId}-action-${actionId}-duration`
+                for=`${prefix}-${areaId}-action-${actionId}-duration`
             ) Duration in Seconds
             input.col-md-1.form-control(
                 type="number",
                 placeholder="Duration",
-                name=`gamestate[map][${areaId}][actions][${actionId}][duration]`,
-                id=`gamestate_map_area-${areaId}-action-${actionId}-duration`,
+                name=`${namePrefix}[actions][${actionId}][duration]`,
+                id=`${prefix}-${areaId}-action-${actionId}-duration`,
                 value=action.duration?action.duration:0)
             .col-md-2.form-text ( 0 for unlimited )
 
-mixin areaCard(areaId, area, gamestates, links)
+mixin actionsCard(areaId, area)
     - moment.relativeTimeThreshold('ss', 0);
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
-        .card-header #{area.name}
+        if area.name
+            .card-header #{area.name}
         ul.list-group.list-group-flush
             for action in area.actions
                 .list-group-item
                     case action.type
                         when 'link'
                             strong.mr-1 Open Link
-                            i #{links[action.link_id].name}
+                            i #{_.findWhere(links, {id: action.link_id}).name}
                         when 'text'
                             strong.mr-1 Display Text
                             br

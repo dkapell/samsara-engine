@@ -1,0 +1,26 @@
+extends ../layout
+include ../partials/gameactions
+
+block content
+    .row.my-3
+        h2.d-inline-block Code
+            i.ml-2 #{code.code}
+
+
+    if checkPermission('creator')
+        a.btn.btn-outline-info.mr-2(role="button" href='/code/' + code.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Code
+    a.btn.btn-outline-info.mr-2(role="button" href='/code/code/' + code.code target="_blank")
+        i.fas.fa-eye
+        |  View in New tab
+
+    .row.my-3
+        .col
+            h4 Description
+            p= code.description
+
+    .row.my-3
+        .col
+            h4 Actions
+            +actionsCard(0, code)

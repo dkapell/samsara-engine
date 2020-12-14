@@ -2,7 +2,7 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
-const imagemapHelper = require('../lib/imagemapHelper');
+const mapParser = require('../lib/mapParser');
 const gameEngine = require('../lib/gameEngine');
 
 /* GET gamestates listing. */
@@ -48,6 +48,7 @@ async function show(req, res, next){
         res.locals.gamestates = gamestates;
         res.locals.images = await req.models.image.list();
         res.locals.groups = await req.models.group.list();
+        res.locals.links = await req.models.link.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -55,7 +56,6 @@ async function show(req, res, next){
             ],
             current: gamestate.name
         };
-        res.locals.links = _.indexBy(await req.models.link.list(), 'id');
         res.render('gamestate/show');
     } catch(err){
         next(err);
@@ -103,6 +103,8 @@ async function showNew(req, res, next){
         }
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
+        res.locals.codes = await req.models.code.list();
+        res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
         res.locals.csrfToken = req.csrfToken();
@@ -118,7 +120,7 @@ async function showEdit(req, res, next){
 
     try{
         const gamestate = await req.models.gamestate.get(id);
-        gamestate.links = _.pluck(gamestate.links, 'id').map(id => {return id.toString();});
+        gamestate.codes = _.pluck(gamestate.codes, 'id').map(id => {return id.toString();});
         res.locals.gamestate = gamestate;
         if (_.has(req.session, 'gamestateData')){
             res.locals.gamestate = req.session.gamestateData;
@@ -135,6 +137,8 @@ async function showEdit(req, res, next){
         res.locals.groups = await req.models.group.list();
         res.locals.images = await req.models.image.list();
         res.locals.links = await req.models.link.list();
+        res.locals.codes = await req.models.code.list();
+        res.locals.documents = await req.models.document.list();
         res.render('gamestate/edit');
     } catch(err){
         next(err);
@@ -156,12 +160,12 @@ async function create(req, res, next){
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
-    if (!gamestate.links){
-        gamestate.links = [];
-    } else if(!_.isArray(gamestate.links)){
-        gamestate.links = [gamestate.links];
+    if (!gamestate.codes){
+        gamestate.codes = [];
+    } else if(!_.isArray(gamestate.codes)){
+        gamestate.codes = [gamestate.codes];
     }
-    gamestate.map = await imagemapHelper.parseMap(gamestate.map);
+    gamestate.map = await mapParser.parseMap(gamestate.map);
 
     try{
         if (gamestate.start){
@@ -197,13 +201,13 @@ async function update(req, res, next){
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
-    if (!gamestate.links){
-        gamestate.links = [];
-    } else if(!_.isArray(gamestate.links)){
-        gamestate.links = [gamestate.links];
+    if (!gamestate.codes){
+        gamestate.codes = [];
+    } else if(!_.isArray(gamestate.codes)){
+        gamestate.codes = [gamestate.codes];
     }
 
-    gamestate.map = await imagemapHelper.parseMap(gamestate.map);
+    gamestate.map = await mapParser.parseMap(gamestate.map);
 
 
     try {

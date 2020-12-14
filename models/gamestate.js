@@ -5,7 +5,7 @@ const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
-    link: require('./link')
+    code: require('./code')
 };
 
 const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template'];
@@ -15,7 +15,7 @@ exports.get = async function(id){
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return fillLinks(result.rows[0]);
+        return fillCodes(result.rows[0]);
     }
     return;
 };
@@ -24,7 +24,7 @@ exports.getStart = async function(){
     const query = 'select * from gamestates where start = true limit 1';
     const result = await database.query(query);
     if (result.rows.length){
-        return fillLinks(result.rows[0]);
+        return fillCodes(result.rows[0]);
     }
     return;
 };
@@ -32,14 +32,14 @@ exports.getStart = async function(){
 exports.list = async function(){
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillLinks));
+    return Promise.all(result.rows.map(fillCodes));
 };
 
 exports.listSpecial = async function(){
     const query = `select * from gamestates where start = true or special = true or finish = true
         order by start desc nulls last, finish asc nulls first, name`;
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillLinks));
+    return Promise.all(result.rows.map(fillCodes));
 };
 
 exports.create = async function(data, cb){
@@ -65,8 +65,8 @@ exports.create = async function(data, cb){
 
     const result = await database.query(query, queryData);
     const id = result.rows[0].id;
-    if (_.has(data, 'links')){
-        await saveLinks(id, data.links);
+    if (_.has(data, 'codes')){
+        await saveLinks(id, data.codes);
     }
     return id;
 };
@@ -89,8 +89,8 @@ exports.update = async function(id, data, cb){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    if (_.has(data, 'links')){
-        await saveLinks(id, data.links);
+    if (_.has(data, 'codes')){
+        await saveLinks(id, data.codes);
     }
 };
 
@@ -99,27 +99,27 @@ exports.delete = async  function(id, cb){
     await database.query(query, [id]);
 };
 
-async function fillLinks(gamestate){
-    const query = 'select * from gamestate_links where gamestate_id = $1';
+async function fillCodes(gamestate){
+    const query = 'select * from gamestate_codes where gamestate_id = $1';
     const result = await database.query(query, [gamestate.id]);
-    gamestate.links = await Promise.all(
+    gamestate.codes = await Promise.all(
         result.rows.map( async gamestateLink => {
-            return models.link.get(gamestateLink.link_id);
+            return models.code.get(gamestateLink.code_id);
         })
     );
     return gamestate;
 }
 
-async function saveLinks(gamestate_id, links){
-    const deleteQuery = 'delete from gamestate_links where gamestate_id = $1';
-    const insertQuery = 'insert into gamestate_links (gamestate_id, link_id) values ($1, $2)';
+async function saveLinks(gamestate_id, codes){
+    const deleteQuery = 'delete from gamestate_codes where gamestate_id = $1';
+    const insertQuery = 'insert into gamestate_codes (gamestate_id, code_id) values ($1, $2)';
     await database.query(deleteQuery, [gamestate_id]);
     return Promise.all(
-        links.map(link => {
-            if (_.isObject(link)){
-                return database.query(insertQuery, [gamestate_id, link.id]);
+        codes.map(code => {
+            if (_.isObject(code)){
+                return database.query(insertQuery, [gamestate_id, code.id]);
             } else {
-                return database.query(insertQuery, [gamestate_id, link]);
+                return database.query(insertQuery, [gamestate_id, code]);
             }
         })
     );

@@ -114,14 +114,14 @@ mixin jsEditor(id, name, rows, size, contents)
                     h3 Conditionals
                     p Your conditional code should evaluate to true or false
                     pre.border.border-light.rounded.p-2
-                        | data.private.statesVisited >= 20
+                        | private.statesVisited >= 20
                     h3 Scripts
                     p Scripts can manipulate data in data.public or data.private and change gamestate by altering output.to_state_id (and optionally output.delay).
                     pre.border.border-light.rounded.p-2
                         | if(!_.has(data.private, 'statesVisited')){
-                        |     data.private.statesVisited = 0;
+                        |     private.statesVisited = 0;
                         | }
-                        | data.private.statesVisited++;
+                        | private.statesVisited++;
                         | output.console `Increased statesVisited by 1 for ${player} (${character})`;
         .tab-pane.fade(
             id=`${id}-global`
@@ -138,9 +138,13 @@ mixin jsEditor(id, name, rows, size, contents)
                                 th Usage
                         tbody
                             tr
-                                td data
+                                td public
                                 td Yes
-                                td Object which contains the player data under data.public and data.private.
+                                td Object which contains the player-visible player variables/data.
+                            tr
+                                td private
+                                td Yes
+                                td Object which contains the non-player-visible player variables/data.
                             tr
                                 td output
                                 td Yes
@@ -185,11 +189,13 @@ mixin jsEditor(id, name, rows, size, contents)
                             tr
                                 th Variable
                                 th Type
+                                th Public
                         tbody
                             for variable in variables
                                 tr
-                                    td data.#{variable.public?'public':'private'}.#{variable.name}
+                                    td #{variable.public?'public':'private'}.#{variable.name}
                                     td #{variable.type}
+                                    td #{variable.public?'Yes':'No'}
 
 
 

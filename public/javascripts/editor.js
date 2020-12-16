@@ -33,15 +33,20 @@ function renderEditor(id, type, size){
     return editor;
 }
 
+function capitalize(string){
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function showScriptEditor(e){
     const $this = $(this);
     e.preventDefault();
     e.stopPropagation();
     const $modal = $('#editorModal');
-    const input = $this.closest('.input-group').find('.script-input');
+    const $input = $this.closest('.input-group').find('.script-input');
     const editor = $('#js-editor').next('.CodeMirror').get(0).CodeMirror;
-    $('#js-editor').data('sourcefield', input.attr('id'));
-    editor.setValue(input.val());
+    $('#js-editor').data('sourcefield', $input.attr('id'));
+    $modal.find('.modal-title').text(`Javascript Editor - ${capitalize($input.data('fieldtype'))}`);
+    editor.setValue($input.val());
     $modal.modal('show');
     $('#editorModal').one('shown.bs.modal', function(){
         editor.refresh();

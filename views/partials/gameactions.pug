@@ -128,7 +128,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     name=`${namePrefix}[actions][${actionId}][condition]`,
                     id=`${prefix}-${areaId}-action-${actionId}-condition`,
                     value=action.condition
-                    data-fieldtype='content'
+                    data-fieldtype='condition'
                 )
                 .input-group-append
                     button.btn.btn-outline-light.script-editor-btn

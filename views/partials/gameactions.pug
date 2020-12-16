@@ -1,8 +1,13 @@
 mixin area(area, id)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
-            .lead.col-md-1
+            .lead.col
                 strong Area
+                .float-right.d-md-none
+                    button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
+                        i.fa.fa-plus
+                    button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
+                        i.fa.fa-trash
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
             .col-md-5
                 input.form-control.area-name(
@@ -25,7 +30,7 @@ mixin area(area, id)
                     option
                     for shape in ['rect', 'circle', 'poly']
                         option(value=shape selected=area.shape===shape)= shape
-            .col-md-2.text-right
+            .col-md-2.text-right.d-none.d-md-block
                 button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
                     i.fa.fa-plus
                 button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
@@ -52,15 +57,21 @@ mixin area(area, id)
 
 
 mixin action(prefix, namePrefix, action, areaId, actionId)
-    .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}` data-prefix=prefix data-nameprefix=namePrefix)
+    .action-row.border-top.border-secondary.mb-2(id=`action-${areaId}-${actionId}` data-prefix=prefix data-nameprefix=namePrefix)
         // Action General Row
         .form-row.my-1
+
             // Action Type
-            label.col-md-1.col-form-label.action-input-label(
+            label.col-md-auto.col-form-label.action-input-label(
                 for=`${prefix}-${areaId}-action-${actionId}-type`
                 data-fieldtype='type'
             )
-                strong.ml-2 Action
+                strong.d-none.d-xl-block.ml-2 Action
+                strong.d-xl-none Action
+                .text-right.float-right.d-md-none
+                    button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
+                        i.fa.fa-trash
+
             .col-md-2
                 select.custom-select.action-type-select.action-input(
                     name=`${namePrefix}[actions][${actionId}][type]`,
@@ -76,10 +87,10 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
 
 
             // Group ID
-            label.col-md-1.col-form-label.action-input-label(
+            label.col-md-auto.col-form-label.action-input-label(
                 for=`${prefix}-${areaId}-action-${actionId}-group_id`
                 data-fieldtype='group_id'
-            ) For Group
+            ) Group
             .col-md-2
                 select.custom-select.action-input(
                     name=`${namePrefix}[actions][${actionId}][group_id]`
@@ -94,11 +105,14 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                             selected=action.group_id && Number(action.group_id)===group.id
                         )= group.name
 
-                // Condition Input
+
+            // Condition Input
             label.col-md-1.col-form-label.action-input-label(
                 for=`${prefix}-${areaId}-action-${actionId}-condition`
                 data-fieldtype='condition'
-            ) Condition
+            )
+                span.d-md-none.d-xl-block.mr-1 Condition
+                span.d-none.d-md-block.d-xl-none Cond
 
             .input-group.action-condition.col-md-4
                 - const conditionContents = action.condition?action.condition:''
@@ -118,10 +132,10 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 )
                 .input-group-append
                     button.btn.btn-outline-light.script-editor-btn
-                        i.fas.fa-edit.mr-2
-                        | Edit
-            // Remove
-            .col.text-right
+                        i.fas.fa-edit
+
+            // Remove Button
+            .col-md.text-right.d-none.d-md-block
                 button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
                     i.fa.fa-trash
 
@@ -170,7 +184,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 for=`${prefix}-${areaId}-action-${actionId}-content`
                 data-fieldtype='content'
             ) Display Text
-            .col-md-6
+            .col-md-8
                     textarea.form-control.action-input(
                         name=`${namePrefix}[actions][${actionId}][content]`,
                         id=`${prefix}-${areaId}-action-${actionId}-content`,
@@ -236,7 +250,10 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
             label.col-md-2.action-input-label.col-form-label(
                 for=`${prefix}-${areaId}-action-${actionId}-delay`
                 data-fieldtype='delay'
-            ) Delay in Seconds
+            )
+                span.d-md-none.d-xl-block Delay in Seconds
+                span.d-none.d-md-block.d-xl-none Delay
+
             input.col-md-1.form-control.action-input(
                 type="number",
                 placeholder="Delay",

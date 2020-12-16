@@ -12,21 +12,18 @@ mixin gamestate(gamestate)
                     .col.h-50.imageHolder
                         image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
                         map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
-                            - let areaId = 0;
-                            while areaId < gamestate.map.length
-                                - let area = gamestate.map[areaId]
+                            for area in gamestate.map
                                 area(
-                                    id=`area-${areaId}`,
+                                    id=`area-${area.uuid?area.uuid:area.id}`,
                                     shape=area.shape,
                                     coords=area.coords,
                                     data-name=area.name,
                                     data-gamestate-id=gamestate.id
-                                    data-area=areaId
+                                    data-area=area.uuid?area.uuid:area.id
                                     href='#',
                                     target="_self",
                                     data-maphilight='{}'
                                 )
-                                - areaId++;
 
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
         .row.my-3

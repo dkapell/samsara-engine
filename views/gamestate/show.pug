@@ -37,10 +37,8 @@ block content
         .col-md-8.border-primary.border.rounded(style='min-height:200px;')
             +gamestate(gamestate)
         .col-md-4.d-none.d-md-block
-            - let areaId = 0;
-            while areaId < gamestate.map.length
-                +actionsCard(areaId, gamestate.map[areaId])
-                - areaId++;
+            for area in gamestate.map
+                +actionsCard(area.uuid, area)
 
     if gamestate.codes.length
         .row.my-2

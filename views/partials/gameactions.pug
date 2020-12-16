@@ -1,4 +1,5 @@
 mixin area(area, id)
+    input(type='hidden', name=`gamestate[map][${id}][uuid]` value=area.uuid)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
             .lead.col
@@ -324,6 +325,7 @@ mixin actionsCard(areaId, area)
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
         if area.name
             .card-header #{area.name}
+
         ul.list-group.list-group-flush
             for action in area.actions
                 .list-group-item
@@ -335,12 +337,16 @@ mixin actionsCard(areaId, area)
                             strong.mr-1 Display
                             if action.document_id
                                 strong.mr-1 Document
-                                | as #{action.location}
+                                i #{action.location}
+                                if action.location === 'inline' && action.duration
+                                    |  for #{action.duration} seconds
                                 br
                                 i.mr-1 #{_.findWhere(documents, {id: action.document_id}).name}
                             else
                                 strong.mr-1 Text
-                                | as #{action.location}
+                                i #{action.location}
+                                if action.location === 'inline' && action.duration
+                                    |  for #{action.duration} seconds
                                 br
                                 i.mr-1 #{action.content}
 

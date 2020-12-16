@@ -63,6 +63,25 @@ mixin jsEditor(id, name, rows, size, contents)
                 aria-controls=`${id}-help`
                 aria-selected="false"
             ) Help
+        li.nav-item(role="presentation")
+            a.nav-link(
+                id=`${id}-global-tab`
+                data-toggle="tab"
+                href=`#${id}-global`
+                role="tab"
+                aria-controls=`${id}-global`
+                aria-selected="false"
+            ) Global Variables
+        if variables.length
+            li.nav-item(role="presentation")
+                a.nav-link(
+                    id=`${id}-variables-tab`
+                    data-toggle="tab"
+                    href=`#${id}-variables`
+                    role="tab"
+                    aria-controls=`${id}-variables`
+                    aria-selected="false"
+                ) Game Variables
 
     .tab-content.py-2(id=`${id}-editor`)
         .tab-pane.fade.show.active(
@@ -91,7 +110,26 @@ mixin jsEditor(id, name, rows, size, contents)
         )
             .row
                 .col.p-2
-                    h3 Variables
+
+                    h3 Conditionals
+                    p Your conditional code should evaluate to true or false
+                    pre.border.border-light.rounded.p-2
+                        | data.private.statesVisited >= 20
+                    h3 Scripts
+                    p Scripts can manipulate data in data.public or data.private and change gamestate by altering output.to_state_id (and optionally output.delay).
+                    pre.border.border-light.rounded.p-2
+                        | if(!_.has(data.private, 'statesVisited')){
+                        |     data.private.statesVisited = 0;
+                        | }
+                        | data.private.statesVisited++;
+                        | output.console `Increased statesVisited by 1 for ${player} (${character})`;
+        .tab-pane.fade(
+            id=`${id}-global`
+            role='tabpanel'
+            area-labelledby=`${id}-global-tab`
+        )
+            .row
+                .col.p-4
                     table.table.table-sm
                         thead
                             tr
@@ -134,19 +172,24 @@ mixin jsEditor(id, name, rows, size, contents)
                                 td
                                     a(href='http://underscorejs.org/' target='_blank') UnderscoreJS
                                     |  object for assorted helper fucntions
-                    h3 Conditionals
-                    p Your conditional code should evaluate to true or false
-                    pre.border.border-light.rounded.p-2
-                        | data.private.statesVisited >= 20
-                    h3 Scripts
-                    p Scripts can manipulate data in data.public or data.private and change gamestate by altering output.to_state_id (and optionally output.delay).
-                    pre.border.border-light.rounded.p-2
-                        | if(!_.has(data.private, 'statesVisited')){
-                        |     data.private.statesVisited = 0;
-                        | }
-                        | data.private.statesVisited++;
-                        | output.console `Increased statesVisited by 1 for ${player} (${character})`;
 
+        .tab-pane.fade(
+            id=`${id}-variables`
+            role='tabpanel'
+            area-labelledby=`${id}-variables-tab`
+        )
+            .row
+                .col.p-4
+                    table.table.table-sm
+                        thead
+                            tr
+                                th Variable
+                                th Type
+                        tbody
+                            for variable in variables
+                                tr
+                                    td data.#{variable.public?'public':'private'}.#{variable.name}
+                                    td #{variable.type}
 
 
 

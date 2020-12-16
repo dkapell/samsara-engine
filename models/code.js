@@ -19,7 +19,7 @@ exports.get = async function(id){
 };
 
 exports.getByCode = async function(uuid){
-    const query = 'select * from codes where code = $1';
+    const query = 'select * from codes where UPPER(code) = UPPER($1)';
     const result = await database.query(query, [uuid]);
     if (result.rows.length){
         return result.rows[0];

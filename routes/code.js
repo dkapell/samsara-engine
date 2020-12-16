@@ -73,6 +73,7 @@ async function showNew(req, res, next){
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
+        res.locals.variables = await req.models.variable.list();
         res.render('code/new');
     } catch (err){
         next(err);
@@ -103,7 +104,7 @@ async function showEdit(req, res, next){
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
-
+        res.locals.variables = await req.models.variable.list();
 
         res.render('code/edit');
     } catch(err){

@@ -108,6 +108,7 @@ async function showNew(req, res, next){
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
+        res.locals.variables = await req.models.variable.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
     } catch (err){
@@ -139,6 +140,7 @@ async function showEdit(req, res, next){
         res.locals.images = await req.models.image.list();
         res.locals.links = await req.models.link.list();
         res.locals.codes = await req.models.code.list();
+        res.locals.variables = await req.models.variable.list();
         res.locals.documents = await req.models.document.list();
         res.render('gamestate/edit');
     } catch(err){

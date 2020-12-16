@@ -1,5 +1,5 @@
 mixin area(area, id)
-    input(type='hidden', name=`gamestate[map][${id}][uuid]` value=area.uuid)
+    input(type='hidden', name=`gamestate[map][${id}][uuid]` value=clone?'':area.uuid)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
             .lead.col

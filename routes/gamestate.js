@@ -96,6 +96,7 @@ async function showNew(req, res, next){
                     template:false,
                 };
             }
+            res.locals.clone = true;
         }
 
         if (_.has(req.session, 'gamestateData')){

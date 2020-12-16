@@ -96,7 +96,7 @@ async function showEdit(req, res, next){
                 { url: '/', name: 'Home'},
                 { url: '/code', name: 'Codes'},
             ],
-            current: 'Edit: ' + code.name
+            current: 'Edit: ' + code.code
         };
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
@@ -121,7 +121,7 @@ async function create(req, res, next){
     try{
         const id = await req.models.code.create(code);
         delete req.session.codeData;
-        req.flash('success', 'Created Code ' + code.name);
+        req.flash('success', 'Created Code ' + code.code);
         res.redirect(`/code/${id}`);
     } catch (err) {
         req.flash('error', err.toString());
@@ -141,7 +141,7 @@ async function update(req, res, next){
 
         await req.models.code.update(id, code);
         delete req.session.codeData;
-        req.flash('success', 'Updated Code ' + code.name);
+        req.flash('success', 'Updated Code ' + code.code);
         res.redirect(`/code/${id}`);
     } catch(err) {
         req.flash('error', err.toString());

@@ -6,10 +6,13 @@ $(function(){
     $('.player-advance-btn-cancel').on('click', cancelAdvance);
 
     $('.player-message-btn').tooltip();
+    $('.player-viewdata-btn').tooltip();
 
     $('#toastModal').on('show.bs.modal', showToastModal);
     $('#toastModal').on('shown.bs.modal', (e) => {$('#toastText').focus();});
     $('#toastSend').on('click', sendToast);
+    $('#dataModal').on('show.bs.modal', showDataModal);
+
 });
 
 async function advancePlayer(e){
@@ -99,4 +102,13 @@ async function sendToast(e){
 
     $('#toastText').val('');
     $('#toastModal').modal('hide');
+}
+function showDataModal(event){
+    const $this = $(this);
+    const $button = $(event.relatedTarget);
+    const userId = $button.data('user');
+    const name = $button.data('name');
+    const data = JSON.stringify($button.data('userdata'), null, 2);
+    $this.find('.modal-title').text(`View data for ${name}`);
+    $this.find('.modal-body').text(data);
 }

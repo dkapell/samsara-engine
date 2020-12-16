@@ -4,6 +4,9 @@ const _ = require('underscore');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameValidator = require('../lib/gameValidator');
+const script = require('../lib/script');
+const stripAnsi = require('strip-ansi');
+
 
 async function getGamePage(req, res, next){
     return res.render('game/default', { title: config.get('app.name') });
@@ -35,12 +38,26 @@ async function getGraphData(req, res, next){
     }
 }
 
+async function verifyScript(req, res, next){
+    try {
+        const inputScript = req.body.script;
+        const verified = await script.verify(inputScript, 'stylish');
+        if (!verified.verified){
+            verified.errors = stripAnsi(verified.errors).trim();
+        }
+        res.json(verified);
+    } catch (err) {
+        res.json({verified:false, errors:err});
+    }
+}
+
 const router = express.Router();
 
 router.get('/', getGamePage);
 router.get('/validator', permission('gm'), validateGame);
 router.get('/graph', permission('gm'), showGraph);
 router.get('/graph/data', permission('gm'), getGraphData);
+router.post('/script/verify', permission('creator'), verifyScript);
 
 module.exports = router;
 

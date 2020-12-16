@@ -47,6 +47,7 @@ async function show(req, res, next){
         res.locals.gamestate = gamestate;
         res.locals.gamestates = gamestates;
         res.locals.images = await req.models.image.list();
+        res.locals.documents = await req.models.document.list();
         res.locals.groups = await req.models.group.list();
         res.locals.links = await req.models.link.list();
         res.locals.breadcrumbs = {

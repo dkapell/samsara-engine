@@ -11,10 +11,12 @@ include ../partials/gameactions
         = code.description
 
 .form-group#map-group
-    label.control-label.w-100#actions-heading(for="code_actions", data-toggle="collapse" data-target="#actions-container" aria-expanded="false") Actions
+    label.control-label.w-100#actions-heading(for="code_actions", data-toggle="collapse" data-target="#actions-container" aria-expanded="true") Actions
         .badge.badge-info.ml-1 #{code.actions.length} #{code.actions.length === 1?'item':'items'}
         button.btn.btn-sm.btn-outline-success.add-action-btn.expand-text-shown.ml-2(data-toggle="tooltip" title='Add Action' data-target='#code-actions' data-area=0)
-                i.fa.fa-plus
+                i.fa.fa-plus.mr-2
+                | Add Action
+
         i.expand-text-shown.ml-4 (click to hide configuration)
         i.expand-text.ml-4 (click to show configuration)
 
@@ -24,12 +26,13 @@ include ../partials/gameactions
             i.fa.fa-chevron-down
 
 
-    .div#actions-container.collapse(aria-labelledby="actions-heading")
+    .div#actions-container.collapse.show(aria-labelledby="actions-heading")
         .list-group#code_actions
             .list-group-item.area-config(id=`code-actions`)
                 - let actionId = 0;
                 each action in code.actions
                     +action('code', 'code', action, 0, actionId)
+                    - actionId++
 
 
 .form-group
@@ -37,3 +40,4 @@ include ../partials/gameactions
     a.btn.btn-link(href="/code") Cancel
 
 +action('code', 'code', {}, 'new', 'new')
++jsEditorModal()

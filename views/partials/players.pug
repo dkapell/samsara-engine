@@ -52,6 +52,17 @@ mixin players(players)
                                 )
                                     i.fas.fa-comment
 
+                            a.btn.btn-outline-info.btn-sm.mx-1.player-viewdata-btn(
+                                role="button"
+                                data-toggle="modal"
+                                data-target="#dataModal"
+                                data-user=user.id
+                                data-name=user.name
+                                data-userdata=JSON.stringify(user.player.data)
+                                title="View Player Data"
+                            )
+                                i.fas.fa-search
+
                             a.btn.btn-outline-info.mr-1.btn-sm.player-advance-btn(
                                 role="button",
                                 url=`/player/${user.id}/advance`,
@@ -84,7 +95,7 @@ mixin players(players)
             .modal-content
                 .modal-header
                     h5.modal-title#toastModalLabel Send Message to Player
-                    button.close#dismissLoginModal(type="button", data-dismiss="modal" area-label="Close")
+                    button.close#dismissToastModal(type="button", data-dismiss="modal" area-label="Close")
                         span(aria-hidden="true") &times;
                 .modal-body
                     .form
@@ -98,4 +109,19 @@ mixin players(players)
                 .modal-footer
                     button.btn.btn-secondary(type="button", data-dismiss="modal") Close
                     button.btn.btn-primary#toastSend(type="button",data-csrf=csrfToken ) Send Message
+
+    .modal.fade#dataModal(role="dialog" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title#dataModalLabel Player Data
+                    button.close#dismissDataModal(type="button", data-dismiss="modal" area-label="Close")
+                        span(aria-hidden="true") &times;
+                pre.modal-body
+
+                .modal-footer
+                    button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+
+
+
 

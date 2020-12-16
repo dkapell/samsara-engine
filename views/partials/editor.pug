@@ -33,7 +33,7 @@ mixin htmlEditor(id, name, rows, size, contents)
             )
                 = contents
 
-        .tab-pane.fade.show(
+        .tab-pane.fade(
             id=`${id}-preview`
             role="tabpanel"
             aria-labelledby=`${id}-preview-tab`
@@ -44,15 +44,127 @@ mixin htmlEditor(id, name, rows, size, contents)
                     style=`height: ${size-2}px`)
 
 mixin jsEditor(id, name, rows, size, contents)
-    small.form-text Javascript
-    textarea.form-control.editor(
-        id= id
-        rows= rows
-        name= name
-        data-size= size
-        data-type= 'javascript'
-    )
-        = contents
+    ul.nav.nav-tabs(id=`${id}-edit-tabs` role="tablist")
+        li.nav-item(role="presentation")
+            a.nav-link(active
+                id=`${id}-code-tab`
+                data-toggle="tab"
+                href=`#${id}-code`
+                role="tab"
+                aria-controls=`${id}-code`
+                aria-selected="true"
+            ) Javascript
+        li.nav-item(role="presentation")
+            a.nav-link(
+                id=`${id}-help-tab`
+                data-toggle="tab"
+                href=`#${id}-help`
+                role="tab"
+                aria-controls=`${id}-help`
+                aria-selected="false"
+            ) Help
+
+    .tab-content.py-2(id=`${id}-editor`)
+        .tab-pane.fade.show.active(
+            id=`${id}-code`
+            role="tabpanel"
+            aria-labelledby=`${id}-code-tab`
+        )
+            .row
+                .col
+                    textarea.form-control.editor(
+                        id= id
+                        rows= rows
+                        name= name
+                        data-size= size
+                        data-type= 'javascript'
+                    )
+                        = contents
+            .row.mt-2
+                .col
+                    pre.text-danger.p-2.m-0.overflow-auto#editor-errors
+
+        .tab-pane.fade(
+            id=`${id}-help`
+            role="tabpanel"
+            aria-labelledby=`${id}-help-tab`
+        )
+            .row
+                .col.p-2
+                    h3 Variables
+                    table.table.table-sm
+                        thead
+                            tr
+                                th Variable
+                                th Writable
+                                th Usage
+                        tbody
+                            tr
+                                td data
+                                td Yes
+                                td Object which contains the player data under data.public and data.private.
+                            tr
+                                td output
+                                td Yes
+                                td Object with output.to_state_id, output.delay, output.console.  set the first two to change the player state.  Set output.console to print data to the server console.
+                            tr
+                                td player
+                                td No
+                                td Contains the current player name.
+
+                            tr
+                                td character
+                                td No
+                                td Contains the current character name.
+                            tr
+                                td groups
+                                td No
+                                td Array of groups for the current player.
+                            tr
+                                td gamestate_id
+                                td No
+                                td Current gamestate id.
+                            tr
+                                td gamestates
+                                td No
+                                td Array of all gamestate objects.
+                            tr
+                                td _
+                                td No
+                                td
+                                    a(href='http://underscorejs.org/' target='_blank') UnderscoreJS
+                                    |  object for assorted helper fucntions
+                    h3 Conditionals
+                    p Your conditional code should evaluate to true or false
+                    pre.border.border-light.rounded.p-2
+                        | data.private.statesVisited >= 20
+                    h3 Scripts
+                    p Scripts can manipulate data in data.public or data.private and change gamestate by altering output.to_state_id (and optionally output.delay).
+                    pre.border.border-light.rounded.p-2
+                        | if(!_.has(data.private, 'statesVisited')){
+                        |     data.private.statesVisited = 0;
+                        | }
+                        | data.private.statesVisited++;
+                        | output.console `Increased statesVisited by 1 for ${player} (${character})`;
+
+
+
+
+
+mixin jsEditorModal(id, name, rows, size, contents)
+     .modal.fade#editorModal(role="dialog" tabindex="-1" aria-labelledby="editorModalLabel" aria-hidden="true")
+        .modal-dialog.modal-lg.modal-dialog-centered(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title Javscript Editor
+                    button.close#dismissEditorModal(type="button", data-dismiss="modal" area-label="Close")
+                        span(aria-hidden="true") &times;
+                .modal-body
+                    +jsEditor('js-editor', 'js-editor', 10, 300, null)
+
+                .modal-footer
+                    button.btn.btn-secondary(type="button", data-dismiss="modal") Close
+                    button.btn.btn-primary#editor-save(type="button") Save
 
 
 append styles
@@ -75,3 +187,4 @@ append scripts
                 renderEditor(id, type, size);
             });
         });
+

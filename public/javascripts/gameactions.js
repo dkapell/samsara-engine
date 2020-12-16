@@ -1,4 +1,4 @@
-/* global _ */
+/* global _ showScriptEditor */
 let nextIndex = 0;
 const nextActions = {};
 
@@ -27,11 +27,18 @@ $(function(){
     $('.action-type-select').on('change', function(e){
         showAction($(this).closest('.action-row'));
     });
+    $('.document-type-select').on('change', function(e){
+        showText($(this).closest('.action-row'));
+    });
+    $('.document-location-select').on('change', function(e){
+        showText($(this).closest('.action-row'));
+    });
+
 
     $('.link-select').on('select2:selecting', getOldLinkName);
     $('.link-select').on('change', updateAreaName);
 
-
+    $('#action-new-new').find('.editor').Code;
 });
 
 function removeArea(e){
@@ -116,6 +123,7 @@ async function deleteItem(e){
 function showAllActions(){
     $('.action-row').each(function(index) {
         showAction($(this));
+        showText($(this));
     });
 }
 
@@ -125,6 +133,7 @@ function showAction($row) {
     $row.find('.action-text').hide();
     $row.find('.action-transition').hide();
     $row.find('.action-image').hide();
+    $row.find('.action-script').hide();
     switch(type){
         case 'link':
             $row.find('.action-link').show();
@@ -138,7 +147,27 @@ function showAction($row) {
         case 'image':
             $row.find('.action-image').show();
             break;
+        case 'script':
+            $row.find('.action-script').show();
+            break;
 
+    }
+}
+
+function showText($row) {
+    const type = $row.find('.action-type-select').val();
+    if (type !== 'text') { return; }
+    const document_id = $row.find('.document-type-select').val();
+    if (document_id === '-1'){
+        $row.find('.document-contents').show();
+    } else {
+        $row.find('.document-contents').hide();
+    }
+    const location = $row.find('.document-location-select').val();
+    if (location === 'inline'){
+        $row.find('.document-duration').show();
+    } else {
+        $row.find('.document-duration').hide();
     }
 }
 
@@ -154,60 +183,28 @@ function addAction(e){
     const id = nextActions[areaId]++;
     const prefix = $new.data('prefix');
     const namePrefix = $new.data('nameprefix');
-    console.log(prefix);
-    console.log(namePrefix);
     $new.attr('id', `action-${areaId}-new-${id}`);
 
 
-    $new.find(`#${prefix}-new-action-new-type`)
-        .attr('required', true)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-type`)
-        .attr('name', `${namePrefix}[actions][new-${id}][type]`);
-    $new.find(`label [for=${prefix}-new-action-new-type]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-type`);
+    // Update all action fields
+    $new.find('.action-input').each(function(e) {
+        const $input = $(this);
+        const fieldtype = $input.data('fieldtype');
+        $input.attr('id', `${prefix}-${areaId}-action-new-${id}-${fieldtype}`);
+        $input.attr('name', `${namePrefix}[actions][new-${id}][${fieldtype}]`);
+        if ($this.data('required')){
+            $input.attr('required', true);
+        }
+    });
 
-    $new.find(`#${prefix}-new-action-new-link_id`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-link_id`)
-        .attr('name', `${namePrefix}[actions][new-${id}][link_id]`);
-    $new.find(`label [for=${prefix}-new-action-new-link_id]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-link_id`);
+    // Update all action labels
+    $new.find('.action-input-label').each(function(e) {
+        const $label = $(this);
+        const fieldtype = $label.data('fieldtype');
+        $label.attr('for', `${prefix}-${areaId}-action-new-${id}-${fieldtype}`);
+    });
 
-    $new.find(`#${prefix}-new-action-new-content`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-content`)
-        .attr('name', `${namePrefix}[actions][new-${id}][content]`);
-    $new.find(`label [for=${prefix}-new-action-new-content]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-content`);
-
-    $new.find(`#${prefix}-new-action-new-duration`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-duration`)
-        .attr('name', `${namePrefix}[actions][new-${id}][duration]`);
-    $new.find(`label [for=${prefix}-new-action-new-duration]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-duration`);
-
-    $new.find(`#${prefix}-new-action-new-to_state_id`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-to_state_id`)
-        .attr('name', `${namePrefix}[actions][new-${id}][to_state_id]`);
-    $new.find(`label [for=${prefix}-new-action-new-to_state_id]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-to_state_id`);
-
-    $new.find(`#${prefix}-new-action-new-delay`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-delay`)
-        .attr('name', `${namePrefix}[actions][new-${id}][delay]`);
-    $new.find(`label [for=${prefix}-new-action-new-delay]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-delay`);
-
-    $new.find(`#${prefix}-new-action-new-group_id`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-group_id`)
-        .attr('name', `${namePrefix}[actions][new-${id}][group_id]`);
-    $new.find(`label [for=${prefix}-new-action-new-group_id]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-group_id`);
-
-    $new.find(`#${prefix}-new-action-new-image_id`)
-        .attr('id', `${prefix}-${areaId}-action-new-${id}-image_id`)
-        .attr('name', `${namePrefix}[actions][new-${id}][image_id]`);
-    $new.find(`label [for=${prefix}-new-action-new-image_id]`)
-        .attr('for', `${prefix}-${areaId}-action-new-${id}-image_id`);
-
+    $new.find('.script-editor-btn').on('click', showScriptEditor);
     $new.find('.remove-action-btn').confirmation({
         title: 'Delete this Action'
     }).on('click', removeAction);
@@ -215,6 +212,13 @@ function addAction(e){
 
     $new.find('.action-type-select').on('change', function(e){
         showAction($(this).closest('.action-row'));
+    });
+
+    $new.find('.document-type-select').on('change', function(e){
+        showText($(this).closest('.action-row'));
+    });
+    $new.find('.document-location-select').on('change', function(e){
+        showText($(this).closest('.action-row'));
     });
 
     $new.find('select').select2({
@@ -230,6 +234,7 @@ function addAction(e){
     }
     $new.show();
     showAction($new);
+    showText($new);
 }
 
 function getOldLinkName(e){

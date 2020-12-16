@@ -1,8 +1,10 @@
 mixin area(area, id)
     .list-group-item.area-config(id=`area-${id}`)
         .form-row.mb-3
+            .lead.col-md-1
+                strong Area
             label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
-            .col-md-6
+            .col-md-5
                 input.form-control.area-name(
                     id=`gamestate_map_area_name-${id}`,
                     name=`gamestate[map][${id}][name]`,
@@ -29,7 +31,7 @@ mixin area(area, id)
                 button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
                     i.fa.fa-trash
         .form-row.mb-3
-            label.col-md-1.d-md-none.d-lg-block.col-form-label(for=`gamestate_map_area_coords-${id}` ) Coords
+            label.col-md-1.offset-md-1.d-md-none.d-lg-block.col-form-label(for=`gamestate_map_area_coords-${id}` ) Coords
             .col
                 input.form-control(
                     name=`gamestate[map][${id}][coords]`,
@@ -51,90 +53,39 @@ mixin area(area, id)
 
 mixin action(prefix, namePrefix, action, areaId, actionId)
     .action-row.border-top.border-secondary(id=`action-${areaId}-${actionId}` data-prefix=prefix data-nameprefix=namePrefix)
+        // Action General Row
         .form-row.my-1
-            label.col-md-1.col-form-label(for=`${prefix}-${areaId}-action-${actionId}-type`) Action
+            // Action Type
+            label.col-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-type`
+                data-fieldtype='type'
+            )
+                strong.ml-2 Action
             .col-md-2
-                select.custom-select.action-type-select(
+                select.custom-select.action-type-select.action-input(
                     name=`${namePrefix}[actions][${actionId}][type]`,
                     id=`${prefix}-${areaId}-action-${actionId}-type`,
                     class=actionId!=='new'?'select2':'',
                     data-placeholder="Type",
+                    data-fieldtype='type'
+                    data-required=true
                 )
                     option
-                    for type in ['link', 'text', 'transition', 'image']
+                    for type in ['link', 'text', 'transition', 'image', 'script']
                         option(value=type, selected=action.type === type)= type
 
 
-            label.col-md-2.col-form-label.action-link(for=`${prefix}-${areaId}-action-${actionId}-link_id` ) Link
-            .col-md-6.action-link
-                select.custom-select.link-select(
-                    name=`${namePrefix}[actions][${actionId}][link_id]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-link_id`,
-                    class=actionId!=='new'?'select2':'',
-                    data-placeholder="Select Link",
-                )
-                    option
-                    for link in links
-                        option(value=link.id selected=action.link_id && Number(action.link_id)===link.id)= link.name
-
-
-            label.col-md-2.col-form-label.action-text(for=`${prefix}-${areaId}-action-${actionId}-content` ) Display Text
-            .col-md-6.action-text
-                    textarea.form-control(
-                        name=`${namePrefix}[actions][${actionId}][content]`,
-                        id=`${prefix}-${areaId}-action-${actionId}-content`,
-                        rows=3
-                    )
-                        = action.content
-
-            label.col-md-2.col-form-label.action-transition(for=`${prefix}-${areaId}-action-${actionId}-to_state_id` ) To State
-            .col-md-6.action-transition
-                select.custom-select(
-                    name=`${namePrefix}[actions][${actionId}][to_state_id]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-to_state_id`,
-                    class=actionId!=='new'?'select2':'',
-                    data-placeholder="Select Gamestate",
-                )
-                    option
-                    for gamestate in gamestates
-                        option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
-
-            label.col-md-2.col-form-label.action-image(for=`${prefix}-${areaId}-action-${actionId}-image_id` ) Image
-            .col-md-6.action-image
-                select.custom-select(
-                    name=`${namePrefix}[actions][${actionId}][image_id]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-image_id`,
-                    class=actionId!=='new'?'select2':'',
-                    data-placeholder="Select Image",
-                )
-                    option
-                    for image in images.filter(i=>{return i.is_popup})
-                        option(value=image.id selected=action.image_id && Number(action.image_id)===image.id)= image.display_name?image.display_name:image.name
-
-
-            .col.text-right
-                    button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
-                        i.fa.fa-trash
-
-
-        .form-row.my-1.action-transition
-            label.col-md-2.offset-md-3.col-form-label(
-                for=`${prefix}-${areaId}-action-${actionId}-delay`
-            ) Delay in Seconds
-            input.col-md-1.form-control(
-                type="number",
-                placeholder="Delay",
-                name=`${namePrefix}[actions][${actionId}][delay]`,
-                id=`${prefix}-${areaId}-action-${actionId}-delay`,
-                value=action.delay?action.delay:0)
-            label.col-md-2.col-form-label(
+            // Group ID
+            label.col-md-1.col-form-label.action-input-label(
                 for=`${prefix}-${areaId}-action-${actionId}-group_id`
-            ) Player Group
-            .col-md-3
-                select.custom-select(
+                data-fieldtype='group_id'
+            ) For Group
+            .col-md-2
+                select.custom-select.action-input(
                     name=`${namePrefix}[actions][${actionId}][group_id]`
                     id=`${prefix}-${areaId}-action-${actionId}-group_id`,
                     class=actionId!=='new'?'select2':'',
+                    data-fieldtype='group_id'
                 )
                     option(selected=!action.group_id value="-1") All
                     for group in groups
@@ -143,17 +94,213 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                             selected=action.group_id && Number(action.group_id)===group.id
                         )= group.name
 
+                // Condition Input
+            label.col-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-condition`
+                data-fieldtype='condition'
+            ) Condition
+
+            .input-group.action-condition.col-md-4
+                - const conditionContents = action.condition?action.condition:''
+                - const conditionLines = conditionContents.split('\n')
+
+                input.form-control.script-display.border-light.action-input.script-editor-btn(
+                    type="text"
+                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
+                    readonly
+                )
+                input.form-control.script-input(
+                    type="hidden"
+                    name=`${namePrefix}[actions][${actionId}][condition]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-condition`,
+                    value=action.condition
+                    data-fieldtype='content'
+                )
+                .input-group-append
+                    button.btn.btn-outline-light.script-editor-btn
+                        i.fas.fa-edit.mr-2
+                        | Edit
+            // Remove
+            .col.text-right
+                button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
+                    i.fa.fa-trash
+
+        // Link Row
+        .form-row.my-1.action-link
+            // Link Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-link_id`
+                data-fieldtype='link_id'
+            ) Link
+            .col-md-8
+                select.custom-select.link-select.action-input(
+                    name=`${namePrefix}[actions][${actionId}][link_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-link_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Link",
+                    data-fieldtype='link_id'
+                )
+                    option
+                    for link in links
+                        option(value=link.id selected=action.link_id && Number(action.link_id)===link.id)= link.name
+
+        // Text Row
         .form-row.my-1.action-text
-            label.col-md-2.offset-md-3.col-form-label(
+
+            // Link Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-document_id`
+                data-fieldtype='document_id'
+            ) Link
+            .col-md-8
+                select.custom-select.link-select.action-input.document-type-select(
+                    name=`${namePrefix}[actions][${actionId}][document_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-document_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Document",
+                    data-fieldtype='document_id'
+                )
+                    option(value=-1 selected=!action.document_id) Custom
+                    for doc in documents
+                        option(value=doc.id selected=action.document_id && Number(action.document_id)===doc.id)= doc.name
+        // Text Row
+        .form-row.my-1.action-text.document-contents
+            // Text Content
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-content`
+                data-fieldtype='content'
+            ) Display Text
+            .col-md-6
+                    textarea.form-control.action-input(
+                        name=`${namePrefix}[actions][${actionId}][content]`,
+                        id=`${prefix}-${areaId}-action-${actionId}-content`,
+                        rows=3
+                        data-fieldtype='content'
+                    )
+                        = action.content
+        // Text Row
+        .form-row.my-1.action-text
+            // Location
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-location`
+                data-fieldtype='location'
+            ) Location
+            .col-md-2
+                select.custom-select.location-select.action-input.document-location-select(
+                    name=`${namePrefix}[actions][${actionId}][location]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-location`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select location",
+                    data-fieldtype='location'
+                )
+                    option
+                    for location in ['inline', 'popup', 'popout']
+                        option(value=location selected=action.location === location)= location
+
+
+            // Duration
+            label.col-md-2.offset-md-1.col-form-label.action-input-label.document-duration(
                 for=`${prefix}-${areaId}-action-${actionId}-duration`
+                data-fieldtype='duration'
             ) Duration in Seconds
-            input.col-md-1.form-control(
+            input.col-md-1.form-control.action-input.document-duration(
                 type="number",
                 placeholder="Duration",
                 name=`${namePrefix}[actions][${actionId}][duration]`,
                 id=`${prefix}-${areaId}-action-${actionId}-duration`,
-                value=action.duration?action.duration:0)
-            .col-md-2.form-text ( 0 for unlimited )
+                value=action.duration?action.duration:0
+                data-fieldtype='duration'
+            )
+            .col-md-2.form-text.document-duration ( 0 for unlimited )
+
+        // Transition Row
+        .form-row.my-1.action-transition
+            // Transition Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-to_state_id`
+                data-fieldtype='to_state_id'
+            ) To State
+            .col-md-5
+                select.custom-select.action-input(
+                    name=`${namePrefix}[actions][${actionId}][to_state_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-to_state_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Gamestate",
+                    data-fieldtype='to_state_id'
+                )
+                    option
+                    for gamestate in gamestates
+                        option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
+
+            // Delay
+            label.col-md-2.action-input-label.col-form-label(
+                for=`${prefix}-${areaId}-action-${actionId}-delay`
+                data-fieldtype='delay'
+            ) Delay in Seconds
+            input.col-md-1.form-control.action-input(
+                type="number",
+                placeholder="Delay",
+                name=`${namePrefix}[actions][${actionId}][delay]`,
+                id=`${prefix}-${areaId}-action-${actionId}-delay`,
+                value=action.delay?action.delay:0
+                data-fieldtype='delay'
+            )
+
+        // Image Row
+        .form-row.my-1.action-image
+
+            // Image Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-image_id`
+                data-fieldtype='image_id'
+            ) Image
+            .col-md-8
+                select.custom-select.action-input(
+                    name=`${namePrefix}[actions][${actionId}][image_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-image_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Image",
+                    data-fieldtype='image_id'
+                )
+                    option
+                    for image in images.filter(i=>{return i.is_popup})
+                        option(value=image.id selected=action.image_id && Number(action.image_id)===image.id)= image.display_name?image.display_name:image.name
+        // Script Row
+        .form-row.my-1.action-script
+            // Script Input
+            label.col-md-2.offset-md-1.col-form-label.action-input-label.action-script(
+                for=`${prefix}-${areaId}-action-${actionId}-script`
+                data-fieldtype='script'
+            ) Script
+
+            .input-group.action-script.col-md-8
+                - const scriptContents = action.script?action.script:''
+                - const lines = scriptContents.split('\n')
+
+                input.form-control.script-display.border-light.action-input.script-editor-btn(
+                    type="text"
+                    value=lines[0] + (lines.length > 1?`...(+${lines.length-1} more lines)`:''),
+                    readonly
+                )
+                input.form-control.script-input(
+                    type="hidden"
+                    placeholder="Script",
+                    name=`${namePrefix}[actions][${actionId}][script]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-script`,
+                    value=action.script
+                    data-fieldtype='script'
+                )
+                .input-group-append
+                    button.btn.btn-outline-light.script-editor-btn
+                        i.fas.fa-edit.mr-2
+                        | Edit
+
+
+
+
+
+
+
 
 mixin actionsCard(areaId, area)
     - moment.relativeTimeThreshold('ss', 0);
@@ -168,17 +315,21 @@ mixin actionsCard(areaId, area)
                             strong.mr-1 Open Link
                             i #{_.findWhere(links, {id: action.link_id}).name}
                         when 'text'
-                            strong.mr-1 Display Text
-                            br
-                            | #{action.content}
+                            strong.mr-1 Display
+                            if action.document_id
+                                strong.mr-1 Document
+                                | as #{action.location}
+                                br
+                                i.mr-1 #{_.findWhere(documents, {id: action.document_id}).name}
+                            else
+                                strong.mr-1 Text
+                                | as #{action.location}
+                                br
+                                i.mr-1 #{action.content}
+
                         when 'transition'
                             strong.mr-1 Transition to state
                             i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}
-                            if action.group_id
-                                br
-                            if action.group_id
-                                | for
-                                i.mx-1 #{_.findWhere(groups, {id: action.group_id}).name}
                             if action.delay
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else
@@ -187,5 +338,19 @@ mixin actionsCard(areaId, area)
                             strong.mr-1 Display Image
                             - const image = _.findWhere(images, {id: Number(action.image_id)})
                             i.mr-1 #{image.display_name?image.display_name:image.name}
+                        when 'script'
+                            strong.mr-1 Run Script
+                            pre.mt-2 #{action.script}
                         default
                             | None
+
+                    if action.condition
+                        br
+                        strong.mr-1 On Condition
+                        span.text-monospace #{action.condition}
+
+                    if action.group_id
+                        br
+                        | For Group
+                        i.mx-1 #{_.findWhere(groups, {id: action.group_id}).name}
+

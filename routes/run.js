@@ -3,6 +3,7 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
+const gameData = require('../lib/gameData');
 
 /* GET runs listing. */
 async function list(req, res, next){
@@ -64,6 +65,7 @@ function showNew(req, res, next){
     res.locals.run = {
         name: null,
         current: false,
+        data: gameData.getStartData('run')
     };
     res.locals.breadcrumbs = {
         path: [
@@ -117,6 +119,9 @@ async function create(req, res, next){
             current.current = false;
             await req.models.run.update(current.id, current);
         }
+        if (run.data){
+            run.data = JSON.parse(run.data);
+        }
 
         const id = await req.models.run.create(run);
 
@@ -142,6 +147,11 @@ async function update(req, res, next){
                 await req.models.run.update(current.id, current);
             }
         }
+
+        if (run.data){
+            run.data = JSON.parse(run.data);
+        }
+
 
         await req.models.run.update(id, run);
         delete req.session.runData;

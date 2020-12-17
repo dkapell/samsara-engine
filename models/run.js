@@ -7,7 +7,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'current'];
+const tableFields = ['name', 'current', 'data'];
 
 
 exports.get = async function(id){

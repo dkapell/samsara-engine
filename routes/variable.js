@@ -3,7 +3,7 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 
-const userData = require('../lib/userData');
+const gameData = require('../lib/gameData');
 
 /* GET variables listing. */
 async function list(req, res, next){
@@ -80,14 +80,21 @@ async function create(req, res, next){
         variable.public = false;
     }
 
+    if (_.has(variable, 'player')){
+        variable.player = true;
+    } else {
+        variable.player = false;
+    }
+
     try{
         const variableId = await req.models.variable.create(variable);
         delete req.session.variableData;
-        await userData.addNewVariable(variable);
+        await gameData.addNewVariable(variable);
         req.flash('success', 'Created Variable ' + variable.name);
         res.redirect('/variable');
     } catch (err) {
         req.flash('error', err.toString());
+        console.trace(err);
         return res.redirect('/variable/new');
     }
 
@@ -103,12 +110,18 @@ async function update(req, res, next){
         variable.public = false;
     }
 
+    if (_.has(variable, 'player')){
+        variable.player = true;
+    } else {
+        variable.player = false;
+    }
+
     try {
         const current = await req.models.variable.get(id);
 
         await req.models.variable.update(id, variable);
         delete req.session.variableData;
-        await userData.addNewVariable(variable, current);
+        await gameData.addNewVariable(variable, current);
         req.flash('success', 'Updated Variable ' + variable.name);
         res.redirect('/variable');
     } catch(err) {

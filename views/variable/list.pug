@@ -11,6 +11,7 @@ block content
                     th
                     th(data-order='asc') Name
                     th Type
+                    th Scope
                     th Public
                     th Default Value
                     th
@@ -22,6 +23,7 @@ block content
                         td
                             a(href='/variable/' + variable.id)= variable.name
                         td= capitalize(variable.type)
+                        td=variable.player?'Player':'Run'
                         td=variable.public?'Yes':'No'
                         td=variable.base_value
                         td.text-right
@@ -31,8 +33,6 @@ block content
                                 data-back='/variable'
                             )
                                 i.fas.fa-trash.fa-fw
-
-
 
 append scripts
     script(src='/javascripts/data-table.js')

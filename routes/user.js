@@ -2,6 +2,7 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
+const gameData = require('../lib/gameData');
 
 /* GET users listing. */
 async function list(req, res, next){
@@ -41,7 +42,8 @@ async function showNew(req, res, next){
                 run_id: (await req.models.run.getCurrent()).id,
                 gamestate_id: startState.id,
                 groups: [],
-                character: null
+                character: null,
+                data: gameData.getStartData('player')
             }
         };
         res.locals.runs = await req.models.run.list();
@@ -81,7 +83,8 @@ async function showEdit(req, res, next){
             user.player = {
                 run_id: (await req.models.run.getCurrent()).id,
                 gamestate_id: startState.id,
-                character: null
+                character: null,
+                data: gameData.getStartData('player')
             };
         }
         res.locals.runs = await req.models.run.list();
@@ -125,8 +128,8 @@ async function create(req, res, next){
                 gamestate_id:Number(user.player.gamestate_id),
                 prev_gamestate_id:null,
                 character: user.player.character,
-                groups: user.player.groups
-
+                groups: user.player.groups,
+                data: JSON.parse(user.player.data)
             });
         }
         delete req.session.userData;
@@ -159,13 +162,16 @@ async function update(req, res, next){
                 player.character = user.player.character;
                 player.gamestate_id =  Number(user.player.gamestate_id);
                 player.groups = user.player.groups;
+                player.data = JSON.parse(user.player.data);
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({
                     user_id:id,
                     run_id:user.player.run_id,
                     game_state:user.player.game_state,
-                    groups: user.player.groups
+                    groups: user.player.groups,
+                    data: JSON.parse(user.player.data)
+
                 });
             }
             await req.app.locals.gameServer.sendGameState(id);

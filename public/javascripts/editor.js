@@ -12,20 +12,46 @@ function renderEditor(id, type, size){
         lineWrapping:true,
         autoRefresh:true,
     };
+    const $textarea = $('#' + id);
+
     if (type === 'html'){
         editorConfig.mode = 'htmlmixed';
     } else if (type === 'javascript') {
         editorConfig.mode = { name: 'javascript', json: false };
+    } else if (type === 'json'){
+        editorConfig.mode = { name: 'javascript', json: true };
     }
+
     let editor = null;
 
-    const $textarea = $('#' + id);
+
     editor = CodeMirror.fromTextArea($textarea[0], editorConfig);
     editor.setSize(null, size);
     if (type === 'html'){
         $('#' + id + '-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
             if ($(e.target).attr('aria-controls') === id + '-preview'){
-                $('#' + id + '-preview-frame').html($.parseHTML(editor.getValue()));
+                if (type === 'html'){
+                    $('#' + id + '-preview-frame').html($.parseHTML(editor.getValue()));
+                }
+            }
+        });
+    }
+    if (type === 'json'){
+        editor.on('change', function(editor){
+            try{
+                JSON.parse(editor.getValue());
+
+                editor.getTextArea().setCustomValidity('');
+                $(editor.getWrapperElement()).removeClass('is-invalid');
+                $(editor.getWrapperElement()).removeClass('border-danger');
+                $(editor.getWrapperElement()).addClass('is-valid');
+                $(editor.getWrapperElement()).addClass('border-success');
+            } catch(e){
+                editor.getTextArea().setCustomValidity('Not valid JSON');
+                $(editor.getWrapperElement()).addClass('is-invalid');
+                $(editor.getWrapperElement()).addClass('border-danger');
+                $(editor.getWrapperElement()).removeClass('is-valid');
+                $(editor.getWrapperElement()).removeClass('border-success');
             }
         });
     }

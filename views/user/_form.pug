@@ -37,6 +37,10 @@ fieldset#player_fields
             for gamestate in gamestates
                 option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
 
+    .form-group
+        label.control-label(for="user_data") Custom Data
+        +jsonEditor('user_data', 'user[player][data]', 6, 300, user.player.data)
+
 .form-group
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'
     a.btn.btn-link(href="/user") Cancel

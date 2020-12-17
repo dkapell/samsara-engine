@@ -7,7 +7,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'type', 'public', 'base_value'];
+const tableFields = ['name', 'type', 'public', 'player', 'base_value'];
 
 
 exports.get = async function(id){
@@ -31,6 +31,24 @@ exports.getByName = async function(name){
 exports.list = async function(){
     const query = 'select * from "variables" order by name';
     const result = await database.query(query);
+    return result.rows;
+};
+
+exports.find = async function(conditions){
+    const queryParts = [];
+    const queryData = [];
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
+    }
+    let query = 'select * from "variables"';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    query += ' order by name';
+    const result = await database.query(query, queryData);
     return result.rows;
 };
 

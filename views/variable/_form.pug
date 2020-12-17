@@ -12,6 +12,11 @@
 
 .form-group
     .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="variable[player]", id="variable_player", checked=variable.player)
+        label.custom-control-label(for="variable_player") Player (Scoped to each player vs scoped to the run itself)
+
+.form-group
+    .custom-control.custom-switch
         input.custom-control-input(type="checkbox", name="variable[public]", id="variable_public", checked=variable.public)
         label.custom-control-label(for="variable_public") Public (Player-visible)
 

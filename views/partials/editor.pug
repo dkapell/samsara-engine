@@ -1,7 +1,7 @@
 mixin htmlEditor(id, name, rows, size, contents)
     ul.nav.nav-tabs(id=`${id}-edit-tabs` role="tablist")
         li.nav-item(role="presentation")
-            a.nav-link(active
+            a.nav-link.active(
                 id=`${id}-code-tab`
                 data-toggle="tab"
                 href=`#${id}-code`
@@ -43,10 +43,25 @@ mixin htmlEditor(id, name, rows, size, contents)
                     id=`${id}-preview-frame`
                     style=`height: ${size-2}px`)
 
+mixin jsonEditor(id, name, rows, size, contents)
+    textarea.form-control.editor(
+        id= id
+        rows= rows
+        name= name
+        data-size= size
+        data-type= 'json',
+        aria-describedby=`editor-feedback-${id}`
+    )
+        = JSON.stringify(contents, null, 2)
+    .invalid-feedback(id=`editor-feedback-${id}`) Not Valid JSON
+
+
+
+
 mixin jsEditor(id, name, rows, size, contents)
     ul.nav.nav-tabs(id=`${id}-edit-tabs` role="tablist")
         li.nav-item(role="presentation")
-            a.nav-link(active
+            a.nav-link.active(
                 id=`${id}-code-tab`
                 data-toggle="tab"
                 href=`#${id}-code`
@@ -189,12 +204,14 @@ mixin jsEditor(id, name, rows, size, contents)
                             tr
                                 th Variable
                                 th Type
+                                th Scope
                                 th Public
                         tbody
                             for variable in variables
                                 tr
-                                    td #{variable.public?'public':'private'}.#{variable.name}
+                                    td #{variable.player?'':'run.'}#{variable.public?'public':'private'}.#{variable.name}
                                     td #{variable.type}
+                                    td #{variable.player?'Player':'Run'}
                                     td #{variable.public?'Yes':'No'}
 
 

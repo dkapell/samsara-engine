@@ -40,6 +40,7 @@ create table runs (
     id          serial,
     name        varchar(80) not null unique,
     current     boolean default false,
+    data jsonb,
     primary key(id)
 );
 
@@ -159,10 +160,12 @@ create type variable_type as ENUM(
     'object'
 );
 
+
 create table variables(
     id serial,
     name varchar(255) not null,
     type variable_type not null,
+    player boolean default true,
     public boolean default false,
     base_value text,
     primary key (id),

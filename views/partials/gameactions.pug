@@ -166,7 +166,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
             label.col-md-2.offset-md-1.col-form-label.action-input-label(
                 for=`${prefix}-${areaId}-action-${actionId}-document_id`
                 data-fieldtype='document_id'
-            ) Link
+            ) Document
             .col-md-8
                 select.custom-select.link-select.action-input.document-type-select(
                     name=`${namePrefix}[actions][${actionId}][document_id]`,

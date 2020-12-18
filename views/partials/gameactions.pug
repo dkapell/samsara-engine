@@ -385,6 +385,16 @@ mixin actionsCard(areaId, area)
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
         if area.name
             .card-header #{area.name}
+                if area.condition
+                    br
+                    strong.mr-1 On Condition
+                    span.text-monospace #{area.condition}
+
+                if area.group_id
+                    br
+                    | For Group
+                    i.mx-1 #{_.findWhere(groups, {id: area.group_id}).name}
+
 
         ul.list-group.list-group-flush
             for action in area.actions
@@ -435,5 +445,5 @@ mixin actionsCard(areaId, area)
                     if action.group_id
                         br
                         | For Group
-                        i.mx-1 #{_.findWhere(groups, {id: action.group_id}).name}
+                        i.mx-1 #{_.findWhere(groups, {id: Number(action.group_id)}).name}
 

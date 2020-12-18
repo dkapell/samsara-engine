@@ -22,6 +22,7 @@ $(function(){
     $('.action-link').hide();
     $('.action-text').hide();
 
+    showAllAreas();
     showAllActions();
 
     $('.action-type-select').on('change', function(e){
@@ -93,6 +94,7 @@ function addArea(e){
         minimumResultsForSearch: 6,
         width:'resolve'
     });
+    showAreaCriteria($new);
     $new.appendTo('#gamestate_map');
     $new.show();
 
@@ -112,6 +114,12 @@ function showAllActions(){
     $('.action-row').each(function(index) {
         showAction($(this));
         showText($(this));
+        showActionCriteria($(this));
+    });
+}
+function showAllAreas(){
+    $('.area-config').each(function(index) {
+        showAreaCriteria($(this));
     });
 }
 
@@ -157,6 +165,39 @@ function showText($row) {
     } else {
         $row.find('.document-duration').hide();
     }
+}
+
+function showActionCriteria($row){
+    const $criteraBtn = $row.find('.show-action-criteria-btn');
+    const $group = $row.find('.action-group');
+    const $condition = $row.find('.action-condition-data');
+    if($group.val() !== '-1' || $condition.val()){
+        $criteraBtn.hide();
+    } else {
+        $row.find('.criteria').hide();
+    }
+    $criteraBtn.on('click', function(e){
+        e.preventDefault();
+        $(this).hide();
+        $row.find('.criteria').show()
+    });
+}
+
+function showAreaCriteria($row){
+    const $criteraBtn = $row.find('.show-area-criteria-btn');
+    const $group = $row.find('.area-group');
+    const $condition = $row.find('.area-condition-data');
+
+    if($group.val() !== '-1' || $condition.val()){
+        $criteraBtn.hide();
+    } else {
+        $row.find('.criteria').hide();
+    }
+    $criteraBtn.on('click', function(e){
+        e.preventDefault();
+        $(this).hide();
+        $row.find('.criteria').show()
+    });
 }
 
 function addAction(e){
@@ -223,6 +264,7 @@ function addAction(e){
     $new.show();
     showAction($new);
     showText($new);
+    showActionCriteria($new);
 }
 
 function getOldLinkName(e){

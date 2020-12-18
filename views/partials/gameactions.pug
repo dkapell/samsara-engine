@@ -5,10 +5,12 @@ mixin area(area, id)
             .lead.col
                 strong Area
                 .float-right.d-md-none
+                    button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Criteria')
+                        i.fas.fa-clipboard-check.fa-fw
                     button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
-                        i.fa.fa-plus
+                        i.fas.fa-plus.fa-fw
                     button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
-                        i.fa.fa-trash
+                        i.fas.fa-trash.fa-fw
             label.col-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
                 for="gamestate_map_area_name-" + id
                 data-fieldtype='name'
@@ -40,10 +42,12 @@ mixin area(area, id)
                     for shape in ['rect', 'circle', 'poly']
                         option(value=shape selected=area.shape===shape)= shape
             .col-md-2.text-right.d-none.d-md-block
+                button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Criteria')
+                    i.fas.fa-clipboard-check.fa-fw
                 button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
-                    i.fa.fa-plus
+                    i.fas.fa-plus.fa-fw
                 button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
-                    i.fa.fa-trash
+                    i.fas.fa-trash.fa-fw
 
         .form-row.mb-2
             label.col-md-1.offset-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
@@ -51,7 +55,7 @@ mixin area(area, id)
                 data-fieldtype='coords'
             ) Coords
             .col
-                input.form-control(
+                input.form-control.area-input(
                     name=`gamestate[map][${id}][coords]`,
                     value=area.coords,
                     id=`gamestate_map_area_coords-${id}`,
@@ -60,14 +64,14 @@ mixin area(area, id)
                     data-fieldtype='coords'
                 )
 
-        .form-row.mb-3
+        .form-row.mb-3.criteria
             // Group ID
             label.col-md-1.offset-md-1.col-form-label.area-input-label(
                 for=`gamestate_map-${id}-group_id`
                 data-fieldtype='group_id'
             ) Group
             .col-md-2
-                select.custom-select.area-input(
+                select.custom-select.area-input.area-group(
                     name=`gamestate[map][${id}][group_id]`
                     id=`gamestate_map-${id}-group_id`
                     class=id!=='new'?'select2':'',
@@ -98,7 +102,7 @@ mixin area(area, id)
                     value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
                     readonly
                 )
-                input.form-control.script-input.area-input(
+                input.form-control.script-input.area-input.area-condition-data(
                     type="hidden"
                     name=`gamestate[map][${id}][condition]`,
                     id=`gamestate_map-${id}-condition`,
@@ -130,8 +134,13 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 strong.d-none.d-xl-block.ml-2 Action
                 strong.d-xl-none Action
                 .text-right.float-right.d-md-none
+                    button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Criteria')
+                        i.fas.fa-clipboard-check.mr-1
+                        | Add Criteria
+
                     button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
-                        i.fa.fa-trash
+                        i.fa.fa-trash.mr-1
+                        | Remove Action
 
             .col-md-2
                 select.custom-select.action-type-select.action-input(
@@ -146,14 +155,13 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     for type in ['link', 'text', 'transition', 'image', 'script']
                         option(value=type, selected=action.type === type)= type
 
-
             // Group ID
-            label.col-md-auto.col-form-label.action-input-label(
+            label.col-md-auto.col-form-label.action-input-label.criteria(
                 for=`${prefix}-${areaId}-action-${actionId}-group_id`
                 data-fieldtype='group_id'
             ) Group
-            .col-md-2
-                select.custom-select.action-input(
+            .col-md-2.criteria
+                select.custom-select.action-input.action-group(
                     name=`${namePrefix}[actions][${actionId}][group_id]`
                     id=`${prefix}-${areaId}-action-${actionId}-group_id`,
                     class=actionId!=='new'?'select2':'',
@@ -168,14 +176,14 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
 
 
             // Condition Input
-            label.col-md-1.col-form-label.action-input-label(
+            label.col-md-1.col-form-label.action-input-label.criteria(
                 for=`${prefix}-${areaId}-action-${actionId}-condition`
                 data-fieldtype='condition'
             )
                 span.d-md-none.d-xl-block.mr-1 Condition
                 span.d-none.d-md-block.d-xl-none Cond
 
-            .input-group.action-condition.col-md-4
+            .input-group.action-condition.col-md-4.criteria
                 - const conditionContents = action.condition?action.condition:''
                 - const conditionLines = conditionContents.split('\n')
 
@@ -184,7 +192,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
                     readonly
                 )
-                input.form-control.script-input.action-input(
+                input.form-control.script-input.action-input.action-condition-data(
                     type="hidden"
                     name=`${namePrefix}[actions][${actionId}][condition]`,
                     id=`${prefix}-${areaId}-action-${actionId}-condition`,
@@ -197,8 +205,11 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
 
             // Remove Button
             .col-md.text-right.d-none.d-md-block
+                button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Criteria')
+                    i.fas.fa-clipboard-check.fa-fw.mr-1
+                    | Add Criteria
                 button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
-                    i.fa.fa-trash
+                    i.fa.fa-trash.fa-fw
 
         // Link Row
         .form-row.my-1.action-link

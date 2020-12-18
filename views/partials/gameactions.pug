@@ -1,7 +1,7 @@
 mixin area(area, id)
     input(type='hidden', name=`gamestate[map][${id}][uuid]` value=clone?'':area.uuid)
     .list-group-item.area-config(id=`area-${id}`)
-        .form-row.mb-3
+        .form-row.mb-2
             .lead.col
                 strong Area
                 .float-right.d-md-none
@@ -9,24 +9,32 @@ mixin area(area, id)
                         i.fa.fa-plus
                     button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
                         i.fa.fa-trash
-            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_name-" + id ) Name
+            label.col-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
+                for="gamestate_map_area_name-" + id
+                data-fieldtype='name'
+            ) Name
             .col-md-5
-                input.form-control.area-name(
+                input.form-control.area-name.area-input(
                     id=`gamestate_map_area_name-${id}`,
                     name=`gamestate[map][${id}][name]`,
                     value=area.name,
                     data-updated='self',
                     placeholder="Area Name.  Leave empty to calculate from actions",
                     required=id!== 'new'
+                    data-fieldtype='name'
                 )
-            label.col-md-1.d-md-none.d-lg-block.col-form-label(for="gamestate_map_area_shape-" + id ) Shape
+            label.col-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
+                for="gamestate_map_area_shape-" + id
+                data-fieldtype='shape'
+            ) Shape
             .col-md-2
-                select.custom-select(
+                select.custom-select.area-input(
                     name=`gamestate[map][${id}][shape]`,
                     id=`gamestate_map_area_shape-${id}`,
                     class=id!=='new'?'select2':'',
                     data-placeholder="Select Shape"
                     required=id!== 'new'
+                    data-fieldtype='shape'
                 )
                     option
                     for shape in ['rect', 'circle', 'poly']
@@ -36,18 +44,70 @@ mixin area(area, id)
                     i.fa.fa-plus
                 button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
                     i.fa.fa-trash
-        .form-row.mb-3
-            label.col-md-1.offset-md-1.d-md-none.d-lg-block.col-form-label(for=`gamestate_map_area_coords-${id}` ) Coords
+
+        .form-row.mb-2
+            label.col-md-1.offset-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
+                for=`gamestate_map_area_coords-${id}`
+                data-fieldtype='coords'
+            ) Coords
             .col
                 input.form-control(
                     name=`gamestate[map][${id}][coords]`,
                     value=area.coords,
                     id=`gamestate_map_area_coords-${id}`,
                     placeholder="Coordinates",
-                    required=id!== 'new'
+                    required=id!== 'new',
+                    data-fieldtype='coords'
                 )
 
+        .form-row.mb-3
+            // Group ID
+            label.col-md-1.offset-md-1.col-form-label.area-input-label(
+                for=`gamestate_map-${id}-group_id`
+                data-fieldtype='group_id'
+            ) Group
+            .col-md-2
+                select.custom-select.area-input(
+                    name=`gamestate[map][${id}][group_id]`
+                    id=`gamestate_map-${id}-group_id`
+                    class=id!=='new'?'select2':'',
+                    data-fieldtype='group_id'
+                )
+                    option(selected=!area.group_id value="-1") All
+                    for group in groups
+                        option(
+                            value=group.id
+                            selected=area.group_id && Number(area.group_id)===group.id
+                        )= group.name
 
+
+            // Condition Input
+            label.col-md-2.offset-md-1.col-form-label.area-input-label(
+                for=`gamestate_map-${id}-condition`
+                data-fieldtype='condition'
+            )
+                span.d-md-none.d-xl-block.mr-1 Condition
+                span.d-none.d-md-block.d-xl-none Cond
+
+            .input-group.area-condition.col-md-5
+                - const conditionContents = area.condition?area.condition:''
+                - const conditionLines = conditionContents.split('\n')
+
+                input.form-control.script-display.border-light.script-editor-btn(
+                    type="text"
+                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
+                    readonly
+                )
+                input.form-control.script-input.area-input(
+                    type="hidden"
+                    name=`gamestate[map][${id}][condition]`,
+                    id=`gamestate_map-${id}-condition`,
+                    value=area.condition
+                    data-fieldtype='condition'
+                )
+                .input-group-append
+                    button.btn.btn-outline-light.script-editor-btn
+                        i.fas.fa-edit
 
         if _.isArray(area.actions)
             - let actionId = 0;
@@ -119,12 +179,12 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 - const conditionContents = action.condition?action.condition:''
                 - const conditionLines = conditionContents.split('\n')
 
-                input.form-control.script-display.border-light.action-input.script-editor-btn(
+                input.form-control.script-display.border-light.script-editor-btn(
                     type="text"
                     value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
                     readonly
                 )
-                input.form-control.script-input(
+                input.form-control.script-input.action-input(
                     type="hidden"
                     name=`${namePrefix}[actions][${actionId}][condition]`,
                     id=`${prefix}-${areaId}-action-${actionId}-condition`,

@@ -34,7 +34,6 @@ $(function(){
         showText($(this).closest('.action-row'));
     });
 
-
     $('.link-select').on('select2:selecting', getOldLinkName);
     $('.link-select').on('change', updateAreaName);
 
@@ -63,34 +62,23 @@ function addArea(e){
     const id = nextIndex++;
     $new.attr('id', `area-new-${id}`);
 
-    $new.find('#gamestate_map_area_name-new')
-        .attr('required', true)
-        .attr('id', 'gamestate_map_area_name-new-' + id)
-        .attr('name', `gamestate[map][new-${id}][name]`);
-    $new.find('label [for=gamestate_map_area_name-new]')
-        .attr('for', 'gamestate_map_area_name-new-' + id);
+    // Update all area fields
+    $new.find('.area-input').each(function(e) {
+        const $input = $(this);
+        const fieldtype = $input.data('fieldtype');
+        $input.attr('id', `gamestate_map_area-new-${id}-${fieldtype}`);
+        $input.attr('name', `gamestate[map][new-${id}][${fieldtype}]`);
+        if ($this.data('required')){
+            $input.attr('required', true);
+        }
+    });
 
-    $new.find('#gamestate_map_area_link_id-new')
-        .attr('required', true)
-        .attr('id', 'gamestate_map_area_link_id-new-' + id)
-        .attr('name', `gamestate[map][new-${id}][link_id]`);
-    $new.find('label [for=gamestate_map_area_link_id-new]')
-        .attr('for', 'gamestate_map_area_link_id-new-' + id);
-
-    $new.find('#gamestate_map_area_coords-new')
-        .attr('required', true)
-        .attr('id', 'gamestate_map_area_coords-new-' + id)
-        .attr('name', `gamestate[map][new-${id}][coords]`);
-    $new.find('label [for=gamestate_map_area_coords-new]')
-        .attr('for', 'gamestate_map_area_coords-new-' + id);
-
-
-    $new.find('#gamestate_map_area_shape-new')
-        .attr('required', true)
-        .attr('id', 'gamestate_map_area_shape-new-' + id)
-        .attr('name', `gamestate[map][new-${id}][shape]`);
-    $new.find('label [for=gamestate_map_area_shape-new]')
-        .attr('for', 'gamestate_map_area_shape-new-' + id);
+    // Update all area labels
+    $new.find('.area-input-label').each(function(e) {
+        const $label = $(this);
+        const fieldtype = $label.data('fieldtype');
+        $label.attr('for', `gamestate_map_area-new-${id}-${fieldtype}`);
+    });
 
     $new.find('.remove-area-btn').confirmation({
         title: 'Delete this Area'

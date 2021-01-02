@@ -8,7 +8,7 @@ const models = {
     code: require('./code')
 };
 
-const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template'];
+const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template', 'chat'];
 
 
 exports.get = async function(id){
@@ -42,7 +42,7 @@ exports.listSpecial = async function(){
     return Promise.all(result.rows.map(fillCodes));
 };
 
-exports.create = async function(data, cb){
+exports.create = async function(data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -71,7 +71,7 @@ exports.create = async function(data, cb){
     return id;
 };
 
-exports.update = async function(id, data, cb){
+exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -94,7 +94,7 @@ exports.update = async function(id, data, cb){
     }
 };
 
-exports.delete = async  function(id, cb){
+exports.delete = async function(id){
     const query = 'delete from gamestates where id = $1';
     await database.query(query, [id]);
 };

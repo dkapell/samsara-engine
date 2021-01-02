@@ -70,7 +70,13 @@ fieldset.mb-2
         .col
             .custom-control.custom-switch
                 input.custom-control-input(type="checkbox", name="gamestate[template]", id="gamestate_template", checked=gamestate.template)
-                label.custom-control-label(for="gamestate_template") is a Template
+                label.custom-control-label(for="gamestate_template") Is a Template
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[chat]", id="gamestate_chat", checked=gamestate.chat)
+                label.custom-control-label(for="gamestate_chat") Has Chat
+
 
 .form-group
     label.control-label(for="gamestate_description") Description (Player Facing)

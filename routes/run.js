@@ -189,6 +189,7 @@ async function resetRun(req, res, next){
                 return req.app.locals.gameServer.sendGameState(player.user_id);
             })
         );
+        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialState.id);
         res.json({success:true});
 
     } catch(err){
@@ -214,6 +215,7 @@ async function updateAllPlayers(req, res, next){
                 }
             })
         );
+        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, state.id);
         res.json({success:true});
 
     } catch(err){
@@ -237,6 +239,7 @@ async function advanceAll(req, res, next){
                 return;
             })
         );
+        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

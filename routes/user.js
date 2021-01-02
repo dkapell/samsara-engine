@@ -13,15 +13,7 @@ async function list(req, res, next){
         current: 'Users'
     };
     try {
-        const users = await req.models.user.list();
-        res.locals.users = await Promise.all(
-            users.map( async user => {
-                if (user.type === 'player'){
-                    user.player = await req.models.player.getByUserId(user.id);
-                }
-                return user;
-            })
-        );
+        res.locals.users = await req.models.user.list();
         res.locals.gamestates = await req.models.gamestate.list();
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
         res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
@@ -175,10 +167,12 @@ async function update(req, res, next){
                 });
             }
             await req.app.locals.gameServer.sendGameState(id);
+            await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         }
         req.flash('success', 'Updated User ' + user.name);
         res.redirect('/user');
     } catch(err) {
+        console.trace(err);
         req.flash('error', err.toString());
         return (res.redirect('/user/'+id));
 

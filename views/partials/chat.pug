@@ -1,0 +1,103 @@
+mixin chatHeader()
+    .card-header
+        if (!session.assumed_user && activeUser.type !== 'player')
+            a.btn.btn-sm.btn-outline-light.mr-2(href="/game/chat" target="_blank" title='Open Full Page Chat' data-toggle='tooltip')
+                i.fas.fa-comments
+        | Chat
+        button.close#chat-hide(type="button" aria-label="Hide Chat")
+            span(aria-hidden="true")
+                i.fas.fa-chevron-right
+
+mixin chatLoading()
+    .card-body#chat-loading.text-center
+        .spinner-border.text-primary(role="status")
+            span.sr-only Chat is Loading...
+
+mixin chatSidebarTablist(showReports)
+    ul.nav.nav-tabs.flex-shrink-0.chat-main#chat-tabs(role="tablist")
+        li.nav-item(role="presentation")
+            a.nav-link.active#chat-gamestate-tab-nav(data-toggle="tab" href="#chat-gamestate-tab" role="tab" aria-controls="chat-gamestate-tab" aria-selected="true")
+                if (session.assumed_user && session.assumed_user.type === 'player') || activeUser.type === 'player'
+                    | Room
+                else
+                    | Gamestate
+                span.badge.badge-danger.ml-1.chat-new-message-indicator
+        li.nav-item(role="presentation")
+            a.nav-link#chat-group-tab-nav(data-toggle="tab" href="#chat-group-tab" role="tab" aria-controls="chat-group-tab" aria-selected="false")
+                | Group(s)
+                span.badge.badge-danger.ml-1.chat-new-message-indicator
+        li.nav-item(role="presentation")
+            a.nav-link#chat-direct-tab-nav(data-toggle="tab" href="#chat-direct-tab" role="tab" aria-controls="chat-direct-tab" aria-selected="false")
+                | DM(s)
+                span.badge.badge-danger.ml-1.chat-new-message-indicator
+        li.nav-item(role="presentation")
+            a.nav-link#chat-gm-tab-nav(data-toggle="tab" href="#chat-gm-tab" role="tab" aria-controls="chat-gm-tab" aria-selected="false")
+                | Staff
+                span.badge.badge-danger.ml-1.chat-new-message-indicator
+        if showReports
+            li.nav-item(role="presentation")
+                a.nav-link#chat-report-tab-nav(data-toggle="tab" href="#chat-report-tab" role="tab" aria-controls="chat-report-tab" aria-selected="false")
+                    | Reports
+                    span.badge.badge-danger.ml-1.chat-new-message-indicator
+
+mixin chatTabs(showReports)
+    .card-body.tab-content.p-0.m-0.chat-main.h-100#chat-tab-content
+        .tab-pane.fade.show.active.h-100#chat-gamestate-tab(role="tabpanel" aria-labelledby="chat-gamestate-tab-nav")
+            .d-flex.flex-column.h-100
+                .my-1.py-1.px-2.chat-users.border-bottom.border-secondary(style="max-height:100px; min-height:40px")
+                ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
+                    data-location='gamestate'
+                )
+
+        .tab-pane.fade.h-100(id=`chat-group-tab` role="tabpanel" aria-labelledby=`chat-group-tab-nav`)
+            .d-flex.flex-column.h-100
+                .my-1.p-1.px-2.chat-users.border-bottom.border-secondary(style="max-height:100px; min-height:40px")
+                ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
+                    data-location='group'
+                )
+
+        .tab-pane.fade.h-100(id=`chat-direct-tab` role="tabpanel" aria-labelledby=`chat-direct-tab-nav`)
+            .d-flex.flex-column.h-100
+                ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
+                    data-location='direct'
+                )
+
+        .tab-pane.fade.h-100(id=`chat-gm-tab` role="tabpanel" aria-labelledby=`chat-gm-tab-nav`)
+            .d-flex.flex-column.h-100
+                ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
+                    data-location='gm'
+                )
+        if showReports
+            .tab-pane.fade.h-100(id=`chat-report-tab` role="tabpanel" aria-labelledby=`chat-report-tab-nav`)
+                .d-flex.flex-column.h-100
+                    ul.list-unstyled.overflow-auto.my-0.px-2.pt-2.mb-2.h-100.chat-container(
+                        data-location='report'
+                    )
+mixin chatActions()
+    form#chat-form(autocomplete="off")
+        .card-footer.p-2#chat-actions
+            .form-row
+                .col.mx-1.p-0
+                    select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-gamestate(data-location='gamestate')
+                    select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-group(data-location='group')
+                    select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-direct(data-location='direct')
+
+            .form-row
+                .col.mx-1.p-0
+                    input.form-control.form-control-sm#chat-message-input.flex-grow-1(type="text" placeholder='Message')
+
+
+mixin chatSidebar()
+    +chatHeader()
+    +chatLoading()
+    +chatSidebarTablist()
+    +chatTabs()
+    +chatActions()
+
+mixin chatStandalone()
+    +chatLoading()
+    +chatSidebarTablist(true)
+    +chatTabs(true)
+    +chatActions()
+
+

@@ -13,6 +13,7 @@ block content
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Image
                     th(data-priority="3") Codes
+                    th(data-priority="4") Has Chat
                     if checkPermission('creator')
                         th
 
@@ -36,6 +37,7 @@ block content
                             else
                                 i None
                         td= _.pluck(gamestate.codes, 'code').join(', ')
+                        td= gamestate.chat?"Yes":"No"
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-success.btn-sm.mr-1.action-btn(

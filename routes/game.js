@@ -51,6 +51,17 @@ async function verifyScript(req, res, next){
     }
 }
 
+function showChat(req, res, next){
+    res.locals.includeChatSidebar = false;
+    res.locals.breadcrumbs = {
+        path: [
+            { url: '/', name: 'Home'},
+        ],
+        current: 'Chat'
+    };
+    res.render('game/chat');
+}
+
 const router = express.Router();
 
 router.get('/', getGamePage);
@@ -58,6 +69,7 @@ router.get('/validator', permission('gm'), validateGame);
 router.get('/graph', permission('gm'), showGraph);
 router.get('/graph/data', permission('gm'), getGraphData);
 router.post('/script/verify', permission('creator'), verifyScript);
+router.get('/chat', permission('gm'), showChat);
 
 module.exports = router;
 

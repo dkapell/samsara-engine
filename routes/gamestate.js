@@ -73,6 +73,7 @@ async function showNew(req, res, next){
         finish: false,
         special: false,
         template:false,
+        chat: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -94,6 +95,7 @@ async function showNew(req, res, next){
                     start: false,
                     special: false,
                     template:false,
+                    chat: old.chat
                 };
             }
             res.locals.clone = true;
@@ -161,6 +163,9 @@ async function create(req, res, next){
     if (!_.has(gamestate, 'template')){
         gamestate.template = false;
     }
+    if (!_.has(gamestate, 'chat')){
+        gamestate.chat = false;
+    }
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
@@ -201,6 +206,9 @@ async function update(req, res, next){
     }
     if (!_.has(gamestate, 'template')){
         gamestate.template = false;
+    }
+    if (!_.has(gamestate, 'chat')){
+        gamestate.chat = false;
     }
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;

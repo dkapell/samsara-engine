@@ -65,6 +65,7 @@ async function advance(req, res, next){
         const changed = await gameEngine.nextState(user.id);
         if (changed){
             await req.app.locals.gameServer.sendGameState(user.id);
+            await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         }
         res.json({success:true});
     } catch(err){

@@ -32,6 +32,9 @@
     "webSocket": {
         "pingInterval": "PING_INTERVAL",
         "debug": "WEBSOCKET_DEBUG"
+    },
+    "chat": {
+        "brokerType": "CHAT_BROKERTYPE"
     }
 
 }

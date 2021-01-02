@@ -22,7 +22,8 @@ async function list(req, res, next){
 function showNew(req, res, next){
     res.locals.group = {
         name: null,
-        description: null
+        description: null,
+        chat: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -70,6 +71,10 @@ async function create(req, res, next){
 
     req.session.groupData = group;
 
+    if (!_.has(group, 'chat')){
+        group.chat = false;
+    }
+
     try{
         await req.models.group.create(group);
         delete req.session.groupData;
@@ -85,9 +90,10 @@ async function update(req, res, next){
     const id = req.params.id;
     const group = req.body.group;
     req.session.groupData = group;
-    if (!_.has(group, 'active')){
-        group.active = false;
+    if (!_.has(group, 'chat')){
+        group.chat = false;
     }
+
 
     try {
         const current = await req.models.group.get(id);

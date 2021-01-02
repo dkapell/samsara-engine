@@ -52,6 +52,19 @@ exports.list = async function(){
     return Promise.all(result.rows.map(fillGroups));
 };
 
+exports.list = async function(){
+    const query = 'select * from players';
+    const result = await database.query(query);
+    return Promise.all(result.rows.map(fillGroups));
+};
+
+exports.listByGroupAndRun = async function(group_id, run_id){
+    const query = `select players.* from players left join player_groups on player_groups.player_id = players.id
+        where player_groups.group_id = $1 and players.run_id = $2`;
+    const result = await database.query(query, [group_id, run_id]);
+    return Promise.all(result.rows.map(fillGroups));
+};
+
 exports.listByRunId = async function(run_id){
     const query = 'select * from players where run_id = $1';
     const result = await database.query(query, [run_id]);

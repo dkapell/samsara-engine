@@ -179,7 +179,7 @@ function showActionCriteria($row){
     $criteraBtn.on('click', function(e){
         e.preventDefault();
         $(this).hide();
-        $row.find('.criteria').show()
+        $row.find('.criteria').show();
     });
 }
 
@@ -196,7 +196,7 @@ function showAreaCriteria($row){
     $criteraBtn.on('click', function(e){
         e.preventDefault();
         $(this).hide();
-        $row.find('.criteria').show()
+        $row.find('.criteria').show();
     });
 }
 

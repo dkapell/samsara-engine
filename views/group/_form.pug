@@ -9,6 +9,11 @@
         = group.description
 
 .form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="group[chat]", id="group_chat", checked=group.chat)
+        label.custom-control-label(for="group_chat") Has Chat
+
+.form-group
     button.btn.btn-primary(type="submit")= group.id?'Update':'Create'
     a.btn.btn-link(href="/group") Cancel
 

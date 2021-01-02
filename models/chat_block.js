@@ -7,10 +7,10 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['code', 'description', 'actions'];
+const tableFields = ['user_id', 'blocked_user_id', 'created'];
 
 exports.get = async function(id){
-    const query = 'select * from codes where id = $1';
+    const query = 'select * from chat_blocks where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -18,18 +18,35 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByCode = async function(uuid){
-    const query = 'select * from codes where UPPER(code) = UPPER($1)';
-    const result = await database.query(query, [uuid]);
-    if (result.rows.length){
-        return result.rows[0];
+exports.find = async function(conditions){
+    const queryParts = [];
+    const queryData = [];
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
+    }
+    let query = 'select * from chat_blocks';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    query += ' order by user_id, blocked_user_id';
+    const result = await database.query(query, queryData);
+    return result.rows;
+
+};
+
+exports.findOne = async function(conditions){
+    const results = await exports.find(conditions);
+    if (results.length){
+        return results[0];
     }
     return;
 };
 
-
 exports.list = async function(){
-    const query = 'select * from codes order by code';
+    const query = 'select * from chat_blocks order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -49,7 +66,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into codes (';
+    let query = 'insert into chat_blocks (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -72,7 +89,7 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update codes set ';
+    let query = 'update chat_blocks set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -80,14 +97,10 @@ exports.update = async function(id, data){
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from codes where id = $1';
+    const query = 'delete from chat_blocks where id = $1';
     await database.query(query, [id]);
 };
 
 function validate(data){
-    if (! validator.isLength(data.code, 2, 80)){
-        return false;
-    }
-
     return true;
 }

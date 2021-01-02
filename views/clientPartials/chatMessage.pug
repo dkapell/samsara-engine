@@ -1,0 +1,93 @@
+if !forReport && (!last || (new Date(last.created)).toLocaleDateString() !== (new Date(message.created)).toLocaleDateString())
+    li.chat-date-change.py-1.text-center #{(new Date(message.created)).toLocaleDateString([], { dateStyle:'short'})}
+
+li.media(
+
+    data-messageid=message.message_id
+    data-location=message.location
+    data-self=message.self
+    data-userid=message.user_id
+    data-sender=message.recipient_type === 'player'?message.sender:message.sender.full
+    class=message.firstNew?'first-new':''
+    class=forReport?'reported-chat-message':'chat-message'
+)
+   .media-body
+        - let timeSinceLast = last?new Date(message.created).getTime() - new Date(last.created).getTime():1000
+        - const showHeader = (!last || message.user_id !== last.user_id || timeSinceLast > 300000 || message.location !== last.location || ((message.location === 'group' || message.location === 'direct' ) && message.location_id !== last.location_id))
+
+        if showHeader
+            .mt-1.w-100.chat-message-header
+                span.chat-message-user(
+                    data-userid=message.user_id
+                    data-self=message.self
+                    class=message.user_type==='player'?'chat-player-message':'chat-staff-message'
+                )
+                    if message.self
+                        strong.mr-1 Me
+                    else if message.recipient_type === 'player'
+                        strong.mr-1 #{message.sender}
+                    else
+                        strong.mr-1 #{message.sender.full}
+                span.mr-2
+                    case message.location
+                        when 'gamestate'
+                            if !message.recipient_type
+                                i.fas.fa-arrow-right.mr-1
+                                .badge.badge-primary.mr-2.chat-message-location(
+                                    data-location='gamestate'
+                                    data-locationid=message.location_id
+                                ) State:
+                                    i  #{message.location_name}
+                        when 'gm'
+                            i.fas.fa-arrow-right.mr-1
+                            .badge.badge-primary.mr-2.chat-message-location(
+                                data-location='gm'
+                            ) Staff
+                        when 'group'
+                            i.fas.fa-arrow-right.mr-1
+                            .badge.badge-primary.mr-2.chat-message-location(
+                                data-locationid=message.location_id
+                                data-location='group'
+                                data-locationname=message.location_name
+                            ) Group:
+                                i  #{message.location_name}
+                        when 'direct'
+                            i.fas.fa-arrow-right.mr-1
+
+                            .badge.badge-primary.mr-2.chat-message-location(
+                                data-location='direct'
+                                data-locationid=message.self?message.location_id:message.user_id
+                                data-locationname=message.direct_location_name
+                            ) #{message.self?message.location_name:'Me'}
+                if forReport
+                    i.float-right.pr-1 #{(new Date(message.created)).toLocaleString([], {timeStyle: 'short', dateStyle:'short'})}
+                else
+                    i.float-right.pr-1 #{(new Date(message.created)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                if !message.self && !forReport
+                    .float-right.px-1.mr-2.chat-message-actions.bg-secondary.rounded
+                        if message.user_type === 'player'
+                            a.chat-message-block.px-1.text-light(href='#' data-blocked=message.blockedUser)
+                                i.fas.fa-fw(class=message.userBlocked?'fa-eye':'fa-eye-slash')
+
+                        a.chat-message-report.px-1.text-light(href='#')
+                            i.fas.fa-flag.fa-fw
+
+        else
+            if !message.blockedUser
+                if !message.self && !forReport
+                    .float-right.px-1.mr-2.chat-message-actions.bg-secondary.rounded
+                        if message.user_type === 'player'
+                            a.chat-message-block.px-1.text-light(href='#' data-blocked=message.blockedUser)
+                                i.fas.fa-fw(class=message.userBlocked?'fa-eye':'fa-eye-slash')
+
+                        a.chat-message-report.px-1.text-light(href='#')
+                            i.fas.fa-flag.fa-fw
+
+        .pl-2.my-0
+            if (message.hidden)
+                .message-text.hidden(data-messagecontent=message.content)
+                    if (showHeader)
+                        | Click to show hidden message.
+            else
+                .message-text !{message.content}
+

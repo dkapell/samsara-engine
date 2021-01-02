@@ -47,7 +47,8 @@ create table runs (
 create table groups (
     id          serial,
     name        varchar(80) not null unique,
-    description text
+    description text,
+    chat        boolean default false,
     primary key (id),
 );
 
@@ -75,6 +76,7 @@ create table gamestates (
     image_id    int not null,
     map         jsonb default '[]'::jsonb,
     template    boolean default false,
+    chat        boolean default false,
     primary key (id),
     CONSTRAINT gamestate_image_fk FOREIGN KEY (image_id)
         REFERENCES "images" (id) MATCH SIMPLE
@@ -160,7 +162,6 @@ create type variable_type as ENUM(
     'object'
 );
 
-
 create table variables(
     id serial,
     name varchar(255) not null,
@@ -181,4 +182,75 @@ create table documents(
     primary key (id)
 );
 
+create type message_location as ENUM(
+    'gamestate',
+    'group',
+    'gm',
+    'direct',
+    'report'
+);
 
+create table messages(
+    id serial,
+    message_id uuid not null unique,
+    run_id int,
+    user_id int not null,
+    location message_location not null,
+    location_id int,
+    content text not null,
+    removed boolean default false,
+    created timestamp with time zone DEFAULT now(),
+    primary key (id),
+    CONSTRAINT messages_run_fk FOREIGN KEY (run_id)
+        REFERENCES "runs" (id) match simple
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT messages_user_fk FOREIGN KEY (user_id)
+        REFERENCES "users" (id) match simple
+        ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+create table read_messages(
+    user_id int not null,
+    location message_location not null,
+    message_id uuid not null,
+    seen timestamp with time zone DEFAULT now(),
+    emailed boolean default false,
+    primary key (user_id, location),
+    constraint read_user_fk foreign key (user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE
+);
+
+create table chat_blocks(
+    id serial,
+    user_id int not null,
+    blocked_user_id int not null,
+    created timestamp with time zone default now(),
+    constraint chat_user_fk foreign key (user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE,
+    constraint chat_blocked_user_fl foreign key (blocked_user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE
+);
+
+create table chat_reports(
+    id serial,
+    user_id int not null,
+    report_id uuid not null unique default uuid_generate_v4(),
+    message_id uuid not null,
+    reason text,
+    created timestamp with time zone default now(),
+    resolved timestamp with time zone,
+    resolution varchar(80),
+    resolved_by int,
+    constraint chat_user_fk foreign key (user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE,
+     constraint chat_message_fk foreign key (message_id)
+        REFERENCES "messages" (message_id) match simple
+        on update no action on delete CASCADE,
+    constraint chat_resolver_fk foreign key (resolved_by)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE,
+);

@@ -1,57 +1,80 @@
 'use strict';
 const async = require('async');
-const config = require('config');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
 
 const models = {
+    user: './user'
 };
 
-const tableFields = ['name', 'display_name', 'description', 'status', 'is_gamestate', 'is_popup', 'is_inventory'];
+const tableFields = ['message_id', 'run_id', 'user_id', 'location', 'location_id', 'content', 'created', 'removed'];
+
 
 exports.get = async function(id){
-    const query = 'select * from images where id = $1';
+    const query = `select m.*, u.name, u.type as user_type, p.character
+         from "messages" m left join users u on m.user_id = u.id
+         left join players p on u.id = p.user_id
+         where m.id = $1`;
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return postProcess(result.rows[0]);
+        return result.rows[0];
     }
     return;
 };
 
-exports.list = async function(){
-    const query = 'select * from images order by name';
-    const result = await database.query(query);
-    return result.rows.map(postProcess);
+exports.getByMessageId = async function(message_id){
+    const query = `select m.*, u.name, u.type as user_type, p.character
+        from "messages" m left join users u on m.user_id = u.id
+        left join players p on u.id = p.user_id
+        where message_id = $1`;
+    const result = await database.query(query, [message_id]);
+    if (result.rows.length){
+        return result.rows[0];
+    }
+    return;
 };
 
-exports.find = async function(conditions){
+exports.find = async function(conditions, options){
     const queryParts = [];
     const queryData = [];
+    if (!options){
+        options = {};
+    }
     for (const field of tableFields){
         if (_.has(conditions, field)){
-            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryParts.push(`m.${field} = $${queryParts.length+1}`);
             queryData.push(conditions[field]);
         }
     }
-    let query = 'select * from images';
+    let query = `select m.*, u.name, u.type as user_type, p.character
+         from "messages" m left join users u on m.user_id = u.id
+         left join players p on u.id = p.user_id`;
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by name';
+    query += ' order by created desc';
+    if (options.offset){
+        query += ` offset ${options.offset}`;
+    }
+    if (options.limit){
+        query += ` limit ${options.limit}`;
+    }
     const result = await database.query(query, queryData);
-    return result.rows.map(postProcess);
+    return result.rows;
+};
+
+exports.findOne = async function(conditions){
+    const results = await exports.find(conditions, {limit:1});
+    if (results.length){
+        return results[0];
+    }
+    return;
 };
 
 exports.create = async function(data){
     if (! validate(data)){
         throw new Error('Invalid Data');
-    }
-    if (_.has(data, 'type')){
-        if(!_.isArray(data.type)){
-            data.type = [data.type];
-        }
-        data.type = data.type.sort((a,b)=>{return a.localecompare(b);});
     }
     const queryFields = [];
     const queryData = [];
@@ -64,7 +87,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into images (';
+    let query = 'insert into "messages" (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -78,15 +101,6 @@ exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
-
-    if (_.has(data, 'type')){
-        if(!_.isArray(data.type)){
-            data.type = [data.type];
-        }
-        data.type = data.type.sort((a,b)=>{return b.localeCompare(a);});
-    }
-
-
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){
@@ -96,29 +110,22 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update images set ';
+    let query = 'update "messages" set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
-
     await database.query(query, queryData);
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from images where id = $1';
+    const query = 'delete from "messages" where id = $1';
     await database.query(query, [id]);
 };
 
 
 
 function validate(data){
-    if (_.has(data, 'name') && ! validator.isLength(data.name, 2, 80)){
+    if (! validator.isLength(data.content, 1, 80)){
         return false;
     }
     return true;
-}
-
-function postProcess(image){
-    const key = ['images', image.id, image.name].join('/');
-    image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
-    return image;
 }

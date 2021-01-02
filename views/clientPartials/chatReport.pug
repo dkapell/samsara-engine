@@ -1,0 +1,37 @@
+li.media.chat-report(
+    data-reportid=report.report_id
+    data-messageid=report.message_id
+    data-userid=report.user_id
+    data-reporter=report.reporter_id
+    class=report.firstNew?'first-new':''
+)
+    .media-body
+        .mt-1.w-100.chat-report-header
+            span.chat-message-user(
+                data-userid=report.user_id
+                class=report.reporter.type==='player'?'chat-player-message':'chat-staff-message'
+            )
+                strong.mr-1 #{report.reporter.full}
+            span.ml-3 #{report.reason}
+            if report.resolution
+                span.badge.chat-report-resolution.ml-2(
+                    class=report.resolution==='ignored'?'badge-info':'badge-danger'
+                    title=`${report.resolver.full} at ${(new Date(report.resolved)).toLocaleString([], {timeStyle: 'short', dateStyle:'short'})}`
+                ) #{capitalize(report.resolution)}
+
+            i.float-right.pr-1 #{(new Date(report.created)).toLocaleString([], {timeStyle: 'short', dateStyle:'short'})}
+            .float-right.px-1.mr-2.chat-report-actions.bg-secondary.rounded
+                if !report.resolved
+                    a.chat-report-remove.px-1.text-light(href='#')
+                        i.fas.fa-trash.fa-fw
+                    a.chat-report-ignore.px-1.text-light(href='#')
+                        i.fas.fa-eye-slash.fa-fw
+                else
+                    a.chat-report-clear.px-1.text-light(href='#')
+                        i.fas.fa-eye.fa-fw
+
+
+
+        .pl-2.my-1
+            .message-holder.border.rounded.border-primary.py-1.px-2
+

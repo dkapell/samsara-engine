@@ -7,10 +7,10 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['code', 'description', 'actions'];
+const tableFields = ['user_id', 'report_id', 'message_id', 'reason', 'created', 'resolved', 'resolved_by', 'resolution'];
 
 exports.get = async function(id){
-    const query = 'select * from codes where id = $1';
+    const query = 'select * from chat_reports where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -18,18 +18,44 @@ exports.get = async function(id){
     return;
 };
 
-exports.getByCode = async function(uuid){
-    const query = 'select * from codes where UPPER(code) = UPPER($1)';
-    const result = await database.query(query, [uuid]);
-    if (result.rows.length){
-        return result.rows[0];
+exports.find = async function(conditions, options){
+    const queryParts = [];
+    const queryData = [];
+    if (!options){
+        options = {};
+    }
+    for (const field of tableFields){
+        if (_.has(conditions, field)){
+            queryParts.push(field + ' = $' + (queryParts.length+1));
+            queryData.push(conditions[field]);
+        }
+    }
+    let query = 'select * from chat_reports';
+    if (queryParts.length){
+        query += ' where ' + queryParts.join(' and ');
+    }
+    query += ' order by created desc';
+    if (options.offset){
+        query += ` offset ${options.offset}`;
+    }
+    if (options.limit){
+        query += ` limit ${options.limit}`;
+    }
+    const result = await database.query(query, queryData);
+    return result.rows;
+
+};
+
+exports.findOne = async function(conditions){
+    const results = await exports.find(conditions, {limit:1});
+    if (results.length){
+        return results[0];
     }
     return;
 };
 
-
 exports.list = async function(){
-    const query = 'select * from codes order by code';
+    const query = 'select * from chat_reports order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -49,7 +75,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into codes (';
+    let query = 'insert into chat_reports (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -72,7 +98,7 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update codes set ';
+    let query = 'update chat_reports set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -80,14 +106,10 @@ exports.update = async function(id, data){
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from codes where id = $1';
+    const query = 'delete from chat_reports where id = $1';
     await database.query(query, [id]);
 };
 
 function validate(data){
-    if (! validator.isLength(data.code, 2, 80)){
-        return false;
-    }
-
     return true;
 }

@@ -43,7 +43,7 @@ exports.list = async function(){
     return result.rows;
 };
 
-exports.create = async function(data, cb){
+exports.create = async function(data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -68,7 +68,7 @@ exports.create = async function(data, cb){
     return result.rows[0].id;
 };
 
-exports.update = async function(id, data, cb){
+exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -88,7 +88,7 @@ exports.update = async function(id, data, cb){
     await database.query(query, queryData);
 };
 
-exports.delete = async  function(id, cb){
+exports.delete = async  function(id){
     const query = 'delete from runs where id = $1';
     await database.query(query, [id]);
 };

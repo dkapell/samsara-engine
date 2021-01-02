@@ -36,5 +36,9 @@
     "webSocket": {
         "pingInterval": 30000,
         "debug": false
+    },
+    "chat": {
+        "brokerType": "redis",
+        "channel": "samsara-chat"
     }
 }

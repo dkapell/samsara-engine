@@ -1,4 +1,4 @@
-/* global pageTemplate toastTemplate popupTemplate */
+/* global pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation*/
 let currentGameState = 0;
 let textTimeout = null;
 let ws = null;
@@ -9,6 +9,7 @@ let areaTimers = {};
 $(function(){
     $('#game-text').hide();
     openWebSocket();
+
 });
 
 function openWebSocket(){
@@ -20,7 +21,7 @@ function openWebSocket(){
     ws.onmessage = async function (event) {
         const data = JSON.parse(event.data);
         switch(data.action){
-            case 'show default': await renderDefault(); break;
+            case 'show default': await renderDefault(data); break;
             case 'show page': renderPage(data.gamestate); break;
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display':
@@ -32,6 +33,7 @@ function openWebSocket(){
                 break;
             case 'toast': showToast(data); break;
             case 'image': showPopup('image', data); break;
+            case 'chat': handleChat(data); break;
             case 'code error':
                 $('#code-entry').addClass('is-invalid');
                 if (!data.retry){
@@ -52,10 +54,20 @@ function openWebSocket(){
         ws = null;
         reconnectTimeout = setTimeout(openWebSocket, 5000);
     };
+    ws.onopen = function () {
+        const doc = {
+            action:'history',
+            options: {}
+        };
+        if ($('#chat-history-limit').val()){
+            doc.options.limit = Number($('#chat-history-limit').val());
+        }
+        ws.send(JSON.stringify(doc));
 
+    };
 }
 
-async function renderDefault(){
+async function renderDefault(data){
     try{
         const response = await fetch('/game');
         if(!response.ok){
@@ -63,6 +75,22 @@ async function renderDefault(){
         }
         const content = await response.text();
         $('#game-content').html(content);
+
+        if (data.chatSidebar){
+            showChatSidebar(data.chatExpanded);
+            if (data.chat){
+                $('#chat-gamestate-tab-nav').show();
+            } else {
+                $('#chat-gamestate-tab-nav').hide();
+                if (currentLocation === 'gamestate'){
+                    $('#chat-tabs').find('li:visible:first').find('a').tab('show');
+                }
+            }
+            $('.chat-location').change();
+        } else {
+            hideChatSidebar();
+        }
+
     } catch (err){
         const $err = $('<div>')
             .addClass('alert')
@@ -87,6 +115,20 @@ function renderPage(gamestate){
             }
         });
         prepImageMap();
+        if (gamestate.chatSidebar){
+            showChatSidebar(gamestate.chatExpanded);
+            if (gamestate.chat){
+                $('#chat-gamestate-tab-nav').show();
+            } else {
+                $('#chat-gamestate-tab-nav').hide();
+                if (currentLocation === 'gamestate'){
+                    $('#chat-tabs').find('li:visible:first').find('a').tab('show');
+                }
+            }
+            $('.chat-location').change();
+        } else {
+            hideChatSidebar();
+        }
     }
 }
 
@@ -197,4 +239,3 @@ function showAreas(e){
         areaTimers[areaId] = timeout;
     });
 }
-

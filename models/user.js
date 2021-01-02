@@ -56,6 +56,19 @@ exports.findOne = async function(conditions){
 exports.list = async function(){
     const query = 'select * from users order by name';
     const result = await database.query(query);
+    return Promise.all(
+        result.rows.map( async user => {
+            if (user.type === 'player'){
+                user.player = await models.player.getByUserId(user.id);
+            }
+            return user;
+        })
+    );
+};
+
+exports.listGms = async function(){
+    const query = 'select * from users where type not in (\'none\', \'player\') order by name';
+    const result = await database.query(query);
     return result.rows;
 };
 

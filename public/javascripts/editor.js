@@ -1,4 +1,4 @@
-/* global CodeMirror */
+/* global CodeMirror capitalize */
 'use strict';
 let popupEditor = null;
 $(function(){
@@ -57,10 +57,6 @@ function renderEditor(id, type, size){
     }
     editor.refresh();
     return editor;
-}
-
-function capitalize(string){
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function showScriptEditor(e){

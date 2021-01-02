@@ -6,7 +6,8 @@
         "sessionType": "local",
         "sessionSecret": "samsara",
         "redisURL": false,
-        "secureOnly": false
+        "secureOnly": false,
+        "fontawesome": null
     },
     "auth": {
         "google": {

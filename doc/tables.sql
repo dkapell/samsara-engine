@@ -252,5 +252,5 @@ create table chat_reports(
         on update no action on delete CASCADE,
     constraint chat_resolver_fk foreign key (resolved_by)
         REFERENCES "users" (id) match simple
-        on update no action on delete CASCADE,
+        on update no action on delete CASCADE
 );

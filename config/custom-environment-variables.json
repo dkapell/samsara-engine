@@ -5,7 +5,8 @@
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",
         "redisURL": "REDISTOGO_URL",
-        "secureOnly": "SECURE_ONLY"
+        "secureOnly": "SECURE_ONLY",
+        "fontawesome": "FONTAWESOME_CODE"
     },
     "auth": {
         "google": {

@@ -1,6 +1,5 @@
-/* global _ */
+/* global _ areaTimers */
 let link_idLocked = false;
-let areaTimers = {};
 
 $(function(){
     //For Show

@@ -64,7 +64,7 @@ mixin area(area, id)
                     data-fieldtype='coords'
                 )
 
-        .form-row.mb-3.criteria
+        .form-row.mb-3.area-criteria
             // Group ID
             label.col-md-1.offset-md-1.col-form-label.area-input-label(
                 for=`gamestate_map-${id}-group_id`
@@ -156,11 +156,11 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                         option(value=type, selected=action.type === type)= type
 
             // Group ID
-            label.col-md-auto.col-form-label.action-input-label.criteria(
+            label.col-md-auto.col-form-label.action-input-label.action-criteria(
                 for=`${prefix}-${areaId}-action-${actionId}-group_id`
                 data-fieldtype='group_id'
             ) Group
-            .col-md-2.criteria
+            .col-md-2.action-criteria
                 select.custom-select.action-input.action-group(
                     name=`${namePrefix}[actions][${actionId}][group_id]`
                     id=`${prefix}-${areaId}-action-${actionId}-group_id`,
@@ -176,14 +176,14 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
 
 
             // Condition Input
-            label.col-md-1.col-form-label.action-input-label.criteria(
+            label.col-md-1.col-form-label.action-input-label.action-criteria(
                 for=`${prefix}-${areaId}-action-${actionId}-condition`
                 data-fieldtype='condition'
             )
                 span.d-md-none.d-xl-block.mr-1 Condition
                 span.d-none.d-md-block.d-xl-none Cond
 
-            .input-group.action-condition.col-md-4.criteria
+            .input-group.action-condition.col-md-4.action-criteria
                 - const conditionContents = action.condition?action.condition:''
                 - const conditionLines = conditionContents.split('\n')
 

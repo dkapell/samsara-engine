@@ -43,7 +43,7 @@ async function show(req, res, next){
                     return user;
                 }
                 user.player = user.gamestate.player;
-                user.connections = _.keys(req.app.locals.gameServer.clients[player.user_id]).length;
+                user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
                 return user;
             })
         );
@@ -53,6 +53,7 @@ async function show(req, res, next){
         res.locals.groups = await req.models.group.list();
         res.locals.users = users.filter(user => { return user.type === 'player';});
         res.locals.gamestates = await req.models.gamestate.listSpecial();
+        res.locals.triggers = await req.models.trigger.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('run/show');
 
@@ -266,6 +267,27 @@ async function toastAll(req, res, next){
     }
 }
 
+async function runTriggerAll(req, res, next){
+    try{
+        const run = await req.models.run.get(req.params.id);
+        if (!run){
+            throw new Error ('Run not found');
+        }
+        const trigger = await req.models.trigger.get(req.params.triggerid);
+        if (!trigger){
+            throw new Error ('Trigger not found');
+        }
+        const players = await req.models.player.listByRunId(req.params.id);
+        await Promise.all(
+            players.map(async player => {
+                const user = await req.models.user.get(player.user_id);
+                return req.app.locals.gameServer.runTrigger(trigger, user);
+            }));
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
 
 const router = express.Router();
 
@@ -284,6 +306,7 @@ router.put('/:id/reset', permission('admin'), csrf(), resetRun);
 router.put('/:id/stateChange', permission('admin'), csrf(), updateAllPlayers);
 router.put('/:id/advance', csrf(), advanceAll);
 router.put('/:id/toast', csrf(), toastAll);
+router.put('/:id/trigger/:triggerid', csrf(), runTriggerAll);
 router.post('/', permission('admin'), csrf(), create);
 router.put('/:id', permission('admin'), csrf(), update);
 router.delete('/:id', permission('admin'), remove);

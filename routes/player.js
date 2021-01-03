@@ -20,11 +20,13 @@ async function list(req, res, next){
             players.map( async user => {
                 user.gamestate = await gameEngine.getGameState(user.id);
                 user.player = user.gamestate.player;
+                user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
                 return user;
             })
         );
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
         res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
+        res.locals.triggers = await req.models.trigger.list();
 
         res.render('player/list', { pageTitle: 'Players' });
     } catch (err){
@@ -89,6 +91,25 @@ async function sendToast(req, res, next){
     }
 }
 
+async function runTrigger(req, res, next){
+    try{
+        const user = await req.models.user.get(req.params.id);
+        if (!user){
+            throw new Error ('User not found');
+        }
+        const trigger = await req.models.trigger.get(req.params.triggerid);
+        if (!trigger){
+            throw new Error ('Trigger not found');
+        }
+
+        await req.app.locals.gameServer.runTrigger(trigger, user);
+
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
 const router = express.Router();
 
 router.use(function(req, res, next){
@@ -101,5 +122,6 @@ router.get('/revert', revertPlayer);
 router.get('/:id/assume', csrf(), permission('gm'), assumePlayer);
 router.put('/:id/advance', csrf(), permission('gm'), advance);
 router.put('/:id/toast', csrf(), permission('gm'), sendToast);
+router.put('/:id/trigger/:triggerid', csrf(), permission('gm'), runTrigger);
 
 module.exports = router;

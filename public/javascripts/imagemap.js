@@ -1,4 +1,4 @@
-/* global _ areaTimers */
+/* global _ areaTimers:writable */
 let link_idLocked = false;
 
 $(function(){

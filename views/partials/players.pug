@@ -19,9 +19,13 @@ mixin players(players)
                         td.dtr-expand
                         if runs
                             td= runs[user.player.run_id].name
-                        td= user.player.groups.length?_.pluck(user.player.groups, 'name').join(', '):'Ungrouped'
+                        td
+                            if user.player.groups.length
+                                | #{_.pluck(user.player.groups, 'name').join(', ')}
+                            else
+                                i Ungrouped
                         td= user.name
-                            if (user.connections)
+                            if (user.connected)
                                 .badge.badge-success.ml-2 Connected
                         td= user.player.character
                         td= user.email
@@ -40,7 +44,7 @@ mixin players(players)
                             else
                                 i Unknown
                         td.text-right
-                            if (user.connections)
+                            if (user.connected)
                                 a.btn.btn-outline-info.btn-sm.mx-1.player-message-btn(
                                     role="button"
                                     data-toggle="modal"
@@ -51,6 +55,12 @@ mixin players(players)
                                     title="Message User"
                                 )
                                     i.fas.fa-comment
+
+                            for trigger in triggers
+                                if trigger.icon
+                                    +triggerButton(trigger, user.id, false)(class='btn-sm mx-1')
+
+
 
                             a.btn.btn-outline-info.btn-sm.mx-1.player-viewdata-btn(
                                 role="button"

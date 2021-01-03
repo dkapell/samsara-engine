@@ -24,11 +24,19 @@ async function list(req, res, next){
 async function show(req, res, next){
     const id = req.params.id;
     try{
-        res.locals.code = await req.models.code.get(id);
+        const code = await req.models.code.get(id);
+        res.locals.code = code;
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/trigger', name: 'Codes'},
+            ],
+            current: code.code
+        };
         res.render('code/show');
     } catch(err){
         next(err);

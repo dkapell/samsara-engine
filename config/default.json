@@ -32,14 +32,12 @@
     },
     "game": {
         "linkName": "Link",
-        "defaultToPlayer": false
+        "defaultToPlayer": false,
+        "brokerType": "redis",
+        "channel": "samsara-game"
     },
     "webSocket": {
         "pingInterval": 30000,
         "debug": false
-    },
-    "chat": {
-        "brokerType": "redis",
-        "channel": "samsara-chat"
     }
 }

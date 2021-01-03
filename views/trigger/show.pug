@@ -1,28 +1,32 @@
 extends ../layout
 include ../partials/gameactions
+include ../partials/triggerButton
 
 block content
     .row.my-3
-        h2.d-inline-block Trigger
-            i.ml-2 #{trigger.name}
+        .col
+            h2 Trigger
+                i.ml-2 #{trigger.name}
 
 
     if checkPermission('creator')
         a.btn.btn-outline-info.mr-2(role="button" href='/trigger/' + trigger.id + '/edit')
             i.fas.fa-edit
-            |  Edit Code
-    a.btn.btn-outline-info.mr-2(role="button" href='/trigger/trigger/' + trigger.trigger target="_blank")
-        i.fas.fa-eye
-        |  View in New tab
+            |  Edit Trigger
 
-    .row.my-3
-        .col
-            h4 Description
-            p= trigger.description
-    .row.my-3
-        .col
-            h4 Icon
-            p= trigger.icon
+    if trigger.description
+        .row.my-3
+            .col
+                h4 Description
+                p= trigger.description
+    if trigger.icon
+        .row.my-3
+            .col
+                h4 Buttons
+                span.mr-2
+                    +triggerButton(trigger, 'none', true)
+                span.mr-2
+                    +triggerButton(trigger, 'none', false)
 
 
     .row.my-3

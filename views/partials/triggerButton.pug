@@ -1,0 +1,14 @@
+mixin triggerButton(trigger, userId, full)
+    a.btn.btn-info.player-trigger-btn(
+        class!=attributes.class
+        role="button"
+        data-triggerid=trigger.id
+        data-user=userId
+        data-csrf=csrfToken
+        title= `Trigger ${trigger.name}`
+        data-toggle="tooltip"
+        data-run!=attributes.run
+    )
+        i.fas(class=trigger.icon)
+        if full
+            span.pl-1 #{trigger.name}#{userId==='all'?' on All':''}

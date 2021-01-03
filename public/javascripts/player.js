@@ -4,6 +4,9 @@ $(function(){
     $('.player-advance-btn').on('click', showAdvanceConfirm);
     $('.player-advance-btn-confirm').on('click', advancePlayer);
     $('.player-advance-btn-cancel').on('click', cancelAdvance);
+    $('.player-trigger-btn')
+        .confirmation({title: 'Run Trigger?'})
+        .on('click', runTrigger);
 
     $('.player-message-btn').tooltip();
     $('.player-viewdata-btn').tooltip();
@@ -34,6 +37,34 @@ async function advancePlayer(e){
     $this.closest('td').find('.player-advance-btn').show();
     $this.closest('td').find('.player-advance-btn-cancel').hide();
     $this.hide();
+}
+
+async function runTrigger(e){
+    e.preventDefault();
+    const $this = $(this);
+    const triggerId = $this.data('triggerid');
+    const user = $this.data('user');
+    let url = '';
+    if (user === 'none'){
+        return;
+    } else if (user === 'all'){
+        const runId = $this.data('run');
+        url = `/run/${runId}/trigger/${triggerId}`;
+    } else {
+        url = `/player/${user}/trigger/${triggerId}`;
+    }
+    const csrf = $this.attr('data-csrf');
+    const result = await fetch(url, {
+        method:'PUT',
+        headers: {
+            'csrf-token': csrf
+        }
+    });
+    if($this.attr('data-back')){
+        location = $this.attr('data-back');
+    } else {
+        location.reload();
+    }
 }
 
 function showAdvanceConfirm(e){

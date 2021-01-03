@@ -23,7 +23,8 @@
         }
     },
     "game": {
-        "defaultToPlayer": "DEFAULT_TO_PLAYER"
+        "defaultToPlayer": "DEFAULT_TO_PLAYER",
+        "brokerType": "GAME_BROKERTYPE"
     },
     "aws": {
         "accessKeyId": "AWS_ACCESSKEY",
@@ -33,9 +34,5 @@
     "webSocket": {
         "pingInterval": "PING_INTERVAL",
         "debug": "WEBSOCKET_DEBUG"
-    },
-    "chat": {
-        "brokerType": "CHAT_BROKERTYPE"
     }
-
 }

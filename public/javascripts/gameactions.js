@@ -174,12 +174,12 @@ function showActionCriteria($row){
     if($group.val() !== '-1' || $condition.val()){
         $criteraBtn.hide();
     } else {
-        $row.find('.criteria').hide();
+        $row.find('.action-criteria').hide();
     }
     $criteraBtn.on('click', function(e){
         e.preventDefault();
         $(this).hide();
-        $row.find('.criteria').show();
+        $row.find('.action-criteria').show();
     });
 }
 
@@ -191,12 +191,12 @@ function showAreaCriteria($row){
     if($group.val() !== '-1' || $condition.val()){
         $criteraBtn.hide();
     } else {
-        $row.find('.criteria').hide();
+        $row.find('.area-criteria').hide();
     }
     $criteraBtn.on('click', function(e){
         e.preventDefault();
         $(this).hide();
-        $row.find('.criteria').show();
+        $row.find('.area-criteria').show();
     });
 }
 

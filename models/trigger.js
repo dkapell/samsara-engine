@@ -7,10 +7,10 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['user_id', 'report_id', 'message_id', 'reason', 'created', 'resolved', 'resolved_by', 'resolution'];
+const tableFields = ['name', 'description', 'icon', 'actions'];
 
 exports.get = async function(id){
-    const query = 'select * from chat_reports where id = $1';
+    const query = 'select * from triggers where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         return result.rows[0];
@@ -30,11 +30,11 @@ exports.find = async function(conditions, options){
             queryData.push(conditions[field]);
         }
     }
-    let query = 'select * from chat_reports';
+    let query = 'select * from triggers';
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by created desc';
+    query += ' order by name';
     if (options.offset){
         query += ` offset ${options.offset}`;
     }
@@ -55,7 +55,7 @@ exports.findOne = async function(conditions){
 };
 
 exports.list = async function(){
-    const query = 'select * from chat_reports order by created desc';
+    const query = 'select * from triggers order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -75,7 +75,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into chat_reports (';
+    let query = 'insert into triggers (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -98,7 +98,7 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update chat_reports set ';
+    let query = 'update triggers set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
@@ -106,10 +106,13 @@ exports.update = async function(id, data){
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from chat_reports where id = $1';
+    const query = 'delete from triggers where id = $1';
     await database.query(query, [id]);
 };
 
 function validate(data){
+    if (! validator.isLength(data.name, 2, 255)){
+        return false;
+    }
     return true;
 }

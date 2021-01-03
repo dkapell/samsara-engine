@@ -52,7 +52,6 @@ create table groups (
     primary key (id),
 );
 
-
 create table images (
     id  serial,
     name varchar(255) not null,
@@ -83,7 +82,7 @@ create table gamestates (
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
-insert into gamestates (name) values ('Initial');
+insert into gamestates (name, start) values ('Initial', true);
 
 create table gamestate_codes(
     gamestate_id int not null,
@@ -117,6 +116,15 @@ create table transitions(
      CONSTRAINT transitions_link_fk FOREIGN KEY (link_id)
         REFERENCES "links" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+create table triggers(
+    id serial,
+    name varchar(255),
+    description text,
+    icon varchar(20),
+    actions jsonb default '[]'::jsonb,
+    primary key (id)
 );
 
 create table players (

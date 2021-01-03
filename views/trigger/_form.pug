@@ -1,0 +1,49 @@
+include ../partials/gameactions
+
+.form-group
+    label.control-label(for="trigger_name") Name
+    input.form-control(type="text",placeholder="Name",name="trigger[name]",value=trigger.name,id='trigger_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="trigger_description") Description
+    textarea.form-control#trigger_description(name="trigger[description]",rows=3)
+        = trigger.description
+
+.form-group
+    label.control-label(for="trigger_icon") Icon
+    input.form-control(type="text",placeholder="Icon - FontAwesome class",name="trigger[icon]",value=trigger.icon,id='trigger_icon')
+    div.invalid-feedback Please choose a valid icon class
+
+
+.form-group#map-group
+    label.control-label.w-100#actions-heading(for="trigger_actions", data-toggle="collapse" data-target="#actions-container" aria-expanded="true") Actions
+        .badge.badge-info.ml-1 #{trigger.actions.length} #{trigger.actions.length === 1?'item':'items'}
+        button.btn.btn-sm.btn-outline-success.add-action-btn.expand-text-shown.ml-2(data-toggle="tooltip" title='Add Action' data-target='#trigger-actions' data-area=0)
+                i.fa.fa-plus.mr-2
+                | Add Action
+
+        i.expand-text-shown.ml-4 (click to hide configuration)
+        i.expand-text.ml-4 (click to show configuration)
+
+
+        span.float-right.pl-2
+            i.fa.fa-chevron-up
+            i.fa.fa-chevron-down
+
+
+    .div#actions-container.collapse.show(aria-labelledby="actions-heading")
+        .list-group#trigger_actions
+            .list-group-item.area-config(id=`trigger-actions`)
+                - let actionId = 0;
+                each action in trigger.actions
+                    +action('trigger', 'trigger', action, 0, actionId)
+                    - actionId++
+
+
+.form-group
+    button.btn.btn-primary(type="submit")= trigger.id?'Update':'Create'
+    a.btn.btn-link(href="/trigger") Cancel
+
++action('trigger', 'trigger', {}, 'new', 'new')
++jsEditorModal()

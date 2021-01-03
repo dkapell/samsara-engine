@@ -1,0 +1,17 @@
+extends ../layout
+
+include ../partials/editor
+
+block content
+    .row
+        .col
+            .card
+                .card-header New Trigger
+                .card-body
+                    form.form.needs-validation(method="POST" action="/trigger" novalidate)
+                        input(type="hidden", name='_csrf',value=csrfToken)
+                        include ./_form.pug
+
+append scripts
+    script(src='/javascripts/validator.js')
+    script(src='/javascripts/gameactions.js')

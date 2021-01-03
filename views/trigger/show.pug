@@ -1,0 +1,31 @@
+extends ../layout
+include ../partials/gameactions
+
+block content
+    .row.my-3
+        h2.d-inline-block Trigger
+            i.ml-2 #{trigger.name}
+
+
+    if checkPermission('creator')
+        a.btn.btn-outline-info.mr-2(role="button" href='/trigger/' + trigger.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Code
+    a.btn.btn-outline-info.mr-2(role="button" href='/trigger/trigger/' + trigger.trigger target="_blank")
+        i.fas.fa-eye
+        |  View in New tab
+
+    .row.my-3
+        .col
+            h4 Description
+            p= trigger.description
+    .row.my-3
+        .col
+            h4 Icon
+            p= trigger.icon
+
+
+    .row.my-3
+        .col
+            h4 Actions
+            +actionsCard(0, trigger)

@@ -614,6 +614,7 @@ function clearNewMessagesOnTab(){
 }
 
 function showChatTab(e){
+    console.log('here')
     const target = $(e.target).attr('aria-controls').match(/chat-(.+?)-tab/)[1];
     const $chatContainer = $(`#chat-${target}-tab >> .chat-container`);
     scrollSmoothToBottom($chatContainer, true);
@@ -625,10 +626,10 @@ function showChatTab(e){
     $(`#chat-location-${target}`).show();
     if (target === 'report'){
         $('#chat-actions').hide();
-        clearNewMessagesOnTab();
     } else {
         $('#chat-actions').show();
     }
+    clearNewMessagesOnTab();
 }
 
 function sendSeen(location){

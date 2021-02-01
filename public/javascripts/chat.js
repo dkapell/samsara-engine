@@ -599,15 +599,12 @@ function clearNewMessagesOnFocus(e){
 }
 
 function clearNewMessagesOnTab(){
-    console.log('cnmot start');
     const $chatContainer = $(`#chat-${currentLocation}-tab >> .chat-container`);
     const $elem = $chatContainer.find('.first-new');
-    console.log($elem);
 
     if ($elem.length &&
         $('#chat-tabs').is(':visible') && $('#chat-tabs') &&
         isVisible($elem)){
-        console.log('clearing chat')
         clearChatNotify(currentLocation);
         setTimeout(()=>{
             sendSeen(currentLocation);
@@ -616,23 +613,22 @@ function clearNewMessagesOnTab(){
 }
 
 function showChatTab(e){
-    console.log('showing chat tab');
     const target = $(e.target).attr('aria-controls').match(/chat-(.+?)-tab/)[1];
     const $chatContainer = $(`#chat-${target}-tab >> .chat-container`);
     scrollSmoothToBottom($chatContainer, true);
     currentLocation = target;
     $('.chat-location').hide();
-    if (hideGamestateLocation && target === 'gamestate'){
-        console.log('returning here')
-        return;
-    }
-    $(`#chat-location-${target}`).show();
     if (target === 'report'){
         $('#chat-actions').hide();
     } else {
         $('#chat-actions').show();
     }
     clearNewMessagesOnTab();
+    if (hideGamestateLocation && target === 'gamestate'){
+        return;
+    }
+    $(`#chat-location-${target}`).show();
+
 }
 
 function sendSeen(location){

@@ -599,8 +599,10 @@ function clearNewMessagesOnFocus(e){
 }
 
 function clearNewMessagesOnTab(){
+    console.log('cnmot start');
     const $chatContainer = $(`#chat-${currentLocation}-tab >> .chat-container`);
     const $elem = $chatContainer.find('.first-new');
+    console.log($elem);
 
     if ($elem.length &&
         $('#chat-tabs').is(':visible') && $('#chat-tabs') &&
@@ -614,12 +616,14 @@ function clearNewMessagesOnTab(){
 }
 
 function showChatTab(e){
+    console.log('showing chat tab');
     const target = $(e.target).attr('aria-controls').match(/chat-(.+?)-tab/)[1];
     const $chatContainer = $(`#chat-${target}-tab >> .chat-container`);
     scrollSmoothToBottom($chatContainer, true);
     currentLocation = target;
     $('.chat-location').hide();
     if (hideGamestateLocation && target === 'gamestate'){
+        console.log('returning here')
         return;
     }
     $(`#chat-location-${target}`).show();

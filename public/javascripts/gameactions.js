@@ -204,14 +204,14 @@ function addAction(e){
     const $this = $(this);
     e.preventDefault();
     e.stopPropagation();
-    const areaId = $this.attr('data-area');
+    const areaId = $this.data('area');
     const $new = $('#action-new-new').clone();
     if (!_.has(nextActions, areaId)){
         nextActions[areaId] = 0;
     }
     const id = nextActions[areaId]++;
     const prefix = $new.data('prefix');
-    const namePrefix = $new.data('nameprefix');
+    const namePrefix = $new.data('nameprefix').replace(/\[new\]$/, `[${areaId}]`)
     $new.attr('id', `action-${areaId}-new-${id}`);
 
 

@@ -605,7 +605,7 @@ function clearNewMessagesOnTab(){
     if ($elem.length &&
         $('#chat-tabs').is(':visible') && $('#chat-tabs') &&
         isVisible($elem)){
-
+        console.log('clearing chat')
         clearChatNotify(currentLocation);
         setTimeout(()=>{
             sendSeen(currentLocation);
@@ -614,7 +614,6 @@ function clearNewMessagesOnTab(){
 }
 
 function showChatTab(e){
-    console.log('here')
     const target = $(e.target).attr('aria-controls').match(/chat-(.+?)-tab/)[1];
     const $chatContainer = $(`#chat-${target}-tab >> .chat-container`);
     scrollSmoothToBottom($chatContainer, true);

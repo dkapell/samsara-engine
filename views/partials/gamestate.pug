@@ -23,14 +23,15 @@ mixin gamestate(gamestate)
                                     target="_self",
                                     data-maphilight='{}'
                                 )
-    .lead !{gamestate.description}
-
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
         .row.my-3
             .col
                 form#code-form
                     .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
+
+    .row
+        .col !{gamestate.description}
 
 
 mixin transition(transition, gamestates, groups, current)

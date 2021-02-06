@@ -20,7 +20,7 @@ exports.get = async function(id){
 };
 
 exports.list = async function(){
-    const query = 'select * from images order by name';
+    const query = 'select * from images order by display_name';
     const result = await database.query(query);
     return result.rows.map(postProcess);
 };
@@ -38,7 +38,7 @@ exports.find = async function(conditions){
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by name';
+    query += ' order by display_name';
     const result = await database.query(query, queryData);
     return result.rows.map(postProcess);
 };

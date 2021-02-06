@@ -14,6 +14,7 @@ block content
                     th(data-priority="2") Image
                     th(data-priority="3") Codes
                     th(data-priority="4") Has Chat
+                    th(data-priority="5") Public Count
                     if checkPermission('creator')
                         th
 
@@ -38,6 +39,7 @@ block content
                                 i None
                         td= _.pluck(gamestate.codes, 'code').join(', ')
                         td= gamestate.chat?"Yes":"No"
+                        td= gamestate.show_count?"Yes":"No"
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-success.btn-sm.mr-1.action-btn(

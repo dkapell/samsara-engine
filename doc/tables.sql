@@ -76,6 +76,7 @@ create table gamestates (
     map         jsonb default '[]'::jsonb,
     template    boolean default false,
     chat        boolean default false,
+    show_count  boolean default false,
     primary key (id),
     CONSTRAINT gamestate_image_fk FOREIGN KEY (image_id)
         REFERENCES "images" (id) MATCH SIMPLE

@@ -211,7 +211,7 @@ function addAction(e){
     }
     const id = nextActions[areaId]++;
     const prefix = $new.data('prefix');
-    const namePrefix = $new.data('nameprefix').replace(/\[new\]$/, `[${areaId}]`)
+    const namePrefix = $new.data('nameprefix').replace(/\[new\]$/, `[${areaId}]`);
     $new.attr('id', `action-${areaId}-new-${id}`);
 
 

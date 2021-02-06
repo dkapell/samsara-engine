@@ -77,6 +77,11 @@ fieldset.mb-2
                 input.custom-control-input(type="checkbox", name="gamestate[chat]", id="gamestate_chat", checked=gamestate.chat)
                 label.custom-control-label(for="gamestate_chat") Has Chat
 
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[show_count]", id="gamestate_show_count", checked=gamestate.show_count)
+                label.custom-control-label(for="gamestate_show_count") User Count is Public
+
 
 .form-group
     label.control-label(for="gamestate_description") Description (Player Facing)

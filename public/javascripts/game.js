@@ -1,10 +1,11 @@
-/* global pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation*/
+/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup */
 let currentGameState = 0;
 let textTimeout = null;
 let ws = null;
 const reconnectInterval = 5000;
 let reconnectTimeout = null;
 let areaTimers = {};
+let gamedata = {};
 
 $(function(){
     $('#game-text').hide();
@@ -41,6 +42,9 @@ function openWebSocket(){
                 }
                 $('#code-feedback').text(data.error);
                 $('#code-feedback').show();
+                break;
+            case 'gamedata':
+                gamedata = data;
                 break;
         }
 
@@ -200,7 +204,15 @@ function clickArea(e){
 
 function showAreaName(e){
     const areaId = $(this).data('area');
-    $('#link-name').text($(this).data('name'));
+    let name = $(this).data('name');
+    const search = (name.match(/\{\{(.+?)\}\}/))[1];
+    if (search){
+        const parts = search.split('|',2);
+        console.log(parts[1]);
+        const fallback = _.isUndefined(parts[1])?'':parts[1];
+        name = name.replace(/\{\{.+?\}\}/, _.get(gamedata, parts[0].split('.'), fallback));
+    }
+    $('#link-name').text(name);
 
     if (areaTimers[areaId]){
         clearTimeout(areaTimers[areaId]);

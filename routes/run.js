@@ -51,7 +51,11 @@ async function show(req, res, next){
             res.locals.siteSection='gm';
         }
         res.locals.groups = await req.models.group.list();
-        res.locals.users = users.filter(user => { return user.type === 'player';});
+        res.locals.users = users
+            .filter(user => { return user.type === 'player';})
+            .sort((a, b) => {
+                a.name.localeCompare(b.name);
+            });
         res.locals.gamestates = await req.models.gamestate.listSpecial();
         res.locals.triggers = await req.models.trigger.list();
         res.locals.csrfToken = req.csrfToken();

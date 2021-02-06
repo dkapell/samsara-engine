@@ -1,5 +1,4 @@
 mixin gamestate(gamestate)
-    .lead=gamestate.description
     if gamestate.image_id
         .row.my-2
             .col.text-center
@@ -24,6 +23,7 @@ mixin gamestate(gamestate)
                                     target="_self",
                                     data-maphilight='{}'
                                 )
+    .lead !{gamestate.description}
 
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
         .row.my-3

@@ -33,7 +33,7 @@ async function show(req, res, next){
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
-                { url: '/trigger', name: 'Codes'},
+                { url: '/code', name: 'Codes'},
             ],
             current: code.code
         };

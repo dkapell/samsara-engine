@@ -21,12 +21,6 @@
             option(value=group.id selected=transition.group_id===group.id)= group.name
 
 .form-group
-    label.control-label(for="transition_link_id") Change On Open Link
-    select.custom-select.select2#transition_link_id(name="transition[link_id]")
-        option(selected=!transition.link_id value="-1") Manual
-        for link in links
-            option(value=link.id selected=transition.link_id===link.id)= link.name
-.form-group
     label.control-label(for="transition_delay") Delay (Seconds)
     input.form-control(type="number",placeholder="Delay in Seconds",name="transition[delay]",id="transition_delay", value=transition.delay)
 

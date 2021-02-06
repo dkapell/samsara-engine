@@ -101,7 +101,6 @@ create table transitions(
     from_state_id int not null,
     to_state_id int not null,
     group_id int,
-    link_id int,
     delay int default 0,
     primary key(id),
     CONSTRAINT transitions_from_fk FOREIGN KEY (from_state_id)

@@ -7,7 +7,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['from_state_id', 'to_state_id', 'group_id', 'link_id', 'manual', 'delay'];
+const tableFields = ['from_state_id', 'to_state_id', 'group_id', 'manual', 'delay'];
 
 exports.get = async function(id){
     const query = 'select * from transitions where id = $1';
@@ -31,7 +31,7 @@ exports.find = async function(conditions){
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by link_id nulls last';
+    query += ' order by from_state_id nulls last';
     const result = await database.query(query, queryData);
     return result.rows;
 };

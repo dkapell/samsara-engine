@@ -17,9 +17,6 @@ async function list(req, res, next){
             transitions.map( async transition => {
                 transition.from_state = await req.models.gamestate.get(transition.from_state_id);
                 transition.to_state = await req.models.gamestate.get(transition.to_state_id);
-                if(transition.link_id){
-                    transition.link = await req.models.link.get(transition.link_id);
-                }
                 if(transition.group_id){
                     transition.group = await req.models.group.get(transition.group_id);
                 }
@@ -37,7 +34,6 @@ async function showNew(req, res, next){
         from_state_id: null,
         to_state_id: null,
         group_id: null,
-        link_id: null,
         delay: 0
     };
     res.locals.breadcrumbs = {
@@ -61,7 +57,6 @@ async function showNew(req, res, next){
     }
     try{
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
-        res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
         res.render('transition/new');
     } catch (err){
@@ -88,7 +83,6 @@ async function showEdit(req, res, next){
             current: 'Edit Transition'
         };
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
-        res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
         res.render('transition/edit');
     } catch(err){
@@ -102,9 +96,6 @@ async function create(req, res, next){
 
     if(Number(transition.group_id) === -1){
         transition.group_id = null;
-    }
-    if(Number(transition.link_id) === -1){
-        transition.link_id = null;
     }
 
     try{
@@ -125,9 +116,6 @@ async function update(req, res, next){
 
     if(Number(transition.group_id) === -1){
         transition.group_id = null;
-    }
-    if(Number(transition.link_id) === -1){
-        transition.link_id = null;
     }
 
     try {

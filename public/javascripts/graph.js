@@ -12,13 +12,16 @@ async function renderGraph(){
         if(!response.ok){
             throw new Error ('Got a bad response');
         }
-        const gamestates = await response.json();
+        const data = await response.json();
+
 
         const g = new Dracula.Graph();
 
         const render = function(r, n){
             let borderColor = '#375a7f';
-            if (n.data.start){
+            if (n.data.type === 'trigger'){
+                borderColor = '#f39c12';
+            } else if (n.data.start){
                 borderColor = '#00bc8c';
             } else if (n.data.special){
                 borderColor = '#3498db';
@@ -40,22 +43,55 @@ async function renderGraph(){
         };
 
         const transitions = {};
-
-        for (const state of gamestates.reverse()){
+        for (const state of data.gamestates.reverse()){
             const name = state.player_count?`${state.name}\n(${pluralize('player', state.player_count, true)})`:state.name;
             g.addNode(state.name, {label:name, render: render, data:state});
 
             transitions[state.name] = {};
 
             for (const transition of state.transitions){
-                const toState = _.findWhere(gamestates, {id: transition.to_state_id});
+                const toState = _.findWhere(data.gamestates, {id: transition.to_state_id});
 
                 if (!_.has(transitions[state.name], toState.name)){
                     transitions[state.name][toState.name] = [];
                 }
-                const group_name = transition.group_name ? transition.group_name : 'All';
+                const group_name = transition.group_name ? transition.group_name : '';
                 transitions[state.name][toState.name].push(group_name);
             }
+            for (const code of state.codes){
+                for(const action of code.actions){
+                    if (action.type === 'transition'){
+
+                        const toState = _.findWhere(data.gamestates, {id: action.to_state_id});
+                        if (!_.has(transitions[state.name], toState.name)){
+                            transitions[state.name][toState.name] = [];
+                        }
+                        transitions[state.name][toState.name].push(code.code);
+                    }
+                }
+            }
+        }
+
+        for (const trigger of data.triggers){
+            let addNode = false;
+            for(const action of trigger.actions){
+                if (action.type === 'transition'){
+                    const toState = _.findWhere(data.gamestates, {id: action.to_state_id});
+                    if (!_.has(transitions, trigger.name)){
+                        transitions[trigger.name] = {};
+                    }
+                    if (!_.has(transitions[trigger.name], toState.name)){
+                        transitions[trigger.name][toState.name] = [];
+                    }
+                    transitions[trigger.name][toState.name].push('Trigger');
+                    addNode = true;
+                }
+            }
+            if (addNode){
+                trigger.type = 'trigger';
+                g.addNode(trigger.name, {label:`Trigger: ${trigger.name}`, render: render, data:trigger});
+            }
+
         }
 
         for (const fromStateName in transitions){

@@ -25,14 +25,19 @@ function showGraph(req, res, next){
 async function getGraphData(req, res, next){
     try{
         const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
-        res.locals.gamestates = await Promise.all(
+        await Promise.all(
             gamestates.map( async gamestate => {
                 gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
                 gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id})).length;
                 return gamestate;
             })
         );
-        res.json(gamestates);
+        res.json({
+            gamestates: gamestates,
+            triggers: await req.models.trigger.list(),
+            codes: await req.models.code.list()
+        });
+
     } catch(err){
         res.json({success:false, error:err});
     }

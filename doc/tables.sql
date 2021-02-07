@@ -157,10 +157,10 @@ create table player_groups(
     group_id int not null,
     CONSTRAINT player_fk FOREIGN KEY (player_id)
         REFERENCES "players" (id) match simple
-        ON UPDATE NO ACTION ON DELETE SET NULL,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) match simple
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE CASCADE
 )
 
 create type variable_type as ENUM(

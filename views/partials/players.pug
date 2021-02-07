@@ -56,7 +56,7 @@ mixin players(players)
                                 )
                                     i.fas.fa-comment
 
-                            for trigger in triggers
+                            for trigger in triggers.filter(trigger => { return trigger.player; })
                                 if trigger.icon
                                     +triggerButton(trigger, user.id, false)(class='btn-sm mx-1')
 

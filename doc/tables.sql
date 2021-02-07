@@ -125,6 +125,8 @@ create table triggers(
     description text,
     icon varchar(20),
     actions jsonb default '[]'::jsonb,
+    run boolean default false,
+    player boolean default false,
     primary key (id)
 );
 

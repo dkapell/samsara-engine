@@ -5,6 +5,18 @@ include ../partials/gameactions
     input.form-control(type="text",placeholder="Name",name="trigger[name]",value=trigger.name,id='trigger_name',required)
     div.invalid-feedback Please choose a valid name
 
+.row.mb-2
+    .col
+        .custom-control.custom-switch
+            input.custom-control-input(type="checkbox", name="trigger[run]", id="trigger_run", checked=trigger.run)
+            label.custom-control-label(for="trigger_run") Execute on all players in a run
+
+    .col
+        .custom-control.custom-switch
+            input.custom-control-input(type="checkbox", name="trigger[player]", id="trigger_player", checked=trigger.player)
+            label.custom-control-label(for="trigger_player") Execute on a single player
+
+
 .form-group
     label.control-label(for="trigger_description") Description
     textarea.form-control#trigger_description(name="trigger[description]",rows=3)

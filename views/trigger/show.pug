@@ -14,19 +14,28 @@ block content
             i.fas.fa-edit
             |  Edit Trigger
 
+
     if trigger.description
         .row.my-3
             .col
                 h4 Description
                 p= trigger.description
-    if trigger.icon
+
+    if trigger.icon && (trigger.run || trigger.player)
         .row.my-3
             .col
                 h4 Buttons
-                span.mr-2
-                    +triggerButton(trigger, 'none', true)
-                span.mr-2
-                    +triggerButton(trigger, 'none', false)
+                .row
+                    if trigger.run
+                        .col
+                            span.mx-2 Execute on all players in a run:
+                            span.mr-2
+                                +triggerButton(trigger, 'none', true)
+                    if trigger.player
+                        .col
+                            span.mx-2 Execute on one player:
+                            span.mr-2
+                                +triggerButton(trigger, 'none', false)
 
 
     .row.my-3

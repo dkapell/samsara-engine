@@ -101,6 +101,9 @@ async function runTrigger(req, res, next){
         if (!trigger){
             throw new Error ('Trigger not found');
         }
+        if (!trigger.player){
+            throw new Error('Trigger not enabled for individual players');
+        }
 
         await req.app.locals.gameServer.runTrigger(trigger, user);
 

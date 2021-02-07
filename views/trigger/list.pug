@@ -13,7 +13,8 @@ block content
                     th
                     th(data-order='asc') Name
                     th Description
-                    th Buttons
+                    th Execute on Run
+                    th Execute on Players
                     if checkPermission('creator')
                         th
 
@@ -24,9 +25,11 @@ block content
                         td
                             a(href='/trigger/' + trigger.id)= trigger.name
                         td= trigger.description
-                        th
-                            if trigger.icon
-                                +triggerButton(trigger, 'none', true)(class='btn-sm mx-1')
+                        td
+                            if trigger.run
+                                 +triggerButton(trigger, 'none', true)(class='btn-sm mx-1')
+                        td
+                            if trigger.player
                                 +triggerButton(trigger, 'none', false)(class='btn-sm mx-1')
                         if checkPermission('creator')
                             td.text-right

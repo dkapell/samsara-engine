@@ -287,6 +287,9 @@ async function runTriggerAll(req, res, next){
         if (!trigger){
             throw new Error ('Trigger not found');
         }
+        if (!trigger.run){
+            throw new Error('Trigger not enabled for all players in a run');
+        }
         const players = await req.models.player.listByRunId(req.params.id);
         await Promise.all(
             players.map(async player => {

@@ -50,7 +50,9 @@ async function showNew(req, res, next){
         name: null,
         description: null,
         icon:null,
-        actions: []
+        actions: [],
+        run: false,
+        player: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -70,7 +72,9 @@ async function showNew(req, res, next){
                     name: `Copy of ${old.name}`,
                     description: old.description?old.description:null,
                     icon: old.icon?old.icon:null,
-                    map: old.actions?old.actions:[]
+                    map: old.actions?old.actions:[],
+                    run: old.run,
+                    player: old.player
                 };
             }
         }
@@ -131,6 +135,13 @@ async function create(req, res, next){
 
     trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions));
 
+    if (!_.has(trigger, 'run')){
+        trigger.run = false;
+    }
+    if (!_.has(trigger, 'player')){
+        trigger.player = false;
+    }
+
     try{
         const id = await req.models.trigger.create(trigger);
         delete req.session.triggerData;
@@ -148,6 +159,13 @@ async function update(req, res, next){
     req.session.triggerData = trigger;
 
     trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions));
+
+    if (!_.has(trigger, 'run')){
+        trigger.run = false;
+    }
+    if (!_.has(trigger, 'player')){
+        trigger.player = false;
+    }
 
     try {
         const current = await req.models.trigger.get(id);

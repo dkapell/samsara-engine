@@ -62,11 +62,11 @@ block content
                                 .badge.badge-light.ml-1=_.pluck(users, 'connected').filter(e => {return e;}).length
                                 .sr-only Connected Users
 
-            if triggers.length
+            if triggers.filter(trigger => { return trigger.run; }).length
                 .row.my-2
                     .col
                         .form-inline
-                            for trigger in triggers
+                            for trigger in triggers.filter(trigger => { return trigger.run; })
                                 +triggerButton(trigger, 'all', true)(run=run.id class='mr-1')
 
 

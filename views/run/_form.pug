@@ -7,6 +7,10 @@
     .custom-control.custom-switch
         input.custom-control-input(type="checkbox", name="run[current]", id="run_current", checked=run.current disabled=run.current)
         label.custom-control-label(for="run_current") Current
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="run[show_stubs]", id="run_show_stubs", checked=run.show_stubs)
+        label.custom-control-label(for="run_show_stubs") Show Stub Links
 
 .form-group
     label.control-label(for="run_data") Custom Data

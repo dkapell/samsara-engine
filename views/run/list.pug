@@ -12,6 +12,7 @@ block content
                     th(style="max-width:50px") ID
                     th(data-order='asc') Name
                     th Current
+                    th Show Stubs
                     th
             tbody
                 for run in runs
@@ -21,6 +22,11 @@ block content
                         td
                             a(href='/run/' + run.id)= run.name
                         td= run.current?'Yes':''
+                        td
+                            if run.show_stubs
+                                | Yes
+                            else
+                                .badge.badge-danger No
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(
                                 role="button",

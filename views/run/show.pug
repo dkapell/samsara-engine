@@ -11,6 +11,9 @@ block content
             if run.current
                 h3.d-inline-block
                     span.badge.badge-light.ml-2 Current
+            if !run.show_stubs
+                h3.d-inline-block
+                    span.badge.badge-danger.ml-2 Stubs Hidden
     .row.bg-dark.pb-2.rounded
         .col-md
             .row.my-2

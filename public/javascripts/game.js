@@ -154,7 +154,7 @@ function showText(data){
     $('#game-text').html(data.content);
     $('#game-text').show();
     clearTimeout(textTimeout);
-    if (data.duration){
+    if (Number(data.duration)){
         textTimeout = setTimeout(hideText, data.duration * 1000);
     }
 }
@@ -205,8 +205,8 @@ function clickArea(e){
 function showAreaName(e){
     const areaId = $(this).data('area');
     let name = $(this).data('name');
-    const search = (name.match(/\{\{(.+?)\}\}/))[1];
-    if (search){
+    if (name.match(/\{\{.+?\}\}/)){
+        const search = (name.match(/\{\{(.+?)\}\}/))[1];
         const parts = search.split('|',2);
         console.log(parts[1]);
         const fallback = _.isUndefined(parts[1])?'':parts[1];

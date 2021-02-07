@@ -70,7 +70,8 @@ function showNew(req, res, next){
     res.locals.run = {
         name: null,
         current: false,
-        data: gameData.getStartData('run')
+        data: gameData.getStartData('run'),
+        show_stubs: true,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -127,6 +128,9 @@ async function create(req, res, next){
         if (run.data){
             run.data = JSON.parse(run.data);
         }
+        if (!_.has(run, 'show_stubs')){
+            run.show_stubs = false;
+        }
 
         const id = await req.models.run.create(run);
 
@@ -156,7 +160,9 @@ async function update(req, res, next){
         if (run.data){
             run.data = JSON.parse(run.data);
         }
-
+        if (!_.has(run, 'show_stubs')){
+            run.show_stubs = false;
+        }
 
         await req.models.run.update(id, run);
         delete req.session.runData;
@@ -215,7 +221,7 @@ async function updateAllPlayers(req, res, next){
         await Promise.all(
             players.map( async player => {
                 if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
-                    await gameEngine.changeState(player.user_id, state.id, 0);
+                    await gameEngine.changeState(player.user_id, state.id, 0, true);
                     return req.app.locals.gameServer.sendGameState(player.user_id);
                 }
             })

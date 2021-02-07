@@ -40,6 +40,7 @@ create table runs (
     id          serial,
     name        varchar(80) not null unique,
     current     boolean default false,
+    show_stubs  boolean default true,
     data jsonb,
     primary key(id)
 );

@@ -20,7 +20,7 @@ block content
                 .col-md
                     .form-inline
 
-                        if checkPermission('creator')
+                        if checkPermission('admin')
                             a.btn.btn-outline-info.mr-2.mt-2(role="button" href='/run/' + run.id + '/edit')
                                 i.fas.fa-edit.pr-1
                                 | Edit Run

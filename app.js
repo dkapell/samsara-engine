@@ -206,10 +206,12 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
     // set locals, only providing error in development
-    if (req.app.get('env') === 'development'){
-        console.trace(err);
-    } else {
-        console.error(err);
+    if (err.status !== 404){
+        if (req.app.get('env') === 'development'){
+            console.trace(err);
+        } else {
+            console.error(err);
+        }
     }
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -167,19 +167,25 @@ function showPopup(type, data){
 }
 
 function prepImageMap(){
-    $('img[usemap]').rwdImageMaps();
-    $('.map').maphilight({
-        wrapClass:true,
-        shadow:true,
-        strokeWidth:3,
-        strokeColor: '3498db',
-        fillColor: '000000',
-        fillOpacity: 0.2,
-    });
-    $('.imageHolder').on('click', showAreas);
-    $('area').on('click', clickArea);
-    $('area').on('mouseover', showAreaName);
-    $('area').on('mouseout', clearAreaName);
+    if (!document.hidden){
+        $('img[usemap]').rwdImageMaps();
+        $('.map').maphilight({
+            wrapClass:true,
+            shadow:true,
+            strokeWidth:3,
+            strokeColor: '3498db',
+            fillColor: '000000',
+            fillOpacity: 0.2,
+        });
+        $('.imageHolder').on('click', showAreas);
+        $('area').on('click', clickArea);
+        $('area').on('mouseover', showAreaName);
+        $('area').on('mouseout', clearAreaName);
+        return;
+    } else {
+        console.log('delay');
+        setTimeout(prepImageMap, 150);
+    }
 }
 
 function submitCodeForm(e){
@@ -208,7 +214,6 @@ function showAreaName(e){
     if (name.match(/\{\{.+?\}\}/)){
         const search = (name.match(/\{\{(.+?)\}\}/))[1];
         const parts = search.split('|',2);
-        console.log(parts[1]);
         const fallback = _.isUndefined(parts[1])?'':parts[1];
         name = name.replace(/\{\{.+?\}\}/, _.get(gamedata, parts[0].split('.'), fallback));
     }

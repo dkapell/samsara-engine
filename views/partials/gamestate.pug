@@ -1,15 +1,20 @@
 mixin gamestate(gamestate)
+    if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
+        .row.mb-2
+            .col
+                form#code-form
+                    .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
+                    input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
     if gamestate.image_id
-        .row.my-2
+        .row.mb-2
             .col.text-center
-
-                .row.my-1
+                .row.mb-1
                     .col
                         .lead.text-center#link-name &nbsp;
 
                 .row.my-1
                     .col.h-50.imageHolder
-                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:50vh')
+                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
                         map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
                             for area in gamestate.map
                                 area(
@@ -23,13 +28,6 @@ mixin gamestate(gamestate)
                                     target="_self",
                                     data-maphilight='{}'
                                 )
-    if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
-        .row.my-3
-            .col
-                form#code-form
-                    .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
-                    input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
-
     .row
         .col !{gamestate.description}
 

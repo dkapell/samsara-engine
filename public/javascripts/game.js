@@ -183,7 +183,6 @@ function prepImageMap(){
         $('area').on('mouseout', clearAreaName);
         return;
     } else {
-        console.log('delay');
         setTimeout(prepImageMap, 150);
     }
 }

@@ -39,7 +39,7 @@ async function show(req, res, next){
             }
             gamestate.image.image = await req.models.image.get(gamestate.image.image_id);
         }
-        const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        const gamestates = (await req.models.gamestate.list());
         gamestate.transitions = {
             to: await gameEngine.getTransitionsTo(gamestate.id),
             from: await gameEngine.getTransitionsFrom(gamestate)

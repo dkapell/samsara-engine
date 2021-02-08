@@ -9,7 +9,7 @@ mixin gamestate(gamestate)
 
                 .row.my-1
                     .col.h-50.imageHolder
-                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
+                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:50vh')
                         map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
                             for area in gamestate.map
                                 area(

@@ -1,4 +1,4 @@
-/* global CodeMirror capitalize */
+/* global liquidjs CodeMirror capitalize */
 'use strict';
 let popupEditor = null;
 $(function(){

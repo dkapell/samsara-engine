@@ -85,8 +85,7 @@ fieldset.mb-2
 
 .form-group
     label.control-label(for="gamestate_description") Description (Player Facing)
-    textarea.form-control(name="gamestate[description]",id="gamestate_description",rows=3)
-        = gamestate.description
+    +htmlEditor('gamestate_description', 'gamestate[description]', 4, 200, gamestate.description)
 
 .form-group
     label.control-label(for="gamestate_codes") Codes Allowed

@@ -9,6 +9,9 @@ body, .popover {
     font-family:  'Montserrat', sans-serif;
 }
 
+#main-content {
+    margin-top:75px;
+}
 
 table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>td:first-child:before,
 table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
@@ -104,7 +107,8 @@ map, image {
 #chat-show {
     position:fixed;
     right: 0;
-    padding-top:70px;
+    top:0;
+    margin-top:70px;
     z-index: 999;
     float: right;
     font-size: 1.40625rem;

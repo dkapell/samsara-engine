@@ -114,7 +114,7 @@ async function showEdit(req, res, next){
                 { url: '/', name: 'Home'},
                 { url: '/trigger', name: 'Triggers'},
             ],
-            current: 'Edit: ' + trigger.trigger
+            current: 'Edit: ' + trigger.name
         };
         res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         res.locals.images = await req.models.image.list();
@@ -146,7 +146,7 @@ async function create(req, res, next){
     try{
         const id = await req.models.trigger.create(trigger);
         delete req.session.triggerData;
-        req.flash('success', 'Created Trigger ' + trigger.trigger);
+        req.flash('success', 'Created Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
     } catch (err) {
         req.flash('error', err.toString());
@@ -173,7 +173,7 @@ async function update(req, res, next){
 
         await req.models.trigger.update(id, trigger);
         delete req.session.triggerData;
-        req.flash('success', 'Updated Trigger ' + trigger.trigger);
+        req.flash('success', 'Updated Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
     } catch(err) {
         req.flash('error', err.toString());

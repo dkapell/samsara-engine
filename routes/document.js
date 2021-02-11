@@ -3,6 +3,7 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const validator = require('validator');
+const liquid = require('../lib/liquid');
 
 /* GET documents listing. */
 async function list(req, res, next){
@@ -38,10 +39,12 @@ async function showByCode(req, res, next){
         return res.render('document/invalid');
     }
     try{
+        const user = req.session.assumed_user ? req.session.assumed_user: req.user;
         const doc = await req.models.document.getByCode(code);
         if(!doc){
             return res.render('document/invalid');
         }
+        doc.content = await liquid.render(user.id, doc.content);
         res.locals.document = doc;
 
         res.render('document/page');

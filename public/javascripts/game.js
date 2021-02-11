@@ -1,4 +1,5 @@
-/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup */
+/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup liquidjs */
+const engine = new liquidjs.Liquid();
 let currentGameState = 0;
 let textTimeout = null;
 let ws = null;
@@ -23,7 +24,14 @@ function openWebSocket(){
         const data = JSON.parse(event.data);
         switch(data.action){
             case 'show default': await renderDefault(data); break;
-            case 'show page': renderPage(data.gamestate); break;
+            case 'show page': {
+                if (_.has(data, 'gamedata')){
+                    for (const key in data.gamedata){
+                        gamedata[key] = data.gamedata[key];
+                    }
+                }
+                renderPage(data.gamestate);
+            }break;
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display':
                 if (data.location === 'popup'){
@@ -44,7 +52,7 @@ function openWebSocket(){
                 $('#code-feedback').show();
                 break;
             case 'gamedata':
-                gamedata = data;
+                gamedata = data.gamedata;
                 break;
         }
 
@@ -106,9 +114,10 @@ async function renderDefault(data){
     }
 }
 
-function renderPage(gamestate){
+async function renderPage(gamestate){
     if (currentGameState !== gamestate.id){
         currentGameState = gamestate.id;
+        gamestate.description = await(liquidify(gamestate.description));
         const rendered = pageTemplate({gamestate: gamestate});
         $('#game-content').html(rendered);
         $('#code-feedback').hide();
@@ -136,7 +145,8 @@ function renderPage(gamestate){
     }
 }
 
-function showToast(data){
+async function showToast(data){
+    data.message = await liquidify(data.message);
     const toast = toastTemplate(data);
     $('#toastHolder').append(toast);
     const options = {
@@ -150,8 +160,8 @@ function showToast(data){
     $(`#toast-${data.id}`).toast('show');
 }
 
-function showText(data){
-    $('#game-text').html(data.content);
+async function showText(data){
+    $('#game-text').html(await liquidify(data.content));
     $('#game-text').show();
     clearTimeout(textTimeout);
     if (Number(data.duration)){
@@ -159,7 +169,8 @@ function showText(data){
     }
 }
 
-function showPopup(type, data){
+async function showPopup(type, data){
+    data.content = await liquidify(data.content);
     const $modal = $('#popupModal');
     $modal.find('.modal-title').text(data.name);
     $modal.find('.modal-body').html(popupTemplate(data));
@@ -207,15 +218,10 @@ function clickArea(e){
     }));
 }
 
-function showAreaName(e){
+async function showAreaName(e){
     const areaId = $(this).data('area');
     let name = $(this).data('name');
-    if (name.match(/\{\{.+?\}\}/)){
-        const search = (name.match(/\{\{(.+?)\}\}/))[1];
-        const parts = search.split('|',2);
-        const fallback = _.isUndefined(parts[1])?'':parts[1];
-        name = name.replace(/\{\{.+?\}\}/, _.get(gamedata, parts[0].split('.'), fallback));
-    }
+    name = await liquidify(name);
     $('#link-name').text(name);
 
     if (areaTimers[areaId]){
@@ -254,4 +260,8 @@ function showAreas(e){
         }, 2000);
         areaTimers[areaId] = timeout;
     });
+}
+
+async function liquidify(input){
+    return engine.parseAndRender(input, gamedata);
 }

@@ -20,7 +20,7 @@ html.h-100(lang="en")
             link(rel='stylesheet' href='/stylesheets/style.css')
 
     body.h-100
-        nav.navbar.navbar-dark.bg-primary.navbar-expand-md.sticky-top
+        nav.navbar.navbar-dark.bg-primary.navbar-expand-md.fixed-top
             .container
                 a.navbar-brand(href='/')=config.get('app.name')
                 button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation")
@@ -140,7 +140,7 @@ html.h-100(lang="en")
                 #toastHolder(style="position: absolute; top: 0; left: 0; min-width:350px; padding-top:10px")
 
         .d-flex.w-100.flex-grow-1.align-items-stretch
-            .p-1.mt-1.flex-grow-1#main-content
+            .p-1.flex-grow-1#main-content
                 - if(breadcrumbs)
                     .container(role="breadcrumbs")
                         nav(aria-label='breadcrumb')
@@ -211,6 +211,7 @@ html.h-100(lang="en")
             script(src="/javascripts/vendor/bootstrap-confirmation.min.js")
             script(src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js")
             script(src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.12.0/underscore-min.js")
+            script(src="https://cdn.jsdelivr.net/npm/liquidjs/dist/liquid.browser.min.js")
             script(src="/javascripts/samsara.js")
             script(src='/javascripts/game.js')
             script(src='/javascripts/chat.js')

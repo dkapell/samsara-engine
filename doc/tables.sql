@@ -170,7 +170,8 @@ create type variable_type as ENUM(
     'string',
     'date',
     'boolean',
-    'object'
+    'object',
+    'array'
 );
 
 create table variables(

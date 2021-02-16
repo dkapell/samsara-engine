@@ -24,7 +24,17 @@ async function list(req, res, next){
 async function show(req, res, next){
     const id = req.params.id;
     try{
-        res.locals.document = await req.models.document.get(id);
+        const document = await req.models.document.get(id);
+
+        res.locals.document = document;
+
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/document', name: 'Documents'},
+            ],
+            current: document.name
+        };
         res.render('document/show');
     } catch(err){
         next(err);

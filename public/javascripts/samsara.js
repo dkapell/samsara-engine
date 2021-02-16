@@ -74,6 +74,9 @@ function collapseChatSidebar(e){
     }
     setTimeout(function() {
         $('#chat-show').show();
+        if ($('.imageHolder')){
+            $('img[usemap]').rwdImageMaps();
+        }
     }, 350);
 }
 
@@ -112,7 +115,7 @@ function showChatSidebar(expand){
     $('#chat-sidebar').removeClass('notransition');
     $('#chat-sidebar').removeClass('d-none');
     $('#chat-sidebar').addClass('d-flex');
-    if (expand){
+    if (expand && !(xs || mx)){
         expandChatSidebar();
     } else {
         collapseChatSidebar();

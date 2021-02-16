@@ -1,7 +1,7 @@
 mixin gamestate(gamestate)
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
         .row.mb-2
-            .col
+            .col-10.offset-1
                 form#code-form
                     .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")

@@ -29,16 +29,16 @@ async function renderGraph(){
                 borderColor = '#e74c3c';
             }
             const label = r.text(0,0, n.label);
-            label.attr({'font-size':'13px'});
+            label.attr({'font-size':'11px'});
             label.attr({'opacity':0});
-            let ovalWidth = label.getBBox().width + 40;
+            let ovalWidth = label.getBBox().width + 30;
 
-            if (ovalWidth < 60 ){ ovalWidth = 60; }
+            if (ovalWidth < 40 ){ ovalWidth = 40; }
             let ovalHeight = ovalWidth * 0.6;
-            if (ovalHeight > 60) { ovalHeight = 60; }
+            if (ovalHeight > 40) { ovalHeight = 40; }
             const set = r.set()
                 .push(r.ellipse(0, 0, ovalWidth/2, ovalHeight/2).attr({ fill: '#fff', 'stroke-width': 2, stroke: borderColor }))
-                .push(r.text(0, 0, n.label).attr({'font-size':'13px'}));
+                .push(r.text(0, 0, n.label).attr({'font-size':'11px'}));
             return set;
         };
 
@@ -55,8 +55,10 @@ async function renderGraph(){
                 if (!_.has(transitions[state.name], toState.name)){
                     transitions[state.name][toState.name] = [];
                 }
-                const group_name = transition.group_name ? transition.group_name : '';
-                transitions[state.name][toState.name].push(group_name);
+                const group_name = transition.group_name ? transition.group_name : null;
+                if (group_name){
+                    transitions[state.name][toState.name].push(group_name);
+                }
             }
             for (const code of state.codes){
                 for(const action of code.actions){
@@ -77,19 +79,19 @@ async function renderGraph(){
             for(const action of trigger.actions){
                 if (action.type === 'transition'){
                     const toState = _.findWhere(data.gamestates, {id: action.to_state_id});
-                    if (!_.has(transitions, trigger.name)){
-                        transitions[trigger.name] = {};
+                    if (!_.has(transitions, `trigger-${trigger.name}`)){
+                        transitions[`trigger-${trigger.name}`] = {};
                     }
-                    if (!_.has(transitions[trigger.name], toState.name)){
-                        transitions[trigger.name][toState.name] = [];
+                    if (!_.has(transitions[`trigger-${trigger.name}`], toState.name)){
+                        transitions[`trigger-${trigger.name}`][toState.name] = [];
                     }
-                    transitions[trigger.name][toState.name].push('Trigger');
+                    transitions[`trigger-${trigger.name}`][toState.name].push('Trigger');
                     addNode = true;
                 }
             }
             if (addNode){
                 trigger.type = 'trigger';
-                g.addNode(trigger.name, {label:`Trigger: ${trigger.name}`, render: render, data:trigger});
+                g.addNode(`trigger-${trigger.name}`, {label:`Trigger: ${trigger.name}`, render: render, data:trigger});
             }
 
         }

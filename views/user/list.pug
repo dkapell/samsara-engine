@@ -26,7 +26,12 @@ block content
                         td= user.email
                         td= capitalize(user.type)
                         td= user.type === 'player'?runs[user.player.run_id].name:''
-                        td= user.type === 'player'?_.pluck(user.player.groups, 'name').join(', '):'Ungrouped'
+                        td
+                            if user.type === 'player'
+                                if user.player.groups.length
+                                    span=_.pluck(user.player.groups, 'name').join(', ')
+                                else
+                                    i Ungrouped
                         td= user.type === 'player'?user.player.character:''
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(

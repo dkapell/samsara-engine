@@ -10,6 +10,7 @@ block content
             thead
                 tr
                     th
+                    th Id
                     th(data-order='asc') Name
                     th Description
                     if checkPermission('creator')
@@ -19,6 +20,7 @@ block content
                 for document in documents
                     tr(class='clickable-row', data-click-object='document' data-click-id=document.id)
                         td.dtr-expand
+                        th=document.id
                         td
                             a(href='/document/' + document.id)= document.name
                         td= document.description

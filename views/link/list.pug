@@ -9,6 +9,8 @@ block content
             thead
                 tr
                     th
+                    if checkPermission('creator')
+                        th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
                     th URL
                     th(data-priority="2") GM
@@ -20,6 +22,8 @@ block content
                 for link in links
                     tr(class='clickable-row', data-click-object='link' data-click-id=link.id)
                         td.dtr-expand
+                        if checkPermission('creator')
+                            th= link.id
                         td
                             a(href='/link/' + link.id)= link.name
                         td= link.url

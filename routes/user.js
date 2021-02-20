@@ -35,7 +35,7 @@ async function showNew(req, res, next){
                 gamestate_id: startState.id,
                 groups: [],
                 character: null,
-                data: gameData.getStartData('player')
+                data: await gameData.getStartData('player')
             }
         };
         res.locals.runs = await req.models.run.list();
@@ -76,7 +76,7 @@ async function showEdit(req, res, next){
                 run_id: (await req.models.run.getCurrent()).id,
                 gamestate_id: startState.id,
                 character: null,
-                data: gameData.getStartData('player')
+                data: await gameData.getStartData('player')
             };
         }
         res.locals.runs = await req.models.run.list();
@@ -159,11 +159,12 @@ async function update(req, res, next){
             } else {
                 await req.models.player.create({
                     user_id:id,
-                    run_id:user.player.run_id,
-                    game_state:user.player.game_state,
+                    run_id:Number(user.player.run_id),
+                    gamestate_id:  Number(user.player.gamestate_id),
+                    prev_gamestate_id:null,
                     groups: user.player.groups,
-                    data: JSON.parse(user.player.data)
-
+                    data: JSON.parse(user.player.data),
+                    character: user.player.character
                 });
             }
             await req.app.locals.gameServer.sendGameState(id);

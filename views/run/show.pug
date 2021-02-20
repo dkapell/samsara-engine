@@ -73,6 +73,24 @@ block content
     h3.my-3 Players
     +players(users)
 
+    if _.has(run, 'data') && ((_.has(run.data, 'public') && _.keys(run.data.public).length) || (_.has(run.data, 'private') && _.keys(run.data.private).length))
+        .row.my-3
+            .col
+                .card
+                    h5.card-header#run-data-heading(data-toggle="collapse" aria-expanded="false" data-target="#run-data" aria-controls="run-data") Run Data
+                        i.expand-text-shown.ml-4 (click to hide)
+                        i.expand-text.ml-4 (click to show)
+
+                        span.float-right
+                            i.fa.fa-chevron-up
+                            i.fa.fa-chevron-down
+
+                    .card-body.p-0
+                        .collapse.p-2#run-data(aria-labelledby="run-data-heading")
+                            pre
+                                =JSON.stringify(run.data, null, 2)
+
+
 append scripts
     script(src='/javascripts/data-table.js')
     script(src='/javascripts/run.js')

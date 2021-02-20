@@ -1,4 +1,4 @@
-/* global currentLocation */
+/* global currentLocation xs md lg xl */
 $(function(){
     $('.select2').select2({
         theme:'bootstrap4',
@@ -115,7 +115,7 @@ function showChatSidebar(expand){
     $('#chat-sidebar').removeClass('notransition');
     $('#chat-sidebar').removeClass('d-none');
     $('#chat-sidebar').addClass('d-flex');
-    if (expand && !(xs || mx)){
+    if (expand && !(xs || md)){
         expandChatSidebar();
     } else {
         collapseChatSidebar();

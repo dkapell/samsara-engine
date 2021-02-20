@@ -134,13 +134,13 @@ mixin jsEditor(id, name, rows, size, contents)
             ) Help
         li.nav-item(role="presentation")
             a.nav-link(
-                id=`${id}-global-tab`
+                id=`${id}-engine-tab`
                 data-toggle="tab"
-                href=`#${id}-global`
+                href=`#${id}-engine`
                 role="tab"
-                aria-controls=`${id}-global`
+                aria-controls=`${id}-engine`
                 aria-selected="false"
-            ) Global Variables
+            ) Engine Variables
         if variables.length
             li.nav-item(role="presentation")
                 a.nav-link(
@@ -193,9 +193,9 @@ mixin jsEditor(id, name, rows, size, contents)
                         | private.statesVisited++;
                         | output.console `Increased statesVisited by 1 for ${player} (${character})`;
         .tab-pane.fade(
-            id=`${id}-global`
+            id=`${id}-engine`
             role='tabpanel'
-            area-labelledby=`${id}-global-tab`
+            area-labelledby=`${id}-engine-tab`
         )
             .row
                 .col.p-4
@@ -225,7 +225,23 @@ mixin jsEditor(id, name, rows, size, contents)
                             tr
                                 td output
                                 td Yes
-                                td Object with output.to_state_id, output.delay, output.console.  set the first two to change the player state.  Set output.console to print data to the server console.
+                                td Object with output.to_state_id, output.delay. Set these to change the player state.
+                            tr
+                                td output.log("text")
+                                td No
+                                td Function to log text to the server console.
+                            tr
+                                td output.text("text", options)
+                                td No
+                                td Function to display text to the user.  <i>option</i> object has location (inline/popup/popout), duration (for inline), name, documentId (for documents)
+                            tr
+                                td output.link(id)
+                                td No
+                                td Function to open a link by ID
+                            tr
+                                td output.image(id)
+                                td No
+                                td Function to open an image popup by ID
                             tr
                                 td player
                                 td No

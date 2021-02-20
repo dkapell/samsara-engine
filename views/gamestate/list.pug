@@ -10,7 +10,8 @@ block content
             thead
                 tr
                     th
-                    th(data-priority="6") Id
+                    if checkPermission('creator')
+                        th(data-priority="6") Id
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Image
                     th(data-priority="3") Codes
@@ -23,7 +24,8 @@ block content
                 for gamestate in gamestates
                     tr(class='clickable-row', data-click-object='gamestate' data-click-id=gamestate.id)
                         td.dtr-expand
-                        th=gamestate.id
+                        if checkPermission('creator')
+                            th=gamestate.id
                         td
                             a(href='/gamestate/' + gamestate.id)= gamestate.name
                             if gamestate.start

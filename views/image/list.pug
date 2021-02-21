@@ -12,7 +12,9 @@ block content
                 .card
                     .card-header
                         .badge.badge-primary.float-right=image.status
-                        h5.card-title=image.display_name?image.display_name:image.name
+                        .card-title
+                            h5= image.display_name?image.display_name:image.name
+                            .small= image.display_name?image.name:''
                     img.card-img-top(src=image.url alt=image.display_name?image.display_name:image.name)
                     .card-body
                         div

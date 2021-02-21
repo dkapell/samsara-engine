@@ -353,7 +353,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 )
                     option
                     for image in images.filter(i=>{return i.is_popup})
-                        option(value=image.id selected=action.image_id && Number(action.image_id)===image.id)= image.display_name?image.display_name:image.name
+                        option(value=image.id selected=action.image_id && Number(action.image_id)===image.id)= image.display_name?`${image.display_name} ( ${image.name} )`:image.name
         // Script Row
         .form-row.my-1.action-script
             // Script Input

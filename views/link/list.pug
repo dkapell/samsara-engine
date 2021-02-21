@@ -26,7 +26,11 @@ block content
                             th= link.id
                         td
                             a(href='/link/' + link.id)= link.name
-                        td= link.url
+                        td
+                            if link.url === 'stub'
+                                i Stub
+                            else
+                                a.action-btn(href=link.url, target="_blank")= link.url
                         td= link.gm
                         td= link.active?'Yes':'No'
                         if checkPermission('creator')

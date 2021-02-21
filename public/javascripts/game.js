@@ -1,6 +1,6 @@
-/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup liquidjs */
+/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup liquidjs addChatEvent*/
 const engine = new liquidjs.Liquid();
-let currentGameState = 0;
+let currentGameState = null;
 let textTimeout = null;
 let ws = null;
 const reconnectInterval = 5000;
@@ -116,6 +116,10 @@ async function renderDefault(data){
 
 async function renderPage(gamestate){
     if (currentGameState !== gamestate.id){
+        let initialState = false;
+        if (currentGameState === null){
+            initialState = true;
+        }
         currentGameState = gamestate.id;
         gamestate.description = await(liquidify(gamestate.description));
         const rendered = pageTemplate({gamestate: gamestate});
@@ -132,6 +136,9 @@ async function renderPage(gamestate){
             showChatSidebar(gamestate.chatExpanded);
             if (gamestate.chat){
                 $('#chat-gamestate-tab-nav').show();
+                if (!initialState && _.has(gamestate, 'name')){
+                    addChatEvent('gamestate', gamestate.name);
+                }
             } else {
                 $('#chat-gamestate-tab-nav').hide();
                 if (currentLocation === 'gamestate'){

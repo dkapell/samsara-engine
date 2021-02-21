@@ -8,7 +8,7 @@ const models = {
     code: require('./code')
 };
 
-const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template', 'chat', 'show_count'];
+const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'special', 'map', 'template', 'chat', 'show_count', 'show_name'];
 
 
 exports.get = async function(id){

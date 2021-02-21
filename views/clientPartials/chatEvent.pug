@@ -1,0 +1,11 @@
+if (!last || (new Date(last.created)).toLocaleDateString() !== (new Date(message.created)).toLocaleDateString())
+    li.chat-date-change.py-1.text-center #{(new Date(message.created)).toLocaleDateString([], { dateStyle:'short'})}
+
+li.media.chat-event(
+    data-location=message.location
+)
+   .media-body
+        .mt-1.w-100.chat-message-header
+            span.message-event-text !{message.content}
+            i.float-right.pr-1 #{(new Date(message.created)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+

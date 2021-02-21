@@ -47,6 +47,7 @@ $(function(){
     $('.action-btn').on('click', function(e){
         e.stopPropagation();
     });
+
 });
 
 function exportCSV(e){

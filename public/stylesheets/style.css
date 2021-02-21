@@ -169,6 +169,7 @@ map, image {
 }
 
 .chat-message,
+.chat-event,
 .chat-report {
     font-size: .8rem;
     z-index:0;
@@ -227,5 +228,14 @@ map, image {
 }
 .message-text.hidden:hover{
     cursor: pointer;
+}
+
+.chat-event{
+    text-align:center;
+
+}
+.message-event-text{
+    font-size:0.9rem;
+    font-style: italic;
 }
 

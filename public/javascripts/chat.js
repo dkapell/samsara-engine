@@ -1,4 +1,4 @@
-/* global chatmessageTemplate chatreportTemplate scrollSmoothToBottom ws _ */
+/* global chatmessageTemplate chatreportTemplate chateventTemplate scrollSmoothToBottom ws _ */
 let lastMessage = {
     gamestate:null,
     group:null,
@@ -156,6 +156,19 @@ function addChatMessage(message, fastScroll){
     if (!message.self){
         notifyNewChat(message.location, message.location_id);
     }
+}
+
+function addChatEvent(location, content){
+    const $chatContainer = $(`#chat-${location}-tab >> .chat-container`);
+    const message = {
+        content: content,
+        created: new Date()
+    };
+
+    const $message = $($.parseHTML(chateventTemplate({message: message, last:lastMessage[location]})));
+    lastMessage[location] = message;
+    $chatContainer.append($message);
+    scrollSmoothToBottom($chatContainer);
 }
 
 function addReport(message, fastScroll){

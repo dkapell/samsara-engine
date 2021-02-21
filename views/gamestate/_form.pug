@@ -76,7 +76,11 @@ fieldset.mb-2
             .custom-control.custom-switch
                 input.custom-control-input(type="checkbox", name="gamestate[chat]", id="gamestate_chat", checked=gamestate.chat)
                 label.custom-control-label(for="gamestate_chat") Has Chat
-
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="gamestate[show_name]", id="gamestate_show_name", checked=gamestate.show_name)
+                label.custom-control-label(for="gamestate_show_name") Show Gamestate Name in Chat
+    .row.mb-2
         .col
             .custom-control.custom-switch
                 input.custom-control-input(type="checkbox", name="gamestate[show_count]", id="gamestate_show_count", checked=gamestate.show_count)

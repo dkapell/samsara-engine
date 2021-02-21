@@ -75,6 +75,7 @@ async function showNew(req, res, next){
         template:false,
         chat: false,
         show_count: false,
+        show_name: false,
     };
     res.locals.breadcrumbs = {
         path: [
@@ -97,7 +98,8 @@ async function showNew(req, res, next){
                     special: false,
                     template:false,
                     chat: old.chat,
-                    show_count: old.show_count
+                    show_count: old.show_count,
+                    show_name: old.show_name
                 };
             }
             res.locals.clone = true;
@@ -171,6 +173,9 @@ async function create(req, res, next){
     if (!_.has(gamestate, 'show_count')){
         gamestate.show_count = false;
     }
+    if (!_.has(gamestate, 'show_name')){
+        gamestate.show_name = false;
+    }
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }
@@ -218,6 +223,10 @@ async function update(req, res, next){
     if (!_.has(gamestate, 'show_count')){
         gamestate.show_count = false;
     }
+    if (!_.has(gamestate, 'show_name')){
+        gamestate.show_name = false;
+    }
+
     if(Number(gamestate.image_id) === -1){
         gamestate.image_id = null;
     }

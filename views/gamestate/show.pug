@@ -39,9 +39,15 @@ block content
         .col-md-4.d-none.d-md-block
             for area in gamestate.map
                 +actionsCard(area.uuid, area)
+    .row.my-2
+        if gamestate.chat
+            .col
+                h4 Chat
+                p Has Chat
+                if gamestate.show_name
+                    p Show Gamestate Name in Chat
 
-    if gamestate.codes.length
-        .row.my-2
+        if gamestate.codes.length
             .col
                 h4 Codes Allowed
                 ul.list-unstyled

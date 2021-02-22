@@ -120,6 +120,7 @@ async function renderPage(gamestate){
         if (currentGameState === null){
             initialState = true;
         }
+        $('#popupModal').modal('hide');
         currentGameState = gamestate.id;
         gamestate.description = await(liquidify(gamestate.description));
         const rendered = pageTemplate({gamestate: gamestate});

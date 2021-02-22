@@ -85,6 +85,9 @@ async function create(req, res, next){
     } else {
         variable.player = false;
     }
+    if (variable.base_value === ''){
+        variable.base_value = null;
+    }
 
     try{
         const variableId = await req.models.variable.create(variable);
@@ -115,6 +118,10 @@ async function update(req, res, next){
     } else {
         variable.player = false;
     }
+    if (variable.base_value === ''){
+        variable.base_value = null;
+    }
+
 
     try {
         const current = await req.models.variable.get(id);

@@ -106,7 +106,7 @@ mixin jsonEditor(id, name, rows, size, contents)
         data-type= 'json',
         aria-describedby=`editor-feedback-${id}`
     )
-        = JSON.stringify(contents, null, 2)
+        = !_.isNull(contents)?JSON.stringify(contents, null, 2):''
     .invalid-feedback(id=`editor-feedback-${id}`) Not Valid JSON
 
 

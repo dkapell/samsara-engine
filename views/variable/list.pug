@@ -25,7 +25,11 @@ block content
                         td= capitalize(variable.type)
                         td=variable.player?'Player':'Run'
                         td=variable.public?'Yes':'No'
-                        td=variable.base_value
+                        td
+                            if _.isNull(variable.base_value)
+                                i null
+                            else
+                                = variable.base_value
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(
                                 role="button",

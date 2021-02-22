@@ -39,8 +39,10 @@ function renderEditor(id, type, size){
     if (type === 'json'){
         editor.on('change', function(editor){
             try{
-                JSON.parse(editor.getValue());
-
+                const content = editor.getValue();
+                if (content){
+                    JSON.parse(editor.getValue());
+                }
                 editor.getTextArea().setCustomValidity('');
                 $(editor.getWrapperElement()).removeClass('is-invalid');
                 $(editor.getWrapperElement()).removeClass('border-danger');

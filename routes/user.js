@@ -169,6 +169,11 @@ async function update(req, res, next){
             }
             await req.app.locals.gameServer.sendGameState(id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
+        } else {
+            const player = await req.models.player.getByUserId(id);
+            if (player){
+                await req.models.player.delete(player.id);
+            }
         }
         req.flash('success', 'Updated User ' + user.name);
         res.redirect('/user');

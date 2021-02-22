@@ -6,13 +6,13 @@ mixin players(players)
                 tr
                     th
                     if runs
-                        th(data-priority="5") Run
-                    th(data-priority="4") Group
+                        th(data-priority="6") Run
+                    th(data-priority="5") Group
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Character
                     th Email
-                    th(data-priority="3") Game State
-                    th
+                    th(data-priority="4") Game State
+                    th(data-priority="3")
             tbody
                 for user in users
                     tr

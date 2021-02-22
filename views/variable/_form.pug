@@ -22,7 +22,7 @@
 
 .form-group
     label.control-label(for="variable_base_value") Default Value (JSON-formatted)
-    +jsonEditor('variable_base_value', 'variable[base_value]', 3, 100, JSON.parse(variable.base_value))
+    +jsonEditor('variable_base_value', 'variable[base_value]', 3, 100, variable.base_value?JSON.parse(variable.base_value):null)
 
 .form-group
     button.btn.btn-primary(type="submit")= variable.id?'Update':'Create'

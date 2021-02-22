@@ -529,7 +529,6 @@ function showUsers(location, locationId, player){
     const $userList =  $(`#chat-${location}-tab >> .chat-users`);
 
     $userList.empty();
-    console.log('clearing chat user list')
     let users = [];
     if (location === 'gamestate' && chatUsers.current.length){
         users = chatUsers.current;

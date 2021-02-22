@@ -540,14 +540,14 @@ function showUsers(location, locationId, player){
     for(const user of users){
         const $user = $('<span>')
             .addClass('badge')
-            .addClass(user.id === myUserId?'badge-secondary':'badge-primary')
+            .addClass(Number(user.id) === Number(myUserId)?'badge-secondary':'badge-primary')
             .addClass('chat-message-user')
             .addClass('m-1')
             .data('userid', user.id)
             .data('self', false)
             .text(user.name);
 
-        if (user.id !== myUserId){
+        if (Number(user.id) !== Number(myUserId)){
             $user.on('click', clickMessageUser);
         }
 

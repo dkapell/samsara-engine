@@ -15,6 +15,8 @@ block content
                     th Description
                     th Execute on Run
                     th Execute on Players
+                    th Group
+                    th Condition
                     if checkPermission('creator')
                         th
 
@@ -31,6 +33,14 @@ block content
                         td
                             if trigger.player
                                 +triggerButton(trigger, 'none', false)(class='btn-sm mx-1')
+                        td
+                            if (trigger.group_id)
+                                span.mr-2= _.findWhere(groups, {id:Number(trigger.group_id)}).name
+                            else
+                                i All
+                        td= trigger.condition
+
+
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-success.btn-sm.mr-1.action-btn(

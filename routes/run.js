@@ -44,6 +44,7 @@ async function show(req, res, next){
                 }
                 user.player = user.gamestate.player;
                 user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
+                user.triggers = await gameEngine.getTriggers(user.id);
                 return user;
             })
         );
@@ -64,6 +65,11 @@ async function show(req, res, next){
     } catch(err){
         next(err);
     }
+}
+
+async function filter(arr, callback) {
+    const fail = Symbol();
+    return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i=>i!==fail);
 }
 
 function showNew(req, res, next){

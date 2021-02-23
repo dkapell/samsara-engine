@@ -7,7 +7,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'icon', 'actions', 'run', 'player'];
+const tableFields = ['name', 'description', 'icon', 'actions', 'run', 'player', 'group_id', 'condition'];
 
 exports.get = async function(id){
     const query = 'select * from triggers where id = $1';

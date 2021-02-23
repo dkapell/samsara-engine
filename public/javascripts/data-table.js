@@ -3,7 +3,7 @@ $(function(){
     const dataTable = $('.table-sorted').DataTable({
         paging: true,
         fixedHeader: true,
-        saveState: true,
+        stateSave: true,
         responsive: {
             details: {
                 type: 'column'

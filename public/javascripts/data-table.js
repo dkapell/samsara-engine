@@ -4,6 +4,7 @@ $(function(){
         paging: true,
         fixedHeader: true,
         stateSave: true,
+        stateDuration: 0,
         responsive: {
             details: {
                 type: 'column'

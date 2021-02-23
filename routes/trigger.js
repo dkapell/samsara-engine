@@ -15,6 +15,7 @@ async function list(req, res, next){
     };
     try {
         res.locals.triggers = await req.models.trigger.list();
+        res.locals.groups = await req.models.group.list();
         res.render('trigger/list', { pageTitle: 'Triggers' });
     } catch (err){
         next(err);
@@ -54,6 +55,8 @@ async function showNew(req, res, next){
         actions: [],
         run: false,
         player: false,
+        group_id: -1,
+        condition:''
     };
     res.locals.breadcrumbs = {
         path: [
@@ -75,7 +78,9 @@ async function showNew(req, res, next){
                     icon: old.icon?old.icon:null,
                     map: old.actions?old.actions:[],
                     run: old.run,
-                    player: old.player
+                    player: old.player,
+                    group_id: old.group_id,
+                    condition: old.condition
                 };
             }
         }
@@ -142,6 +147,9 @@ async function create(req, res, next){
     if (!_.has(trigger, 'player')){
         trigger.player = false;
     }
+    if (Number(trigger.group_id) === -1){
+        trigger.group_id = null;
+    }
 
     try{
         const id = await req.models.trigger.create(trigger);
@@ -166,6 +174,9 @@ async function update(req, res, next){
     }
     if (!_.has(trigger, 'player')){
         trigger.player = false;
+    }
+    if (Number(trigger.group_id) === -1){
+        trigger.group_id = null;
     }
 
     try {

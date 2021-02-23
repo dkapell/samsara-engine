@@ -9,12 +9,12 @@ include ../partials/gameactions
     .col
         .custom-control.custom-switch
             input.custom-control-input(type="checkbox", name="trigger[run]", id="trigger_run", checked=trigger.run)
-            label.custom-control-label(for="trigger_run") Execute on all players in a run
+            label.custom-control-label(for="trigger_run") Execute on all qualifying players in a run
 
     .col
         .custom-control.custom-switch
             input.custom-control-input(type="checkbox", name="trigger[player]", id="trigger_player", checked=trigger.player)
-            label.custom-control-label(for="trigger_player") Execute on a single player
+            label.custom-control-label(for="trigger_player") Execute on a single qualifying player
 
 
 .form-group
@@ -26,6 +26,38 @@ include ../partials/gameactions
     label.control-label(for="trigger_icon") Icon
     input.form-control(type="text",placeholder="Icon - FontAwesome class",name="trigger[icon]",value=trigger.icon,id='trigger_icon')
     div.invalid-feedback Please choose a valid icon class
+
+fieldset.mb-2.border-secondary.border.p-2.rounded
+
+    label Optional Criteria
+    .row.mb-2
+        .col
+            label.control-label(for="trigger_group_id") For Group
+            select.custom-select.area-input.area-group.select2(name='trigger[group_id]' id='trigger_group_id' )
+                option(selected=!trigger.group_id value="-1") All
+                for group in groups
+                    option( value=group.id selected=trigger.group_id && Number(trigger.group_id)===group.id)= group.name
+        .col
+            label.control-label(for="trigger_condition") On Condition
+            .input-group.trigger-condition
+                - const conditionContents = trigger.condition?trigger.condition:''
+                - const conditionLines = conditionContents.split('\n')
+
+                input.form-control.script-display.border-light.script-editor-btn(
+                    type="text"
+                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
+                    readonly
+                )
+                input.form-control.script-input.area-input.area-condition-data(
+                    type="hidden"
+                    name=`trigger[condition]`,
+                    id='trigger_condition',
+                    value=trigger.condition
+                    data-fieldtype='condition'
+                )
+                .input-group-append
+                    button.btn.btn-outline-light.script-editor-btn
+                        i.fas.fa-edit
 
 
 .form-group#map-group

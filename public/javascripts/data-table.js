@@ -1,7 +1,7 @@
 $(function(){
     const ordering = [];
     const dataTable = $('.table-sorted').DataTable({
-        paging: false,
+        paging: true,
         fixedHeader: true,
         saveState: true,
         responsive: {

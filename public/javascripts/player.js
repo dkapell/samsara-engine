@@ -118,6 +118,7 @@ async function sendToast(e){
     }
 
     const data = {
+        from:  $('#toastFrom').val(),
         message:  $('#toastText').val(),
         duration: $('#toastAutohide').is(':checked') ? 30000 : 0
     };

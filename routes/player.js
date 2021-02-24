@@ -85,7 +85,8 @@ async function sendToast(req, res, next){
         }
         req.app.locals.gameServer.sendToast(req.body.message, {
             duration: req.body.duration,
-            userId: user.id
+            userId: user.id,
+            from: req.body.from && req.body.from !== ''?req.body.from:null
         });
         res.json({success:true});
     } catch(err){

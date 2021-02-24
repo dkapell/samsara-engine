@@ -274,7 +274,8 @@ async function toastAll(req, res, next){
         for(const player of players){
             req.app.locals.gameServer.sendToast(req.body.message, {
                 duration: req.body.duration,
-                userId: player.user_id
+                userId: player.user_id,
+                from:  req.body.from && req.body.from !== ''?req.body.from:null
             });
         }
         res.json({success:true});

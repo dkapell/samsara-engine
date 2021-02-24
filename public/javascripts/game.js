@@ -42,7 +42,7 @@ function openWebSocket(){
                 break;
             case 'toast': showToast(data); break;
             case 'image': showPopup('image', data); break;
-            case 'chat': handleChat(data); break;
+            case 'chat': await handleChat(data); break;
             case 'code error':
                 $('#code-entry').addClass('is-invalid');
                 if (!data.retry){
@@ -56,7 +56,7 @@ function openWebSocket(){
                 break;
             case 'playerupdate':
                 if (typeof refreshPlayerList === 'function'){
-                    refreshPlayerList();
+                    await refreshPlayerList();
                 }
                 break;
         }

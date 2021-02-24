@@ -11,7 +11,6 @@ mixin players(users, runId)
                     th(data-priority="5") Group
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Character
-                    th Email
                     th(data-priority="4") Game State
                     th(data-priority="3")
             tbody
@@ -29,7 +28,6 @@ mixin players(users, runId)
                             if (user.connected)
                                 .badge.badge-success.ml-2 Connected
                         td.col-player-character= user.player.character
-                        td.col-player-email= user.email
                         td.col-player-gamestate
                             if user.gamestate.current
                                 if user.gamestate.transitioning

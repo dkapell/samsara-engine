@@ -5,7 +5,7 @@ if user.gamestate.current
         i.fas.fa-arrow-right.fa-fw.mx-1
         a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.next.id}`)
             | #{user.gamestate.next.name}
-        span.ml-2 #{moment(user.player.statetime).fromNow()}
+        span.ml-2 #{user.gamestate.transitionTime}
     else
         a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.current.id}`)
             | #{user.gamestate.current.name}

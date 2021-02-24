@@ -54,7 +54,7 @@ function sendMessage(e){
     $('#chat-message-input').val('');
 }
 
-function handleChat(data){
+async function handleChat(data){
     if (_.has(data, 'userId')){
         myUserId = data.userId;
     }
@@ -70,7 +70,7 @@ function handleChat(data){
     } else if (_.has(data, 'locations')){
         addLocations(data.locations);
         if (typeof refreshPlayerList === 'function'){
-            refreshPlayerList();
+            await refreshPlayerList();
         }
         $('.chat-location').change();
     } else if (_.has(data, 'remove')){

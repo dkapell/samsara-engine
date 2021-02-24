@@ -57,7 +57,6 @@ mixin players(users)
                                 )
                                     i.fas.fa-comment
                             for trigger in user.triggers
-                                //triggers.filter(trigger => { return trigger.player; })
                                 if trigger.icon
                                     +triggerButton(trigger, user.id, false)(class='btn-sm mx-1')
 
@@ -110,6 +109,9 @@ mixin players(users)
                         span(aria-hidden="true") &times;
                 .modal-body
                     .form
+                        .form-group
+                            label.col-form-label(for="toastFrom") Send As:
+                            input.form-control#toastFrom(type="text",placeholder=config.get('app.name'))
                         .form-group
                             label.col-form-label(for="toastText") Message:
                             textarea.form-control#toastText

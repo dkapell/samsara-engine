@@ -26,8 +26,6 @@ async function runAction(e){
     });
     if($this.attr('data-back')){
         location = $this.attr('data-back');
-    } else {
-        location.reload();
     }
 }
 
@@ -55,7 +53,5 @@ async function updateAll(e){
     });
     if($this.attr('data-back')){
         location = $this.attr('data-back');
-    } else {
-        location.reload();
     }
 }

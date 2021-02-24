@@ -109,6 +109,7 @@ async function runTrigger(req, res, next){
         }
 
         await req.app.locals.gameServer.runTrigger(trigger, user);
+        await req.app.locals.gameServer.sendPlayerUpdate();
 
         res.json({success:true});
     } catch(err){

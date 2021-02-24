@@ -1,3 +1,4 @@
+/* global _ gamestatebadgeTemplate triggerbuttonTemplate*/
 $(function(){
     $('.player-advance-btn-confirm').hide();
     $('.player-advance-btn-cancel').hide();
@@ -18,6 +19,92 @@ $(function(){
 
 });
 
+async function refreshPlayerList(){
+    const $table = $('#players-table');
+    const runId = $table.data('runid');
+    if (!runId){ return; }
+    const url = `/run/${runId}?api=true`;
+    const result = await fetch(url);
+    const data = await result.json();
+    $table.DataTable().rows().every(function(){
+        var $row = this.nodes().toJQuery();
+        const user = _.findWhere(data.users, {id: $row.data('userid')});
+
+        let changed = false;
+        //const $row = $table.find(`tr[data-userid=${user.id}]`);
+        if (!$row[0]) { return; }
+        // Group
+        const $groupcol = $row.find('.col-player-groups');
+        const grouptext = user.player.groups.length?_.pluck(user.player.groups, 'name').join(', '):null;
+        if ($groupcol.html() !== grouptext){
+            changed = true;
+            $groupcol.html(grouptext);
+        }
+        // Name
+        const $namecol = $row.find('.col-player-name');
+        const nametext = user.name + ( user.connected?'<div class="badge badge-success ml-2">Connected</div>':'');
+        if ($namecol.html() !== nametext){
+            changed = true;
+            $namecol.html(nametext);
+        }
+
+        // Character
+        const $charactercol = $row.find('.col-player-character');
+        if($charactercol.html() !== user.player.character){
+            changed = true;
+            $charactercol.html(user.player.character);
+        }
+
+        // Email
+        const $emailcol = $row.find('.col-player-email');
+        if($emailcol.html() !== user.email){
+            changed = true;
+            $emailcol.html(user.email);
+        }
+
+        // Gamestate
+        const $gamestatecol = $row.find('.col-player-gamestate');
+        const gamestateText = gamestatebadgeTemplate({user:user});
+        if($gamestatecol.html() !== gamestateText){
+            changed = true;
+            $gamestatecol.html(gamestateText);
+        }
+
+        // Actions
+        if (user.connected){
+            $row.find('.player-message-btn').show();
+        } else {
+            $row.find('.player-message-btn').hide();
+        }
+        const $triggers = $row.find('.col-player-triggers');
+        const currentTriggers = [];
+        $triggers.find('.player-trigger-btn').each(function(){
+            currentTriggers.push(Number($(this).data('triggerid')));
+        });
+        const newTriggers = _.pluck(user.triggers, 'id');
+        if (!_.isEqual(currentTriggers, newTriggers)){
+            const triggers = [];
+            for (const trigger of user.triggers){
+                if (!trigger.icon){ continue; }
+                triggers.push(triggerbuttonTemplate({trigger:trigger, userId:user.id, full:false, csrfToken:data.csrfToken}));
+            }
+            $triggers.html(triggers.join(''));
+            $triggers.find('.player-trigger-btn')
+                .confirmation({title: 'Run Trigger?'})
+                .on('click', runTrigger)
+                .tooltip();
+
+            changed = true;
+        }
+
+        $row.find('.player-viewdata-btn').data('userdata', user.player.data);
+
+        if (changed){
+            $table.DataTable().row($row).invalidate().draw();
+        }
+    });
+}
+
 async function advancePlayer(e){
     e.preventDefault();
     const $this = $(this);
@@ -31,8 +118,6 @@ async function advancePlayer(e){
     });
     if($this.attr('data-back')){
         location = $this.attr('data-back');
-    } else {
-        location.reload();
     }
     $this.closest('td').find('.player-advance-btn').show();
     $this.closest('td').find('.player-advance-btn-cancel').hide();
@@ -62,8 +147,6 @@ async function runTrigger(e){
     });
     if($this.attr('data-back')){
         location = $this.attr('data-back');
-    } else {
-        location.reload();
     }
 }
 

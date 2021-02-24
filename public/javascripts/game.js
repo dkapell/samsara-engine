@@ -1,4 +1,4 @@
-/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup liquidjs addChatEvent*/
+/* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar currentLocation lookup liquidjs addChatEvent refreshPlayerList*/
 const engine = new liquidjs.Liquid();
 let currentGameState = null;
 let textTimeout = null;
@@ -53,6 +53,11 @@ function openWebSocket(){
                 break;
             case 'gamedata':
                 gamedata = data.gamedata;
+                break;
+            case 'playerupdate':
+                if (typeof refreshPlayerList === 'function'){
+                    refreshPlayerList();
+                }
                 break;
         }
 

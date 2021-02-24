@@ -5,3 +5,4 @@
 
 # build game templates for client side
 ./node_modules/pug-cli/index.js -c --name-after-file -o public/javascripts/templates views/game/page.pug views/clientPartials/*.pug
+

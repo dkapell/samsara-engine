@@ -145,6 +145,7 @@ async function fillGroups(player){
             return models.group.get(playerGroup.group_id);
         })
     );
+    player.groups = _.sortBy(player.groups, 'name');
     return player;
 }
 

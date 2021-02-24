@@ -1,4 +1,4 @@
-/* global chatmessageTemplate chatreportTemplate chateventTemplate scrollSmoothToBottom ws _ */
+/* global chatmessageTemplate chatreportTemplate chateventTemplate scrollSmoothToBottom ws _ refreshPlayerList*/
 let lastMessage = {
     gamestate:null,
     group:null,
@@ -69,6 +69,9 @@ function handleChat(data){
         addMessages(data.messages);
     } else if (_.has(data, 'locations')){
         addLocations(data.locations);
+        if (typeof refreshPlayerList === 'function'){
+            refreshPlayerList();
+        }
         $('.chat-location').change();
     } else if (_.has(data, 'remove')){
         removeMessage(data.remove);

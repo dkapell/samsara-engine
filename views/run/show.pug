@@ -25,7 +25,7 @@ block content
                                 i.fas.fa-edit.pr-1
                                 | Edit Run
 
-                            a.btn.btn-outline-danger.mr-3.mt-2#reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+                            a.btn.btn-outline-danger.mr-3.mt-2#reset-run-btn(role="button" url=`/run/${run.id}/reset`, data-csrf=csrfToken)
                                 i.fas.fa-sync.pr-1
                                 | Reset Run
 
@@ -46,7 +46,7 @@ block content
                                 .input-group-append
                                     button.btn.btn-warning#state-update-btn(type="button", url=`/run/${run.id}/stateChange`, data-csrf=csrfToken) Go
 
-                        a.btn.btn-outline-info.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken, data-back=`/run/${run.id}`)
+                        a.btn.btn-outline-info.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken)
                                 i.fas.fa-arrow-right.pr-1
                                 | Advance All
                         if (_.pluck(users, 'connected').reduce((o, e) => {o += e; return o }, 0))
@@ -95,3 +95,5 @@ append scripts
     script(src='/javascripts/data-table.js')
     script(src='/javascripts/run.js')
     script(src='/javascripts/player.js')
+    script(src='/javascripts/templates/triggerButton.js')
+    script(src='/javascripts/templates/gamestateBadge.js')

@@ -48,6 +48,12 @@ async function show(req, res, next){
                 return user;
             })
         );
+        if (req.query.api){
+            return res.json({
+                users: users,
+                csrfToken: req.csrfToken()
+            });
+        }
         if (res.locals.run.current){
             res.locals.siteSection='gm';
         }
@@ -303,6 +309,7 @@ async function runTriggerAll(req, res, next){
                 const user = await req.models.user.get(player.user_id);
                 return req.app.locals.gameServer.runTrigger(trigger, user);
             }));
+        await req.app.locals.gameServer.sendPlayerUpdate();
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

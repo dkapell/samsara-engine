@@ -1,4 +1,5 @@
 /* global _ gamestatebadgeTemplate triggerbuttonTemplate*/
+let playerRefreshTimer = null;
 $(function(){
     $('.player-advance-btn-confirm').hide();
     $('.player-advance-btn-cancel').hide();
@@ -16,16 +17,21 @@ $(function(){
     $('#toastModal').on('shown.bs.modal', (e) => {$('#toastText').focus();});
     $('#toastSend').on('click', sendToast);
     $('#dataModal').on('show.bs.modal', showDataModal);
+    refreshPlayerList();
 
 });
 
 async function refreshPlayerList(){
+    if (playerRefreshTimer){
+        clearTimeout(playerRefreshTimer);
+    }
     const $table = $('#players-table');
     const runId = $table.data('runid');
     if (!runId){ return; }
     const url = `/run/${runId}?api=true`;
     const result = await fetch(url);
     const data = await result.json();
+    let hasTransitioning = false;
     $table.DataTable().rows().every(function(){
         var $row = this.nodes().toJQuery();
         const user = _.findWhere(data.users, {id: $row.data('userid')});
@@ -55,19 +61,15 @@ async function refreshPlayerList(){
             $charactercol.html(user.player.character);
         }
 
-        // Email
-        const $emailcol = $row.find('.col-player-email');
-        if($emailcol.html() !== user.email){
-            changed = true;
-            $emailcol.html(user.email);
-        }
-
         // Gamestate
         const $gamestatecol = $row.find('.col-player-gamestate');
         const gamestateText = gamestatebadgeTemplate({user:user});
         if($gamestatecol.html() !== gamestateText){
             changed = true;
             $gamestatecol.html(gamestateText);
+        }
+        if (user.gamestate.transitioning){
+            hasTransitioning = true;
         }
 
         // Actions
@@ -103,6 +105,12 @@ async function refreshPlayerList(){
             $table.DataTable().row($row).invalidate().draw();
         }
     });
+
+    if (hasTransitioning){
+        playerRefreshTimer = setTimeout(async () => {
+            await refreshPlayerList();
+        }, 5000);
+    }
 }
 
 async function advancePlayer(e){

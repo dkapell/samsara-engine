@@ -1,6 +1,7 @@
 const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
+const moment = require('moment');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameData = require('../lib/gameData');
@@ -41,6 +42,9 @@ async function show(req, res, next){
                 user.gamestate = await gameEngine.getGameState(user.id);
                 if (!user.gamestate){
                     return user;
+                }
+                if (user.gamestate.transitioning){
+                    user.gamestate.transitionTime = moment(player.statetime).fromNow();
                 }
                 user.player = user.gamestate.player;
                 user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;

@@ -56,7 +56,7 @@ html.h-100(lang="en")
                         if session.assumed_user && session.assumed_user.type === 'player'
                             if session.assumed_user.player.character_sheet
                                 li.nav-item
-                                    a.nav-link(href=session.assumed_user.player.character_sheet target="_blank")
+                                    a.nav-link(href=session.assumed_user.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
                                         if session.assumed_user.player.character
                                             span= session.assumed_user.player.character
                                         else
@@ -70,7 +70,7 @@ html.h-100(lang="en")
                         else if activeUser && activeUser.type === 'player'
                             if activeUser.player.character_sheet
                                 li.nav-item
-                                    a.nav-link(href=activeUser.player.character_sheet target="_blank")
+                                    a.nav-link(href=activeUser.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
                                         if activeUser.player.character
                                             span= activeUser.player.character
                                         else

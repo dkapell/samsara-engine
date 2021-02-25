@@ -1,4 +1,4 @@
-/* global _ gamestatebadgeTemplate triggerbuttonTemplate characterNameTemplate */
+/* global _ gamestatebadgeTemplate triggerbuttonTemplate characternameTemplate */
 let playerRefreshTimer = null;
 $(function(){
     $('.player-advance-btn-confirm').hide();
@@ -56,7 +56,7 @@ async function refreshPlayerList(){
 
         // Character
         const $charactercol = $row.find('.col-player-character');
-        const characterText = characterNameTemplate({player:user.player});
+        const characterText = characternameTemplate({player:user.player});
         if($charactercol.html() !== characterText){
             changed = true;
             $charactercol.html(characterText);
@@ -69,9 +69,20 @@ async function refreshPlayerList(){
             changed = true;
             $gamestatecol.html(gamestateText);
         }
+
+        // State change time
+        const $statetimecol = $row.find('.col-player-statetime');
+        const statetimeText = user.gamestate.transitioning?user.gamestate.transitionTimeDelta:user.gamestate.transitionTime;
+        if($statetimecol.html() !== statetimeText){
+            changed = true;
+            $statetimecol.html(statetimeText);
+            $statetimecol.data('sort', user.player.statetime);
+        }
+
         if (user.gamestate.transitioning){
             hasTransitioning = true;
         }
+
 
         // Actions
         if (user.connected){

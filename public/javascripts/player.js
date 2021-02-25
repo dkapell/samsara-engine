@@ -1,4 +1,4 @@
-/* global _ gamestatebadgeTemplate triggerbuttonTemplate*/
+/* global _ gamestatebadgeTemplate triggerbuttonTemplate characterNameTemplate */
 let playerRefreshTimer = null;
 $(function(){
     $('.player-advance-btn-confirm').hide();
@@ -56,9 +56,10 @@ async function refreshPlayerList(){
 
         // Character
         const $charactercol = $row.find('.col-player-character');
-        if($charactercol.html() !== user.player.character){
+        const characterText = characterNameTemplate({player:user.player});
+        if($charactercol.html() !== characterText){
             changed = true;
-            $charactercol.html(user.player.character);
+            $charactercol.html(characterText);
         }
 
         // Gamestate

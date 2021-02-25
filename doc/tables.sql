@@ -138,6 +138,7 @@ create table players (
     character   varchar(255),
     gamestate_id int,
     prev_gamestate_id int,
+    character_sheet varchar(255),
     statetime timestamp with time zone DEFAULT now(),
     data jsonb,
     primary key (id),

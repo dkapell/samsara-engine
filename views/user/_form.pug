@@ -27,8 +27,13 @@ fieldset#player_fields
                 option(value=group.id selected=_.findWhere(user.player.groups, {id:group.id}))= group.name
 
     .form-group
-        label.control-label(for="user_character") Name
+        label.control-label(for="user_character") Character Name
         input.form-control(type="text",placeholder="Character",name="user[player][character]",value=user.player.character,id='user_character')
+
+    .form-group
+        label.control-label(for="user_character_sheet") Character Sheet URL
+        input.form-control#user_character_sheet(type="url",placeholder="URL",name="user[player][character_sheet]",value=user.player.character_sheet)
+        div.invalid-feedback Must be a valid URL
 
     .form-group
         label.control-label(for="user_gamestate_id") Game State

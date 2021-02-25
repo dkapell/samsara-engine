@@ -52,13 +52,31 @@ html.h-100(lang="en")
                                     a.dropdown-item(href='/game/chat')
                                         i.fas.fa-comments.fa-fw.mr-1
                                         | Chat
-                        if session.assumed_user && session.assumed_user.type === 'player' && session.assumed_user.player.character_sheet
-                            li.nav-item
-                                a.nav-link(href=session.assumed_user.player.character_sheet target="_blank") Character Sheet
+                        if session.assumed_user && session.assumed_user.type === 'player'
+                            if session.assumed_user.player.character_sheet
+                                li.nav-item
+                                    a.nav-link(href=session.assumed_user.player.character_sheet target="_blank")
+                                        if session.assumed_user.player.character
+                                            span= session.assumed_user.player.character
+                                        else
+                                            | Character Sheet
+                                        i.fas.fa-external-link-alt.ml-1
 
-                        else if activeUser.type === 'player' && activeUser.player.character_sheet
-                            li.nav-item
-                                a.nav-link(href=activeUser.player.character_sheet target="_blank") Character Sheet
+                            else if session.assumed_user.player.character
+                                span.navbar-text= session.assumed_user.player.character
+
+
+                        else if activeUser.type === 'player'
+                            if activeUser.player.character_sheet
+                                li.nav-item
+                                    a.nav-link(href=activeUser.player.character_sheet target="_blank")
+                                        if activeUser.player.character
+                                            span= activeUser.player.character
+                                        else
+                                            | Character Sheet
+                                        i.fas.fa-external-link-alt.ml-1
+                            else if activeUser.player.character
+                                span.navbar-text= activeUser.player.character
 
                         if checkPermission('gm')
                             li.nav-item.dropdown(class= siteSection==='config'?"active":null)

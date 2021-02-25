@@ -32,7 +32,19 @@ block content
                                     span=_.pluck(user.player.groups, 'name').join(', ')
                                 else
                                     i Ungrouped
-                        td= user.type === 'player'?user.player.character:''
+                        td
+                            if user.type === 'player'
+                                if (user.player.character_sheet)
+                                    a.action-btn(href=user.player.character_sheet target="_blank")
+                                        if user.player.character
+                                            span= user.player.character
+                                        else
+                                            i Unspecified
+                                else
+                                    if user.player.character
+                                        span= user.player.character
+                                    else
+                                        i Unspecified
                         td.text-right
                             a.btn.btn-outline-danger.btn-sm.delete-btn(
                                 role="button",

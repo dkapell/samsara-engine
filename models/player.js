@@ -8,7 +8,7 @@ const models = {
     group: require('./group')
 };
 
-const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character', 'data'];
+const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character', 'data', 'character_sheet'];
 
 
 exports.get = async function(id){
@@ -165,6 +165,8 @@ async function saveGroups(player_id, groups){
 }
 
 function validate(data){
-
+    if (!_.isNull(data.character_sheet) && ! validator.isURL(data.character_sheet)){
+        return false;
+    }
     return true;
 }

@@ -35,7 +35,8 @@ async function showNew(req, res, next){
                 gamestate_id: startState.id,
                 groups: [],
                 character: null,
-                data: await gameData.getStartData('player')
+                data: await gameData.getStartData('player'),
+                character_sheet: null
             }
         };
         res.locals.runs = await req.models.run.list();
@@ -76,7 +77,8 @@ async function showEdit(req, res, next){
                 run_id: (await req.models.run.getCurrent()).id,
                 gamestate_id: startState.id,
                 character: null,
-                data: await gameData.getStartData('player')
+                data: await gameData.getStartData('player'),
+                character_sheet: null
             };
         }
         res.locals.runs = await req.models.run.list();
@@ -121,7 +123,8 @@ async function create(req, res, next){
                 prev_gamestate_id:null,
                 character: user.player.character,
                 groups: user.player.groups,
-                data: JSON.parse(user.player.data)
+                data: JSON.parse(user.player.data),
+                character_sheet: user.player.character_sheet
             });
         }
         delete req.session.userData;
@@ -155,6 +158,7 @@ async function update(req, res, next){
                 player.gamestate_id =  Number(user.player.gamestate_id);
                 player.groups = user.player.groups;
                 player.data = JSON.parse(user.player.data);
+                player.character_sheet = user.player.character_sheet;
                 await req.models.player.update(player.id, player);
             } else {
                 await req.models.player.create({
@@ -164,7 +168,8 @@ async function update(req, res, next){
                     prev_gamestate_id:null,
                     groups: user.player.groups,
                     data: JSON.parse(user.player.data),
-                    character: user.player.character
+                    character: user.player.character,
+                    character_sheet: user.player.character_sheet
                 });
             }
             await req.app.locals.gameServer.sendGameState(id);

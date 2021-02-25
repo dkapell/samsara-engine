@@ -27,7 +27,19 @@ mixin players(users, runId)
                         td.col-player-name= user.name
                             if (user.connected)
                                 .badge.badge-success.ml-2 Connected
-                        td.col-player-character= user.player.character
+                        td.col-player-character
+                            if (user.player.character_sheet)
+                                a.action-btn(href=user.player.character_sheet target="_blank")
+                                    if user.player.character
+                                        span= user.player.character
+                                    else
+                                        i Unspecified
+                                    i.fas.fa-external-link-alt.ml-1
+                            else
+                                if user.player.character
+                                    span= user.player.character
+                                else
+                                    i Unspecified
                         td.col-player-gamestate
                             if user.gamestate.current
                                 if user.gamestate.transitioning

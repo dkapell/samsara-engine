@@ -1,0 +1,12 @@
+if (player.character_sheet)
+    a.action-btn(href=player.character_sheet target="_blank")
+        if player.character
+            span= player.character
+        else
+            i Unspecified
+        i.fas.fa-external-link-alt.ml-1
+else
+    if player.character
+        span= player.character
+    else
+        i Unspecified

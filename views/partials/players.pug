@@ -7,11 +7,12 @@ mixin players(users, runId)
                 tr
                     th
                     if runs
-                        th(data-priority="6") Run
-                    th(data-priority="5") Group
+                        th(data-priority="7") Run
+                    th(data-priority="6") Group
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Character
                     th(data-priority="4") Game State
+                    th(data-priority="5") State Time
                     th(data-priority="3")
             tbody
                 for user in users
@@ -48,12 +49,17 @@ mixin players(users, runId)
                                     i.fas.fa-arrow-right.fa-fw.mx-1
                                     a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.next.id}`)
                                         | #{user.gamestate.next.name}
-                                    span.ml-2 #{moment(user.player.statetime).fromNow()}
                                 else
                                     a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.current.id}`)
-                                        | #{user.gamestate.current.name}
                             else
                                 i Unknown
+                        td.col-player-statetime(data-sort=user.player.statetime)
+                            if user.gamestate.current
+                                if user.gamestate.transitioning
+                                    | #{moment(user.player.statetime).fromNow()}
+                                else
+                                    | #{user.gamestate.transitionTime}
+
                         td.text-right
                             a.btn.btn-outline-info.btn-sm.mx-1.player-message-btn(
                                 style=user.connected?'':'display:none'

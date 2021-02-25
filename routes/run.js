@@ -43,9 +43,9 @@ async function show(req, res, next){
                 if (!user.gamestate){
                     return user;
                 }
-                if (user.gamestate.transitioning){
-                    user.gamestate.transitionTime = moment(player.statetime).fromNow();
-                }
+                user.gamestate.transitionTimeDelta = moment(player.statetime).fromNow();
+                user.gamestate.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
+
                 user.player = user.gamestate.player;
                 user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
                 user.triggers = await gameEngine.getTriggers(user.id);

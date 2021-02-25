@@ -52,6 +52,7 @@ html.h-100(lang="en")
                                     a.dropdown-item(href='/game/chat')
                                         i.fas.fa-comments.fa-fw.mr-1
                                         | Chat
+
                         if session.assumed_user && session.assumed_user.type === 'player'
                             if session.assumed_user.player.character_sheet
                                 li.nav-item
@@ -66,7 +67,7 @@ html.h-100(lang="en")
                                 span.navbar-text= session.assumed_user.player.character
 
 
-                        else if activeUser.type === 'player'
+                        else if activeUser && activeUser.type === 'player'
                             if activeUser.player.character_sheet
                                 li.nav-item
                                     a.nav-link(href=activeUser.player.character_sheet target="_blank")

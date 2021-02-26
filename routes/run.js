@@ -143,6 +143,8 @@ async function create(req, res, next){
         }
         if (run.data){
             run.data = JSON.parse(run.data);
+        } else {
+            run.data = null
         }
         if (!_.has(run, 'show_stubs')){
             run.show_stubs = false;
@@ -172,10 +174,12 @@ async function update(req, res, next){
                 await req.models.run.update(current.id, current);
             }
         }
-
         if (run.data){
             run.data = JSON.parse(run.data);
+        } else {
+            run.data = null;
         }
+
         if (!_.has(run, 'show_stubs')){
             run.show_stubs = false;
         }

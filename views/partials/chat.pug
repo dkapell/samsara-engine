@@ -44,7 +44,7 @@ mixin chatTabs(showReports)
     .card-body.tab-content.p-0.m-0.chat-main.h-100#chat-tab-content
         .tab-pane.fade.show.active.h-100#chat-gamestate-tab(role="tabpanel" aria-labelledby="chat-gamestate-tab-nav")
             .d-flex.flex-column.h-100
-                .my-1.py-1.px-2.chat-users.border-bottom.border-secondary(style="max-height:100px; min-height:40px")
+                .my-1.py-1.px-2.chat-users.border-bottom.border-secondary.overflow-auto(style="max-height:300px; min-height:40px")
                 ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
                     data-location='gamestate'
                 )

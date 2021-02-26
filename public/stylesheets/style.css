@@ -242,13 +242,14 @@ map, image {
 .table-responsive{
     margin-top:10px;
 }
-::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 10px;
+.chat-users::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
 }
 
-::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background-color: rgba(0,0,0,.5);
-  -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+.chat-users::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
+

@@ -2,9 +2,11 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const moment = require('moment');
+const async = require('async');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameData = require('../lib/gameData');
+
 
 /* GET runs listing. */
 async function list(req, res, next){
@@ -35,9 +37,8 @@ async function show(req, res, next){
     try{
         res.locals.run = await req.models.run.get(req.params.id);
         const players = await req.models.player.listByRunId(req.params.id);
+        const users = await async.mapLimit(players, 10, async function(player){
 
-        const users = await Promise.all(
-            players.map( async player => {
                 const user = await req.models.user.get(player.user_id);
                 user.gamestate = await gameEngine.getGameState(user.id);
                 if (!user.gamestate){
@@ -50,7 +51,8 @@ async function show(req, res, next){
                 user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
                 user.triggers = await gameEngine.getTriggers(user.id);
                 return user;
-            })
+
+            }
         );
         if (req.query.api){
             return res.json({

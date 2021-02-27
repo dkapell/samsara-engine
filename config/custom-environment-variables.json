@@ -2,6 +2,7 @@
     "app": {
         "name": "SAMSARA_NAME",
         "dbURL": "DATABASE_URL",
+        "dbSSL": "DATABASE_SSL",
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",
         "redisURL": "REDISTOGO_URL",

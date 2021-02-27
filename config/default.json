@@ -3,6 +3,7 @@
         "name": "Club Samsara",
         "debug": false,
         "dbURL": "postgres://samsara:samsara@localhost:5432/samsara",
+        "dbSSL": false,
         "sessionType": "local",
         "sessionSecret": "samsara",
         "redisURL": false,

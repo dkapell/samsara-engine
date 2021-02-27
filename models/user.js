@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
     player: require('./player'),
@@ -14,13 +15,16 @@ const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
 
 
 exports.get = async function(id){
+    let user = cache.check('user', id);
+    if (user) { return user; }
     const query = 'select * from users where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        const user = result.rows[0];
+        user = result.rows[0];
         if (user.type === 'player'){
             user.player = await models.player.getByUserId(user.id);
         }
+        cache.store('user', id, user);
         return user;
     }
     return;
@@ -61,6 +65,7 @@ exports.list = async function(){
             if (user.type === 'player'){
                 user.player = await models.player.getByUserId(user.id);
             }
+            cache.store('user', user.id, user);
             return user;
         })
     );
@@ -115,6 +120,7 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    cache.invalidate('user', id);
 };
 
 exports.delete = async  function(id){

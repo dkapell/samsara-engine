@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -11,18 +12,26 @@ const tableFields = ['name', 'current', 'data', 'show_stubs'];
 
 
 exports.get = async function(id){
+    const run = cache.check('run', id);
+    if (run){ return run; }
+
     const query = 'select * from runs where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
+        cache.store('run', id, result.rows[0]);
         return result.rows[0];
     }
     return;
 };
 
 exports.getCurrent = async function(){
+    const run = cache.check('run', 'current');
+    if (run){ return run; }
+
     const query = 'select * from runs where current = true limit 1';
     const result = await database.query(query);
     if (result.rows.length){
+        cache.store('run', 'current', result.rows[0]);
         return result.rows[0];
     }
     return;

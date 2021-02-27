@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -10,10 +11,14 @@ const models = {
 const tableFields = ['name', 'description', 'icon', 'actions', 'run', 'player', 'group_id', 'condition'];
 
 exports.get = async function(id){
+    let trigger = cache.check('trigger', id);
+    if (trigger) { return trigger; }
     const query = 'select * from triggers where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        trigger = result.rows[0];
+        cache.store('trigger', id, trigger);
+        return trigger;
     }
     return;
 };
@@ -103,11 +108,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    cache.invalidate('trigger', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from triggers where id = $1';
     await database.query(query, [id]);
+    cache.invalidate('trigger', id);
 };
 
 function validate(data){

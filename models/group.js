@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -11,9 +12,12 @@ const tableFields = ['name', 'description', 'chat'];
 
 
 exports.get = async function(id){
+    const group = cache.check('group', id);
+    if (group){ return group; }
     const query = 'select * from groups where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
+        cache.store('group', id, result.rows[0]);
         return result.rows[0];
     }
     return;
@@ -77,6 +81,7 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+     cache.invalidate('group', id);
 };
 
 exports.delete = async  function(id){

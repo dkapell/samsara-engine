@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -10,10 +11,14 @@ const models = {
 const tableFields = ['from_state_id', 'to_state_id', 'group_id', 'manual', 'delay'];
 
 exports.get = async function(id){
+    let transition = cache.check('transition', id);
+    if (transition) { return transition}
     const query = 'select * from transitions where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        transition = result.rows[0];
+        cache.store('transition', id, transition);
+        return transition;
     }
     return;
 };
@@ -83,11 +88,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    cache.invalidate('transitions', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from transitions where id = $1';
     await database.query(query, [id]);
+    cache.invalidate('transitions', id);
 };
 
 function validate(data){

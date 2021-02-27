@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
     code: require('./code')
@@ -12,10 +13,14 @@ const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'spec
 
 
 exports.get = async function(id){
+    let gamestate = cache.check('gamestate', id);
+    if (gamestate) { return gamestate; }
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return fillCodes(result.rows[0]);
+        gamestate = fillCodes(result.rows[0]);
+        cache.store('gamestate', id, gamestate);
+        return gamestate;
     }
     return;
 };
@@ -89,6 +94,7 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    cache.invalidate('gamestate', id);
     if (_.has(data, 'codes')){
         await saveLinks(id, data.codes);
     }
@@ -97,6 +103,7 @@ exports.update = async function(id, data){
 exports.delete = async function(id){
     const query = 'delete from gamestates where id = $1';
     await database.query(query, [id]);
+    cache.invalidate('gamestate', id);
 };
 
 async function fillCodes(gamestate){

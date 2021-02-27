@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
     group: require('./group')
@@ -12,10 +13,16 @@ const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', '
 
 
 exports.get = async function(id){
+    let record = cache.check('player', id);
+    if (record) {
+        return record;
+    }
     const query = 'select * from players where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return fillGroups(result.rows[0]);
+        record = fillGroups(result.rows[0]);
+        cache.store('player', id, record);
+        return record;
     }
     return;
 };
@@ -122,11 +129,14 @@ exports.update = async function(id, data){
     if (_.has(data, 'groups')){
         await saveGroups(id, data.groups);
     }
+    cache.invalidate('player', id);
+    cache.invalidate('user', data.user_id);
 };
 
 exports.delete = async  function(id, cb){
     const query = 'delete from players where id = $1';
     await database.query(query, [id]);
+    cache.invalidate('player', id);
 };
 
 exports.updateState = async function(id, gamestate_id, cb){
@@ -150,18 +160,33 @@ async function fillGroups(player){
 }
 
 async function saveGroups(player_id, groups){
-    const deleteQuery = 'delete from player_groups where player_id = $1';
+    const currentQuery  = 'select * from player_groups where player_id = $1';
     const insertQuery = 'insert into player_groups (player_id, group_id) values ($1, $2)';
-    await database.query(deleteQuery, [player_id]);
-    return Promise.all(
-        groups.map(group => {
-            if (_.isObject(group)){
-                return database.query(insertQuery, [player_id, group.id]);
-            } else {
-                return database.query(insertQuery, [player_id, group]);
-            }
-        })
-    );
+    const deleteQuery = 'delete from player_groups where player_id = $1 and group_id = $2';
+    const current = await database.query(currentQuery, [player_id]);
+
+    const newGroups = [];
+    for (const group of groups){
+        if (_.isObject(group)){
+            newGroups.push(group.id)
+        } else {
+            newGroups.push(group)
+        }
+    }
+
+    for (const groupId of newGroups){
+        if(!_.findWhere(current, {group_id: groupId})){
+            console.log(`adding group ${groupId} to ${player_id}`)
+            await database.query(insertQuery, [player_id, groupId]);
+        }
+    }
+
+    for (const group of current){
+        if(_.indexOf(newGroups, groupId) !== -1){
+            console.log(`removing group ${groupId} from ${player_id}`)
+            await database.query(deleteQuery, [player_id, group.id]);
+        }
+    }
 }
 
 function validate(data){

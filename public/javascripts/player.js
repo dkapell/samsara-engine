@@ -1,6 +1,6 @@
 /* global _ gamestatebadgeTemplate triggerbuttonTemplate characternameTemplate */
 let playerRefreshTimer = null;
-let autoRefresh = true;
+let autoRefresh = false;
 $(function(){
     $('.player-advance-btn-confirm').hide();
     $('.player-advance-btn-cancel').hide();

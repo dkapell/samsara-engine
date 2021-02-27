@@ -37,23 +37,20 @@ async function show(req, res, next){
     try{
         res.locals.run = await req.models.run.get(req.params.id);
         const players = await req.models.player.listByRunId(req.params.id);
-        const users = await async.mapLimit(players, 10, async function(player){
-
-                const user = await req.models.user.get(player.user_id);
-                user.gamestate = await gameEngine.getGameState(user.id);
-                if (!user.gamestate){
-                    return user;
-                }
-                user.gamestate.transitionTimeDelta = moment(player.statetime).fromNow();
-                user.gamestate.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
-
-                user.player = user.gamestate.player;
-                user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
-                user.triggers = await gameEngine.getTriggers(user.id);
+        const users = await async.mapLimit(players, 6, async function(player){
+            const user = await req.models.user.get(player.user_id);
+            user.gamestate = await gameEngine.getGameState(user.id);
+            if (!user.gamestate){
                 return user;
-
             }
-        );
+            user.gamestate.transitionTimeDelta = moment(player.statetime).fromNow();
+            user.gamestate.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
+
+            user.player = user.gamestate.player;
+            user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
+            user.triggers = await gameEngine.getTriggers(user.id);
+            return user;
+        });
         if (req.query.api){
             return res.json({
                 users: users,

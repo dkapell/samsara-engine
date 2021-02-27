@@ -51,6 +51,7 @@ mixin players(users, runId)
                                         | #{user.gamestate.next.name}
                                 else
                                     a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.current.id}`)
+                                        | #{user.gamestate.current.name}
                             else
                                 i Unknown
                         td.col-player-statetime(data-sort=user.player.statetime)

@@ -33,22 +33,41 @@ async function showCurrent(req, res, next){
     }
 }
 
+
+
 async function show(req, res, next){
     try{
         res.locals.run = await req.models.run.get(req.params.id);
         const players = await req.models.player.listByRunId(req.params.id);
-        const users = await async.mapLimit(players, 6, async function(player){
+        let last = (new Date()).getTime();
+
+        const users = await async.map(players, async function(player){
             const user = await req.models.user.get(player.user_id);
+
             user.gamestate = await gameEngine.getGameState(user.id);
+
             if (!user.gamestate){
                 return user;
+            }
+            for (const type of ['next', 'prev', 'current']){
+                if (_.has(user.gamestate, type)){
+                    delete user.gamestate[type].map;
+                    delete user.gamestate[type].transitions;
+                    delete user.gamestate[type].codes;
+                    delete user.gamestate[type].image;
+                }
             }
             user.gamestate.transitionTimeDelta = moment(player.statetime).fromNow();
             user.gamestate.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
 
             user.player = user.gamestate.player;
             user.connected = _.indexOf(req.app.locals.gameServer.allClients, player.user_id) !== -1;
-            user.triggers = await gameEngine.getTriggers(user.id);
+            user.triggers = (await gameEngine.getTriggers(user.id)).map(trigger => {
+                delete trigger.actions;
+                delete trigger.condition;
+                return trigger;
+            });
+
             return user;
         });
         if (req.query.api){
@@ -143,7 +162,7 @@ async function create(req, res, next){
         if (run.data){
             run.data = JSON.parse(run.data);
         } else {
-            run.data = null
+            run.data = null;
         }
         if (!_.has(run, 'show_stubs')){
             run.show_stubs = false;

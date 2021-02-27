@@ -15,8 +15,8 @@ async function list(req, res, next){
         const transitions = await req.models.transition.list();
         res.locals.transitions = await Promise.all(
             transitions.map( async transition => {
-                transition.from_state = await req.models.gamestate.get(transition.from_state_id);
-                transition.to_state = await req.models.gamestate.get(transition.to_state_id);
+                transition.from_state = (await req.models.gamestate.get(transition.from_state_id)).name;
+                transition.to_state = (await req.models.gamestate.get(transition.to_state_id)).name;
                 if(transition.group_id){
                     transition.group = await req.models.group.get(transition.group_id);
                 }

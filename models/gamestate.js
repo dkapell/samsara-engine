@@ -18,7 +18,7 @@ exports.get = async function(id){
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        gamestate = fillCodes(result.rows[0]);
+        gamestate = await fillCodes(result.rows[0]);
         cache.store('gamestate', id, gamestate);
         return gamestate;
     }
@@ -35,9 +35,14 @@ exports.getStart = async function(){
 };
 
 exports.list = async function(){
+    let gamestates = cache.check('gamestate', 'list');
+
+    if (gamestates) { return gamestates; }
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillCodes));
+    gamestates = await Promise.all(result.rows.map(fillCodes));
+    cache.store('gamestate', 'list', gamestates);
+    return gamestates;
 };
 
 exports.listSpecial = async function(){
@@ -71,7 +76,7 @@ exports.create = async function(data){
     const result = await database.query(query, queryData);
     const id = result.rows[0].id;
     if (_.has(data, 'codes')){
-        await saveLinks(id, data.codes);
+        await saveCodes(id, data.codes);
     }
     return id;
 };
@@ -95,8 +100,9 @@ exports.update = async function(id, data){
 
     await database.query(query, queryData);
     cache.invalidate('gamestate', id);
+    cache.invalidate('gamestate', 'list');
     if (_.has(data, 'codes')){
-        await saveLinks(id, data.codes);
+        await saveCodes(id, data.codes);
     }
 };
 
@@ -109,27 +115,38 @@ exports.delete = async function(id){
 async function fillCodes(gamestate){
     const query = 'select * from gamestate_codes where gamestate_id = $1';
     const result = await database.query(query, [gamestate.id]);
-    gamestate.codes = await Promise.all(
-        result.rows.map( async gamestateLink => {
-            return models.code.get(gamestateLink.code_id);
-        })
-    );
+    gamestate.codes = await async.map(result.rows, async gamestateLink => {
+        return models.code.get(gamestateLink.code_id);
+    });
     return gamestate;
 }
 
-async function saveLinks(gamestate_id, codes){
-    const deleteQuery = 'delete from gamestate_codes where gamestate_id = $1';
+async function saveCodes(gamestate_id, codes){
+    const currentQuery  = 'select * from gamestate_codes where gamestate_id = $1';
     const insertQuery = 'insert into gamestate_codes (gamestate_id, code_id) values ($1, $2)';
-    await database.query(deleteQuery, [gamestate_id]);
-    return Promise.all(
-        codes.map(code => {
-            if (_.isObject(code)){
-                return database.query(insertQuery, [gamestate_id, code.id]);
-            } else {
-                return database.query(insertQuery, [gamestate_id, code]);
-            }
-        })
-    );
+    const deleteQuery = 'delete from gamestate_codes where gamestate_id = $1 and code_id = $2';
+    const current = await database.query(currentQuery, [gamestate_id]);
+
+    const  newCodes = [];
+    for (const code of codes){
+        if (_.isObject(code)){
+            newCodes.push(Number(code.id));
+        } else {
+            newCodes.push(Number(code));
+        }
+    }
+
+    for (const codeId of newCodes){
+        if(!_.findWhere(current.rows, {code_id: Number(codeId)})){
+            await database.query(insertQuery, [gamestate_id, codeId]);
+        }
+    }
+
+    for (const code of current.rows){
+        if(_.indexOf(newCodes, code.code_id) === -1){
+            await database.query(deleteQuery, [gamestate_id, code.code_id]);
+        }
+    }
 }
 
 function validate(data){

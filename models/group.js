@@ -81,7 +81,7 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-     cache.invalidate('group', id);
+    cache.invalidate('group', id);
 };
 
 exports.delete = async  function(id){

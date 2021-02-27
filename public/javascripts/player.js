@@ -1,5 +1,6 @@
 /* global _ gamestatebadgeTemplate triggerbuttonTemplate characternameTemplate */
 let playerRefreshTimer = null;
+let autoRefresh = false;
 $(function(){
     $('.player-advance-btn-confirm').hide();
     $('.player-advance-btn-cancel').hide();
@@ -24,6 +25,9 @@ $(function(){
 async function refreshPlayerList(){
     if (playerRefreshTimer){
         clearTimeout(playerRefreshTimer);
+    }
+    if (!autoRefresh){
+        return;
     }
     const $table = $('#players-table');
     const runId = $table.data('runid');

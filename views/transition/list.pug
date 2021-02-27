@@ -23,9 +23,9 @@ block content
                     tr(class=checkPermission('creator')?'clickable-row':'', data-click-object='transition' data-click-id=transition.id)
                         td.dtr-expand
                         td
-                            .badge.badge-light.badge-gamestate #{transition.from_state.name}
+                            .badge.badge-light.badge-gamestate #{transition.from_state}
                         td
-                            .badge.badge-light.badge-gamestate #{transition.to_state.name}
+                            .badge.badge-light.badge-gamestate #{transition.to_state}
                         td
                             if transition.group_id
                                 = transition.group.name

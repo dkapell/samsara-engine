@@ -12,7 +12,7 @@ const tableFields = ['from_state_id', 'to_state_id', 'group_id', 'manual', 'dela
 
 exports.get = async function(id){
     let transition = cache.check('transition', id);
-    if (transition) { return transition}
+    if (transition) { return transition;}
     const query = 'select * from transitions where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){

@@ -252,6 +252,7 @@ async function update(req, res, next){
         req.flash('success', 'Updated Gamestate ' + gamestate.name);
         res.redirect(`/gamestate/${id}`);
     } catch(err) {
+        console.trace(err);
         req.flash('error', err.toString());
         return (res.redirect(`/gamestate/${id}/edit`));
 

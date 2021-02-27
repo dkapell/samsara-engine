@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -10,10 +11,14 @@ const models = {
 const tableFields = ['code', 'description', 'actions'];
 
 exports.get = async function(id){
+    let code = cache.check('code', id);
+    if (code) { return code; }
     const query = 'select * from codes where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        code = result.rows[0];
+        cache.store('code', id, code);
+        return code;
     }
     return;
 };

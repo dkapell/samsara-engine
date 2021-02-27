@@ -168,23 +168,23 @@ async function saveGroups(player_id, groups){
     const newGroups = [];
     for (const group of groups){
         if (_.isObject(group)){
-            newGroups.push(group.id)
+            newGroups.push(Number(group.id));
         } else {
-            newGroups.push(group)
+            newGroups.push(Number(group));
         }
     }
 
     for (const groupId of newGroups){
-        if(!_.findWhere(current, {group_id: groupId})){
-            console.log(`adding group ${groupId} to ${player_id}`)
+        if(!_.findWhere(current.rows, {group_id: groupId})){
+            console.log(`adding group ${groupId} to ${player_id}`);
             await database.query(insertQuery, [player_id, groupId]);
         }
     }
 
-    for (const group of current){
-        if(_.indexOf(newGroups, groupId) !== -1){
-            console.log(`removing group ${groupId} from ${player_id}`)
-            await database.query(deleteQuery, [player_id, group.id]);
+    for (const group of current.rows){
+        if(_.indexOf(newGroups, group.group_id) === -1){
+            console.log(`removing group ${group.group_id} from ${player_id}`);
+            await database.query(deleteQuery, [player_id, group.group_id]);
         }
     }
 }

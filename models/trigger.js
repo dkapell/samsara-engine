@@ -11,7 +11,7 @@ const models = {
 const tableFields = ['name', 'description', 'icon', 'actions', 'run', 'player', 'group_id', 'condition'];
 
 exports.get = async function(id){
-    let trigger = cache.check('trigger', id);
+    let trigger = await cache.check('trigger', id);
     if (trigger) { return trigger; }
     const query = 'select * from triggers where id = $1';
     const result = await database.query(query, [id]);

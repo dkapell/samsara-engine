@@ -11,7 +11,7 @@ const models = {
 const tableFields = ['code', 'description', 'actions'];
 
 exports.get = async function(id){
-    let code = cache.check('code', id);
+    let code = await cache.check('code', id);
     if (code) { return code; }
     const query = 'select * from codes where id = $1';
     const result = await database.query(query, [id]);

@@ -78,9 +78,9 @@ if (config.get('app.sessionType') === 'redis'){
     const RedisStore = require('connect-redis')(session);
     let redisClient = null;
     if (config.get('app.redis.url')){
-        const options = {}
+        const options = {};
         if (config.get('app.redis.tls')){
-            options.tls = {rejectUnauthorized: false}
+            options.tls = {rejectUnauthorized: false};
         }
         redisClient = redis.createClient(config.get('app.redis.url'), options);
     } else {

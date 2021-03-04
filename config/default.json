@@ -11,7 +11,8 @@
             "tls": false
         },
         "secureOnly": false,
-        "fontawesome": null
+        "fontawesome": null,
+        "cacheType": "redis"
     },
     "auth": {
         "google": {

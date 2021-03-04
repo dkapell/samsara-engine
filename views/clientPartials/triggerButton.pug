@@ -6,6 +6,6 @@ a.btn.btn-info.player-trigger-btn.btn-sm.mx-1(
     title= `Trigger ${trigger.name}`
     data-toggle="tooltip"
 )
-    i.fas(class=trigger.icon)
+    i.fas.fa-fw(class=trigger.icon)
     if full
         span.pl-1 #{trigger.name}#{userId==='all'?' on All':''}

@@ -52,7 +52,7 @@ async function refreshPlayerList(){
         }
         // Name
         const $namecol = $row.find('.col-player-name');
-        const nametext = user.name + ( user.connected?'<div class="badge badge-success ml-2">Connected</div>':'');
+        const nametext = user.name + ( user.connections.length?'<div class="badge badge-success ml-2">Connected</div>':'');
         if ($namecol.html() !== nametext){
             changed = true;
             $namecol.html(nametext);

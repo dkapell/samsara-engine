@@ -40,5 +40,8 @@
     "webSocket": {
         "pingInterval": 30000,
         "debug": false
+    },
+    "server": {
+        "cleanIntervalMins": 60
     }
 }

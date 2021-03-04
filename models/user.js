@@ -8,7 +8,8 @@ const cache = require('../lib/cache');
 const models = {
     player: require('./player'),
     run: require('./run'),
-    gamestate: require('./gamestate')
+    gamestate: require('./gamestate'),
+    connection: require('./connection')
 };
 
 const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
@@ -24,6 +25,7 @@ exports.get = async function(id){
         if (user.type === 'player'){
             user.player = await models.player.getByUserId(user.id);
         }
+        user.connections = await (models.connection.find({user_id: id}));
         cache.store('user', id, user);
         return user;
     }
@@ -65,6 +67,7 @@ exports.list = async function(){
             if (user.type === 'player'){
                 user.player = await models.player.getByUserId(user.id);
             }
+            user.connections = await (models.connection.find({user_id: user.id}));
             cache.store('user', user.id, user);
             return user;
         })

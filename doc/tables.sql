@@ -268,3 +268,13 @@ create table chat_reports(
         REFERENCES "users" (id) match simple
         on update no action on delete CASCADE
 );
+
+create table connections(
+    id serial,
+    user_id int not null,
+    server_id varchar(255),
+    created timestamp with time zone default now(),
+    constraint connection_user_fk foreign key (user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE
+);

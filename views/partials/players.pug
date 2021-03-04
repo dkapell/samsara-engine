@@ -1,5 +1,4 @@
 mixin players(users, runId)
-
     - moment.relativeTimeThreshold('ss', 0);
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm#players-table(data-runid=run?run.id:null)
@@ -63,7 +62,7 @@ mixin players(users, runId)
 
                         td.text-right
                             a.btn.btn-outline-info.btn-sm.mx-1.player-message-btn(
-                                style=user.connected?'':'display:none'
+                                style=user.connections.length?'':'display:none'
                                 role="button"
                                 data-toggle="modal"
                                 data-target="#toastModal"

@@ -176,14 +176,12 @@ async function saveGroups(player_id, groups){
 
     for (const groupId of newGroups){
         if(!_.findWhere(current.rows, {group_id: groupId})){
-            console.log(`adding group ${groupId} to ${player_id}`);
             await database.query(insertQuery, [player_id, groupId]);
         }
     }
 
     for (const group of current.rows){
         if(_.indexOf(newGroups, group.group_id) === -1){
-            console.log(`removing group ${group.group_id} from ${player_id}`);
             await database.query(deleteQuery, [player_id, group.group_id]);
         }
     }

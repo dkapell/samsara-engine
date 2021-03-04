@@ -12,7 +12,7 @@ const tableFields = ['name', 'current', 'data', 'show_stubs'];
 
 
 exports.get = async function(id){
-    const run = cache.check('run', id);
+    const run = await cache.check('run', id);
     if (run){ return run; }
 
     const query = 'select * from runs where id = $1';
@@ -25,7 +25,7 @@ exports.get = async function(id){
 };
 
 exports.getCurrent = async function(){
-    const run = cache.check('run', 'current');
+    const run = await cache.check('run', 'current');
     if (run){ return run; }
 
     const query = 'select * from runs where current = true limit 1';

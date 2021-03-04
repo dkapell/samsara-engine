@@ -12,7 +12,7 @@ const tableFields = ['name', 'description', 'chat'];
 
 
 exports.get = async function(id){
-    const group = cache.check('group', id);
+    const group = await cache.check('group', id);
     if (group){ return group; }
     const query = 'select * from groups where id = $1';
     const result = await database.query(query, [id]);

@@ -13,7 +13,7 @@ const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', '
 
 
 exports.get = async function(id){
-    let record = cache.check('player', id);
+    let record = await cache.check('player', id);
     if (record) {
         return record;
     }

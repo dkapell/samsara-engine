@@ -10,7 +10,8 @@
             "tls": "REDIS_TLS"
         },
         "secureOnly": "SECURE_ONLY",
-        "fontawesome": "FONTAWESOME_CODE"
+        "fontawesome": "FONTAWESOME_CODE",
+        "cacheType": "CACHE_TYPE"
     },
     "auth": {
         "google": {

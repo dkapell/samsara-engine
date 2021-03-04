@@ -11,8 +11,12 @@ const models = {
 const tableFields = ['user_id', 'server_id', 'client_id', 'created'];
 
 exports.get = async function(id){
-    let connection = cache.check('connection', id);
-    if (connection) { return connection;}
+    let connection = await cache.check('connection', id);
+
+    if (connection) {
+        console.log('here ' + id);
+        return connection;}
+
     const query = 'select * from connections where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){

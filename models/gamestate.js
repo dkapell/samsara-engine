@@ -13,7 +13,7 @@ const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'spec
 
 
 exports.get = async function(id){
-    let gamestate = cache.check('gamestate', id);
+    let gamestate = await cache.check('gamestate', id);
     if (gamestate) { return gamestate; }
     const query = 'select * from gamestates where id = $1';
     const result = await database.query(query, [id]);
@@ -35,7 +35,7 @@ exports.getStart = async function(){
 };
 
 exports.list = async function(){
-    let gamestates = cache.check('gamestate', 'list');
+    let gamestates = await cache.check('gamestate', 'list');
 
     if (gamestates) { return gamestates; }
     const query = 'select * from gamestates order by name';

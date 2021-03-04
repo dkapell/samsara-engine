@@ -16,7 +16,7 @@ const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
 
 
 exports.get = async function(id){
-    let user = cache.check('user', id);
+    let user = await cache.check('user', id);
     if (user) { return user; }
     const query = 'select * from users where id = $1';
     const result = await database.query(query, [id]);

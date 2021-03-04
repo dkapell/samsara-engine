@@ -5,7 +5,10 @@
         "dbSSL": "DATABASE_SSL",
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",
-        "redisURL": "REDISTOGO_URL",
+        "redis": {
+            "url": "REDIS_URL",
+            "tls": "REDIS_TLS"
+        },
         "secureOnly": "SECURE_ONLY",
         "fontawesome": "FONTAWESOME_CODE"
     },

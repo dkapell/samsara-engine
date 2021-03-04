@@ -6,7 +6,10 @@
         "dbSSL": false,
         "sessionType": "local",
         "sessionSecret": "samsara",
-        "redisURL": false,
+        "redis":{
+            "url": false,
+            "tls": false
+        },
         "secureOnly": false,
         "fontawesome": null
     },

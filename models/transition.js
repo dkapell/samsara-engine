@@ -17,7 +17,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         transition = result.rows[0];
-        await cache.invalidate('transition', id, transition);
+        await cache.store('transition', id, transition);
         return transition;
     }
     return;

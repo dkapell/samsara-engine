@@ -17,7 +17,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         trigger = result.rows[0];
-        await cache.invalidate('trigger', id, trigger);
+        await cache.store('trigger', id, trigger);
         return trigger;
     }
     return;

@@ -12,13 +12,14 @@ const tableFields = ['name', 'description', 'chat'];
 
 
 exports.get = async function(id){
-    const group = await cache.check('group', id);
+    let group = await cache.check('group', id);
     if (group){ return group; }
     const query = 'select * from groups where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        await cache.invalidate('group', id, result.rows[0]);
-        return result.rows[0];
+        group = result.rows[0];
+        await cache.store('group', id, group);
+        return group;
     }
     return;
 };
@@ -33,9 +34,13 @@ exports.getByName = async function(name){
 };
 
 exports.list = async function(){
+    let groups = await cache.check('group', 'list');
+    if (groups) { return groups; }
     const query = 'select * from groups order by name';
     const result = await database.query(query);
-    return result.rows;
+    groups = result.rows;
+    await cache.store('group', 'list', groups);
+    return groups;
 };
 
 exports.create = async function(data){
@@ -82,11 +87,14 @@ exports.update = async function(id, data){
 
     await database.query(query, queryData);
     await cache.invalidate('group', id);
+    await cache.invalidate('group', 'list');
 };
 
 exports.delete = async  function(id){
     const query = 'delete from groups where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('group', id);
+    await cache.invalidate('group', 'list');
 };
 
 function validate(data){

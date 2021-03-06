@@ -21,8 +21,8 @@ exports.get = async function(id){
     const query = 'select * from players where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        record = fillGroups(result.rows[0]);
-        await cache.invalidate('player', id, record);
+        record = await fillGroups(result.rows[0]);
+        await cache.store('player', id, record);
         return record;
     }
     return;

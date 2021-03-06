@@ -18,7 +18,7 @@ exports.get = async function(id){
     const query = 'select * from runs where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        await cache.invalidate('run', id, result.rows[0]);
+        await cache.store('run', id, result.rows[0]);
         return result.rows[0];
     }
     return;
@@ -31,7 +31,7 @@ exports.getCurrent = async function(){
     const query = 'select * from runs where current = true limit 1';
     const result = await database.query(query);
     if (result.rows.length){
-        await cache.invalidate('run', 'current', result.rows[0]);
+        await cache.store('run', 'current', result.rows[0]);
         return result.rows[0];
     }
     return;

@@ -4,6 +4,7 @@ const _ = require('underscore');
 const permission = require('../lib/permission');
 const mapParser = require('../lib/mapParser');
 const validator = require('validator');
+const gameEngine = require('../lib/gameEngine');
 
 /* GET triggers listing. */
 async function list(req, res, next){
@@ -156,6 +157,7 @@ async function create(req, res, next){
         delete req.session.triggerData;
         req.flash('success', 'Created Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
+        gameEngine.updateAllTriggers();
     } catch (err) {
         req.flash('error', err.toString());
         return res.redirect('/trigger/new');
@@ -186,6 +188,7 @@ async function update(req, res, next){
         delete req.session.triggerData;
         req.flash('success', 'Updated Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
+        gameEngine.updateAllTriggers();
     } catch(err) {
         req.flash('error', err.toString());
         return (res.redirect(`/trigger/${id}/edit`));

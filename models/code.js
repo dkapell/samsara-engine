@@ -17,7 +17,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         code = result.rows[0];
-        cache.store('code', id, code);
+        await cache.invalidate('code', id, code);
         return code;
     }
     return;

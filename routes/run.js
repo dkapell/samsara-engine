@@ -241,6 +241,7 @@ async function resetRun(req, res, next){
             })
         );
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialState.id);
+        await gameEngine.updateAllTriggers();
         res.json({success:true});
 
     } catch(err){
@@ -267,6 +268,7 @@ async function updateAllPlayers(req, res, next){
             })
         );
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, state.id);
+        await gameEngine.updateAllTriggers();
         res.json({success:true});
 
     } catch(err){
@@ -290,6 +292,7 @@ async function advanceAll(req, res, next){
                 return;
             })
         );
+        await gameEngine.updateAllTriggers();
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
         res.json({success:true});
     } catch(err){

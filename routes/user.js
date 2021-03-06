@@ -126,6 +126,7 @@ async function create(req, res, next){
                 data: JSON.parse(user.player.data),
                 character_sheet: user.player.character_sheet
             });
+            await gameEngine.updateTriggers(id);
         }
         delete req.session.userData;
         req.flash('success', 'Created User ' + user.name);
@@ -172,6 +173,7 @@ async function update(req, res, next){
                     character_sheet: user.player.character_sheet
                 });
             }
+            await gameEngine.updateTriggers(id);
             await req.app.locals.gameServer.sendGameState(id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         } else {

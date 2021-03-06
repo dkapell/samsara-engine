@@ -278,3 +278,15 @@ create table connections(
         REFERENCES "users" (id) match simple
         on update no action on delete CASCADE
 );
+
+create table player_triggers(
+    player_id int not null,
+    trigger_id int not null,
+    unique(player_id, trigger_id),
+    CONSTRAINT player_fk FOREIGN KEY (player_id)
+        REFERENCES "players" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT trigger_fk FOREIGN KEY (trigger_id)
+        REFERENCES "triggers" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE
+)

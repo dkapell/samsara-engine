@@ -6,7 +6,8 @@ const validator = require('validator');
 const cache = require('../lib/cache');
 
 const models = {
-    group: require('./group')
+    group: require('./group'),
+    trigger: require('./trigger')
 };
 
 const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character', 'data', 'character_sheet'];
@@ -21,7 +22,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         record = fillGroups(result.rows[0]);
-        cache.store('player', id, record);
+        await cache.invalidate('player', id, record);
         return record;
     }
     return;
@@ -129,14 +130,14 @@ exports.update = async function(id, data){
     if (_.has(data, 'groups')){
         await saveGroups(id, data.groups);
     }
-    cache.invalidate('player', id);
-    cache.invalidate('user', data.user_id);
+    await cache.invalidate('player', id);
+    await cache.invalidate('user', data.user_id);
 };
 
 exports.delete = async  function(id, cb){
     const query = 'delete from players where id = $1';
     await database.query(query, [id]);
-    cache.invalidate('player', id);
+    await cache.invalidate('player', id);
 };
 
 exports.updateState = async function(id, gamestate_id, cb){
@@ -180,12 +181,53 @@ async function saveGroups(player_id, groups){
         }
     }
 
-    for (const group of current.rows){
-        if(_.indexOf(newGroups, group.group_id) === -1){
-            await database.query(deleteQuery, [player_id, group.group_id]);
+    for (const row of current.rows){
+        if(_.indexOf(newGroups, row.group_id) === -1){
+            await database.query(deleteQuery, [player_id, row.group_id]);
         }
     }
 }
+
+exports.getTriggers = async function getTriggers(id){
+    const query = 'select * from player_triggers where player_id = $1';
+    const result = await database.query(query, [id]);
+    const triggers = await Promise.all(
+        result.rows.map( async playerTrigger => {
+            return models.trigger.get(playerTrigger.trigger_id);
+        })
+    );
+    return _.sortBy(triggers, 'name');
+};
+
+exports.saveTriggers = async function saveTriggers(player_id, triggers){
+    const currentQuery  = 'select * from player_triggers where player_id = $1';
+    const insertQuery = 'insert into player_triggers (player_id, trigger_id) values ($1, $2)';
+    const deleteQuery = 'delete from player_triggers where player_id = $1 and trigger_id = $2';
+    const current = await database.query(currentQuery, [player_id]);
+
+    const newTriggers = [];
+    for (const trigger of triggers){
+        if (_.isObject(trigger)){
+            newTriggers.push(Number(trigger.id));
+        } else {
+            newTriggers.push(Number(trigger));
+        }
+    }
+
+    for (const triggerId of newTriggers){
+        if(!_.findWhere(current.rows, {trigger_id: triggerId})){
+            await database.query(insertQuery, [player_id, triggerId]);
+        }
+    }
+
+    for (const row of current.rows){
+        if(_.indexOf(newTriggers, row.trigger_id) === -1){
+            await database.query(deleteQuery, [player_id, row.trigger_id]);
+        }
+    }
+};
+
+
 
 function validate(data){
     if (!_.isNull(data.character_sheet) && ! validator.isURL(data.character_sheet)){

@@ -19,7 +19,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         gamestate = await fillCodes(result.rows[0]);
-        cache.store('gamestate', id, gamestate);
+        await cache.invalidate('gamestate', id, gamestate);
         return gamestate;
     }
     return;
@@ -41,7 +41,7 @@ exports.list = async function(){
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
     gamestates = await Promise.all(result.rows.map(fillCodes));
-    cache.store('gamestate', 'list', gamestates);
+    await cache.invalidate('gamestate', 'list', gamestates);
     return gamestates;
 };
 
@@ -99,8 +99,9 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    cache.invalidate('gamestate', id);
-    cache.invalidate('gamestate', 'list');
+    await cache.invalidate('gamestate', id);
+    await cache.invalidate('gamestate', 'list');
+    await cache.invalidate('gamestaterecord', id);
     if (_.has(data, 'codes')){
         await saveCodes(id, data.codes);
     }
@@ -109,7 +110,8 @@ exports.update = async function(id, data){
 exports.delete = async function(id){
     const query = 'delete from gamestates where id = $1';
     await database.query(query, [id]);
-    cache.invalidate('gamestate', id);
+    await cache.invalidate('gamestate', id);
+    await cache.invalidate('gamestaterecord', id);
 };
 
 async function fillCodes(gamestate){

@@ -17,7 +17,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         trigger = result.rows[0];
-        cache.store('trigger', id, trigger);
+        await cache.invalidate('trigger', id, trigger);
         return trigger;
     }
     return;
@@ -108,13 +108,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    cache.invalidate('trigger', id);
+    await cache.invalidate('trigger', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from triggers where id = $1';
     await database.query(query, [id]);
-    cache.invalidate('trigger', id);
+    await cache.invalidate('trigger', id);
 };
 
 function validate(data){

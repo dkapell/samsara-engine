@@ -17,7 +17,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         transition = result.rows[0];
-        cache.store('transition', id, transition);
+        await cache.invalidate('transition', id, transition);
         return transition;
     }
     return;
@@ -88,13 +88,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    cache.invalidate('transitions', id);
+    await cache.invalidate('transitions', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from transitions where id = $1';
     await database.query(query, [id]);
-    cache.invalidate('transitions', id);
+    await cache.invalidate('transitions', id);
 };
 
 function validate(data){

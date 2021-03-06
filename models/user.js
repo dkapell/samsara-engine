@@ -16,6 +16,7 @@ const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
 
 
 exports.get = async function(id){
+    if (!id){ throw new Error('no id specified'); }
     let user = await cache.check('user', id);
     if (user) { return user; }
     const query = 'select * from users where id = $1';
@@ -26,7 +27,7 @@ exports.get = async function(id){
             user.player = await models.player.getByUserId(user.id);
         }
         user.connections = await (models.connection.find({user_id: id}));
-        cache.store('user', id, user);
+        await cache.invalidate('user', id, user);
         return user;
     }
     return;
@@ -68,7 +69,7 @@ exports.list = async function(){
                 user.player = await models.player.getByUserId(user.id);
             }
             user.connections = await (models.connection.find({user_id: user.id}));
-            cache.store('user', user.id, user);
+            await cache.invalidate('user', user.id, user);
             return user;
         })
     );
@@ -123,7 +124,7 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    cache.invalidate('user', id);
+    await cache.invalidate('user', id);
 };
 
 exports.delete = async  function(id){

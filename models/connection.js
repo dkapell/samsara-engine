@@ -21,7 +21,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         connection = result.rows[0];
-        cache.store('connection', id, connection);
+        await cache.invalidate('connection', id, connection);
         return connection;
     }
     return;
@@ -70,7 +70,7 @@ exports.create = async function(data){
     query += ') returning id';
 
     const result = await database.query(query, queryData);
-    cache.invalidate('user', data.user_id);
+    await cache.invalidate('user', data.user_id);
     return result.rows[0].id;
 };
 
@@ -92,16 +92,16 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    cache.invalidate('connections', id);
-    cache.invalidate('user', data.user_id);
+    await cache.invalidate('connections', id);
+    await cache.invalidate('user', data.user_id);
 };
 
 exports.delete = async  function(id){
     const connection = await exports.get(id);
     const query = 'delete from connections where id = $1';
     await database.query(query, [id]);
-    cache.invalidate('connections', id);
-    cache.invalidate('user', connection.user_id);
+    await cache.invalidate('connections', id);
+    await cache.invalidate('user', connection.user_id);
 };
 
 function validate(data){

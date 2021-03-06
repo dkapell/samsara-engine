@@ -4,6 +4,7 @@ const config = require('config');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -11,10 +12,14 @@ const models = {
 const tableFields = ['name', 'display_name', 'description', 'status', 'is_gamestate', 'is_popup', 'is_inventory'];
 
 exports.get = async function(id){
+    let image = await cache.check('image', id);
+    if (image) { return image; }
     const query = 'select * from images where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return postProcess(result.rows[0]);
+        image = postProcess(result.rows[0]);
+        await cache.store('image', id, image);
+        return image;
     }
     return;
 };
@@ -101,11 +106,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    await cache.invalidate('image', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from images where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('image', id);
 };
 
 

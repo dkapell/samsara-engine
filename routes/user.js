@@ -3,6 +3,7 @@ const csrf = require('csurf');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const gameData = require('../lib/gameData');
+const gameEngine = require('../lib/gameEngine');
 
 /* GET users listing. */
 async function list(req, res, next){

@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -11,10 +12,14 @@ const tableFields = ['name', 'description', 'url', 'gm', 'active'];
 
 
 exports.get = async function(id){
+    let link = await cache.check('link', id);
+    if (link) { return link; }
     const query = 'select * from links where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        link = result.rows[0];
+        await cache.store('link',id, link);
+        return link;
     }
     return;
 };
@@ -68,11 +73,13 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    await cache.invalidate('link', id);
 };
 
 exports.delete = async  function(id){
     const query = 'delete from links where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('link', id);
 };
 
 

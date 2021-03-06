@@ -27,7 +27,7 @@ exports.get = async function(id){
             user.player = await models.player.getByUserId(user.id);
         }
         user.connections = await (models.connection.find({user_id: id}));
-        await cache.invalidate('user', id, user);
+        await cache.store('user', id, user);
         return user;
     }
     return;
@@ -69,7 +69,7 @@ exports.list = async function(){
                 user.player = await models.player.getByUserId(user.id);
             }
             user.connections = await (models.connection.find({user_id: user.id}));
-            await cache.invalidate('user', user.id, user);
+            await cache.store('user', user.id, user);
             return user;
         })
     );
@@ -110,6 +110,7 @@ exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
+    console.trace ('update user '+ id);
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){

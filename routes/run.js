@@ -41,7 +41,7 @@ async function show(req, res, next){
         const players = await req.models.player.listByRunId(req.params.id);
         let last = (new Date()).getTime();
 
-        const users = await async.map(players, async function(player){
+        const users = await async.mapLimit(players, 5, async function(player){
             const user = await req.models.user.get(player.user_id);
 
             user.gamestate = await gameEngine.getGameState(user.id);

@@ -19,7 +19,7 @@ exports.get = async function(id){
     const result = await database.query(query, [id]);
     if (result.rows.length){
         gamestate = await fillCodes(result.rows[0]);
-        await cache.invalidate('gamestate', id, gamestate);
+        await cache.store('gamestate', id, gamestate);
         return gamestate;
     }
     return;
@@ -41,7 +41,7 @@ exports.list = async function(){
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
     gamestates = await Promise.all(result.rows.map(fillCodes));
-    await cache.invalidate('gamestate', 'list', gamestates);
+    await cache.store('gamestate', 'list', gamestates);
     return gamestates;
 };
 
@@ -50,6 +50,16 @@ exports.listSpecial = async function(){
         order by start desc nulls last, finish asc nulls first, name`;
     const result = await database.query(query);
     return Promise.all(result.rows.map(fillCodes));
+};
+
+exports.listForChat = async function(){
+    let gamestates = await cache.check('gamestate', 'chatlist');
+    if (gamestates) { return gamestates; }
+    const query = 'select * from gamestates where template = false and start = false and finish = false and chat = true order by name';
+    const result = await database.query(query);
+    gamestates = result.rows;
+    await cache.store('gamestate', 'chatlist', gamestates);
+    return gamestates;
 };
 
 exports.create = async function(data){
@@ -101,6 +111,7 @@ exports.update = async function(id, data){
     await database.query(query, queryData);
     await cache.invalidate('gamestate', id);
     await cache.invalidate('gamestate', 'list');
+    await cache.invalidate('gamestate', 'chatlist');
     await cache.invalidate('gamestaterecord', id);
     if (_.has(data, 'codes')){
         await saveCodes(id, data.codes);
@@ -111,6 +122,8 @@ exports.delete = async function(id){
     const query = 'delete from gamestates where id = $1';
     await database.query(query, [id]);
     await cache.invalidate('gamestate', id);
+    await cache.invalidate('gamestate', 'list');
+    await cache.invalidate('gamestate', 'chatlist');
     await cache.invalidate('gamestaterecord', id);
 };
 

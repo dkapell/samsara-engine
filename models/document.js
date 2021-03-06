@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
@@ -10,10 +11,16 @@ const models = {
 const tableFields = ['name', 'description', 'content'];
 
 exports.get = async function(id){
+    let doc = await cache.check('document', id);
+    if (doc) { return doc; }
     const query = 'select * from documents where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        doc = result.rows[0];
+        await cache.store('document', doc.id, doc);
+        await cache.store('document-name', doc.name, doc);
+        await cache.store('document-code', doc.code, doc);
+        return doc;
     }
     return;
 };
@@ -22,7 +29,11 @@ exports.getByName = async function(name){
     const query = 'select * from documents where name = $1';
     const result = await database.query(query, [name]);
     if (result.rows.length){
-        return result.rows[0];
+        const doc = result.rows[0];
+        await cache.store('document', doc.id, doc);
+        await cache.store('document-name', doc.name, doc);
+        await cache.store('document-code', doc.code, doc);
+        return doc;
     }
     return;
 };
@@ -31,7 +42,11 @@ exports.getByCode = async function(uuid){
     const query = 'select * from documents where code = $1';
     const result = await database.query(query, [uuid]);
     if (result.rows.length){
-        return result.rows[0];
+        const doc = result.rows[0];
+        await cache.store('document', doc.id, doc);
+        await cache.store('document-name', doc.name, doc);
+        await cache.store('document-code', doc.code, doc);
+        return doc;
     }
     return;
 };
@@ -86,11 +101,18 @@ exports.update = async function(id, data){
     query += ' where id = $1';
 
     await database.query(query, queryData);
+    await cache.invalidate('document', id);
+    await cache.invalidate('document-name', data.name);
+    await cache.invalidate('document-code', data.code);
 };
 
 exports.delete = async  function(id){
+    const document = await exports.get(id);
     const query = 'delete from documents where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('document', id);
+    await cache.invalidate('document-name', document.name);
+    await cache.invalidate('document-code', document.code);
 };
 
 function validate(data){

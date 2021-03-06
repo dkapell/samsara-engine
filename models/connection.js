@@ -13,15 +13,13 @@ const tableFields = ['user_id', 'server_id', 'client_id', 'created'];
 exports.get = async function(id){
     let connection = await cache.check('connection', id);
 
-    if (connection) {
-        console.log('here ' + id);
-        return connection;}
+    if (connection) {return connection;}
 
     const query = 'select * from connections where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         connection = result.rows[0];
-        await cache.invalidate('connection', id, connection);
+        await cache.store('connection', id, connection);
         return connection;
     }
     return;

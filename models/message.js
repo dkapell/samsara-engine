@@ -3,6 +3,7 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
     user: './user'
@@ -12,25 +13,35 @@ const tableFields = ['message_id', 'run_id', 'user_id', 'location', 'location_id
 
 
 exports.get = async function(id){
+    let message = await cache.check('message', id);
+    if (message) { return message; }
     const query = `select m.*, u.name, u.type as user_type, p.character
          from "messages" m left join users u on m.user_id = u.id
          left join players p on u.id = p.user_id
          where m.id = $1`;
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        let message = result.rows[0];
+        await cache.store('message', id, message);
+        await cache.store('message_id', message.message_id, message);
+        return message;
     }
     return;
 };
 
 exports.getByMessageId = async function(message_id){
+    let message = await cache.check('message_id', message_id);
+    if (message) { return message; }
     const query = `select m.*, u.name, u.type as user_type, p.character
         from "messages" m left join users u on m.user_id = u.id
         left join players p on u.id = p.user_id
         where message_id = $1`;
     const result = await database.query(query, [message_id]);
     if (result.rows.length){
-        return result.rows[0];
+        message = result.rows[0];
+        await cache.store('message', message.id, message);
+        await cache.store('message_id', message_id, message);
+        return message;
     }
     return;
 };
@@ -67,7 +78,10 @@ exports.find = async function(conditions, options){
 exports.findOne = async function(conditions){
     const results = await exports.find(conditions, {limit:1});
     if (results.length){
-        return results[0];
+        const message = results[0];
+        await cache.store('message', message.id, message);
+        await cache.store('message_id', message.message_id, message);
+        return message;
     }
     return;
 };
@@ -114,11 +128,16 @@ exports.update = async function(id, data){
     query += queryUpdates.join(', ');
     query += ' where id = $1';
     await database.query(query, queryData);
+    await cache.invalidate('message', id);
+    await cache.invalidate('message_id', data.message_id);
 };
 
-exports.delete = async  function(id){
+exports.delete = async function(id){
+    const message = await exports.get(id);
     const query = 'delete from "messages" where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('message', id);
+    await cache.invalidate('message_id', message.message_id);
 };
 
 

@@ -72,6 +72,7 @@ async function advance(req, res, next){
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         }
         res.json({success:true});
+        gameEngine.updateTriggers(user.id);
     } catch(err){
         res.json({success:false, error: err.message});
     }

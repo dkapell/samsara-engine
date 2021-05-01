@@ -16,6 +16,10 @@ function startVideo(meeting){
         parentNode: $videoContainer[0]
     };
 
+    if (meeting.jwt){
+        options.jwt = meeting.jwt;
+    }
+
     if (!meeting.gm){
         options.configOverwrite = {
             toolbarButtons: [
@@ -26,7 +30,7 @@ function startVideo(meeting){
             ],
         };
     } else {
-         options.configOverwrite = {
+        options.configOverwrite = {
             toolbarButtons: [
                 'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
                 'fodeviceselection', 'hangup', 'profile', 'recording',

@@ -44,6 +44,12 @@
         "cleanIntervalMins": "CLEAN_MINS"
     },
     "jitsi": {
-        "server": "JITSI_SERVER"
+        "server": "JITSI_SERVER",
+        "jwt":{
+            "issuer": "JITSI_JWT_ISSUER",
+            "audience": "JITSI_JWT_AUDIENCE",
+            "secret": "JITSI_JWT_SECRET",
+            "duration": "JITSI_JWT_DURATION"
+        }
     }
 }

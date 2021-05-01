@@ -9,7 +9,12 @@ block content
                         li.breadcrumb-item
                             a(href=breadcrumb.url)= breadcrumb.name
                     li.breadcrumb-item.active(aria-current="page")= page_breadcrumbs.current
-        .video-container.m-1.rounded#video-container(data-domain=meeting.domain, data-meeting_id=meeting.meeting_id, data-subject=meeting.name)
+        .video-container.m-1.rounded#video-container(
+            data-domain=meeting.domain,
+            data-meeting_id=meeting.meeting_id,
+            data-subject=meeting.name
+            data-jwt=meeting.jwt
+        )
 
 append scripts
     script.
@@ -18,6 +23,7 @@ append scripts
                 domain: $('#video-container').data('domain'),
                 meetingName: $('#video-container').data('meeting_id'),
                 subject: $('#video-container').data('subject'),
+                jwt: $('#video-container').data('jwt'),
                 fullscreen:true,
                 gm: true
             });

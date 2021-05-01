@@ -48,6 +48,12 @@
         "cleanIntervalMins": 5
     },
     "jitsi": {
-        "server": false
+        "server": false,
+        "jwt": {
+            "issuer": "samsara",
+            "audience": "samsara-jitsi",
+            "secret": null,
+            "duration": 3600
+        }
     }
 }

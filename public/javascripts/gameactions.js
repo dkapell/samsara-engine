@@ -21,6 +21,7 @@ $(function(){
     }).on('click', deleteItem);
     $('.action-link').hide();
     $('.action-text').hide();
+    $('.action-meeting').hide();
 
     showAllAreas();
     showAllActions();
@@ -126,6 +127,7 @@ function showAllAreas(){
 function showAction($row) {
     const type = $row.find('.action-type-select').val();
     $row.find('.action-link').hide();
+    $row.find('.action-meeting').hide();
     $row.find('.action-text').hide();
     $row.find('.action-transition').hide();
     $row.find('.action-image').hide();
@@ -133,6 +135,9 @@ function showAction($row) {
     switch(type){
         case 'link':
             $row.find('.action-link').show();
+            break;
+        case 'meeting':
+            $row.find('.action-meeting').show();
             break;
         case 'text':
             $row.find('.action-text').show();

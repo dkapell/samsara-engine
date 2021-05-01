@@ -37,7 +37,7 @@ async function show(req, res, next){
             if (!_.isArray(gamestate.image.map)){
                 gamestate.image.map = [];
             }
-            gamestate.image.image = await req.models.image.get(gamestate.image.image_id);
+            gamestate.image.image = await req.models.image.get(gamestate.image_id);
         }
         const gamestates = (await req.models.gamestate.list());
         gamestate.transitions = {
@@ -50,6 +50,7 @@ async function show(req, res, next){
         res.locals.documents = await req.models.document.list();
         res.locals.groups = await req.models.group.list();
         res.locals.links = await req.models.link.list();
+        res.locals.meetings = await req.models.meeting.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -116,6 +117,7 @@ async function showNew(req, res, next){
         res.locals.links = await req.models.link.list();
         res.locals.groups = await req.models.group.list();
         res.locals.variables = await req.models.variable.list();
+        res.locals.meetings = await req.models.meeting.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('gamestate/new');
     } catch (err){
@@ -149,6 +151,7 @@ async function showEdit(req, res, next){
         res.locals.codes = await req.models.code.list();
         res.locals.variables = await req.models.variable.list();
         res.locals.documents = await req.models.document.list();
+        res.locals.meetings = await req.models.meeting.list();
         res.render('gamestate/edit');
     } catch(err){
         next(err);

@@ -1,0 +1,28 @@
+.form-group
+    label.control-label(for="meeting_name") Name
+    input.form-control(type="text",placeholder="Name",name="meeting[name]",value=meeting.name,id='meeting_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="meeting_meeting_id") Meeting ID
+    input.form-control(type="text", placeholder="Meeting ID", name="meeting[meeting_id]",id="meeting_meeting_id",value=meeting.meeting_id,required)
+
+.form-group
+    label.control-label(for="meeting_gm") GM
+    input.form-control(type="text", placeholder="GM Name", name="meeting[gm]",id="meeting_gm",value=meeting.gm)
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="meeting[active]", id="meeting_active", checked=meeting.active)
+        label.custom-control-label(for="meeting_active") Active
+
+.form-group
+    label.control-label(for="meeting_description") Description
+    textarea.form-control(name="meeting[description]",id="meeting_description",rows=3)
+        = meeting.description
+
+.form-group
+    button.btn.btn-primary(type="submit")= meeting.id?'Update':'Create'
+    a.btn.btn-meeting(href="/meeting") Cancel
+
+

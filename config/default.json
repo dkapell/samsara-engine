@@ -36,7 +36,6 @@
         "imageBucket": "imageBucket"
     },
     "game": {
-        "linkName": "Link",
         "defaultToPlayer": false,
         "brokerType": "redis",
         "channel": "samsara-game"
@@ -47,5 +46,8 @@
     },
     "server": {
         "cleanIntervalMins": 5
+    },
+    "jitsi": {
+        "server": false
     }
 }

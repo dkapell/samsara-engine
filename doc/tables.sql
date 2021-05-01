@@ -290,3 +290,13 @@ create table player_triggers(
         REFERENCES "triggers" (id) match simple
         ON UPDATE NO ACTION ON DELETE CASCADE
 )
+
+create table meetings(
+    id serial,
+    meeting_id varchar(20) not null unique,
+    name varchar(80) not null,
+    description text,
+    gm          varchar(255),
+    active      boolean default true,
+    PRIMARY KEY(id)
+);

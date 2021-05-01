@@ -42,5 +42,8 @@
     },
     "server": {
         "cleanIntervalMins": "CLEAN_MINS"
+    },
+    "jitsi": {
+        "server": "JITSI_SERVER"
     }
 }

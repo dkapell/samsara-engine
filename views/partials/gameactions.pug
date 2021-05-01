@@ -152,8 +152,9 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     data-required=true
                 )
                     option
-                    for type in ['link', 'text', 'transition', 'image', 'script']
-                        option(value=type, selected=action.type === type)= type
+                    each name, type in {'link': 'Link', 'text': 'Document/Text', 'transition': 'Transition', 'image': 'Image', 'script': 'Script', 'meeting': 'Meeting', 'closemeeting': 'Close Meeting'}
+
+                        option(value=type, selected=action.type === type)= name
 
             // Group ID
             label.col-md-auto.col-form-label.action-input-label.action-criteria(
@@ -229,6 +230,26 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     option
                     for link in links
                         option(value=link.id selected=action.link_id && Number(action.link_id)===link.id)= link.name
+
+        // Meeting Row
+        .form-row.my-1.action-meeting
+            // Link Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-meeting_id`
+                data-fieldtype='meeting_id'
+            ) Link
+            .col-md-8
+                select.custom-select.meeting-select.action-input(
+                    name=`${namePrefix}[actions][${actionId}][meeting_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-meeting_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Meeting",
+                    data-fieldtype='meeting_id'
+                )
+                    option
+                    for meeting in meetings
+                        option(value=meeting.id selected=action.meeting_id && Number(action.meeting_id)===meeting.id)= meeting.name
+
 
         // Text Row
         .form-row.my-1.action-text
@@ -414,6 +435,11 @@ mixin actionsCard(areaId, area)
                         when 'link'
                             strong.mr-1 Open Link
                             i #{_.findWhere(links, {id: action.link_id}).name}
+                        when 'meeting'
+                            strong.mr-1 Open Meeting
+                            i #{_.findWhere(meetings, {id: action.meeting_id}).name}
+                        when 'closemeeting'
+                            strong.mr-1 Close Meeting
                         when 'text'
                             strong.mr-1 Display
                             if action.document_id

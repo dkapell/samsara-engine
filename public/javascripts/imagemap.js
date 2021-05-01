@@ -1,25 +1,64 @@
-/* global _ areaTimers:writable */
+/* global _ areaTimers:writable resizeImageMap */
 let link_idLocked = false;
 
 $(function(){
     //For Show
-    $('img[usemap]').rwdImageMaps();
-    $('.map').maphilight({
-        wrapClass:true,
-        shadow:true,
-        strokeWidth:3,
-        strokeColor: '3498db',
-        fillColor: '000000',
-        fillOpacity: 0.2,
-    });
-    $('area').on('click', toggleLock);
+    prepImageMapGM();
     $('area').on('mouseover', showLink);
     $('area').on('mouseout', clearLink);
-    $('.imageHolder').on('click', showAreas);
+    $('area').on('click', toggleLock);
 });
+
+function prepImageMapGM(){
+    let inArea = false;
+    const allOpts = {
+        strokeColor: 'ffffff',
+        strokeOpacity: 0.5,
+        fillColor: 'ffffff',
+        fillOpacity: 0.2,
+        stroke:true,
+        strokeWidth:1,
+    };
+    const singleOpts ={
+        strokeColor: '3498db',
+        strokeOpacity: 1,
+        fillColor: '000000',
+        fillOpacity: 0.3,
+        stroke:true,
+        strokeWidth:3,
+    };
+    const initialOpts = {
+        mapKey: 'data-groups',
+        onMouseover: function (data) {
+            inArea = true;
+        },
+        onMouseout: function (data) {
+            inArea = false;
+        }
+    };
+    const opts = $.extend({}, allOpts, initialOpts, singleOpts);
+    const $gamestateImage = $('#gamestate-image');
+    $gamestateImage
+        .mapster('unbind')
+        .mapster(opts)
+        .bind('mouseover', function () {
+            if (!inArea) {
+                $gamestateImage.mapster('set_options', allOpts)
+                    .mapster('set', true, 'all')
+                    .mapster('set_options', singleOpts);
+            }
+        }).bind('mouseout', function () {
+            if (!inArea) {
+                $gamestateImage.mapster('set', false, 'all');
+            }
+        });
+
+    resizeImageMap();
+}
 
 function showLink(e){
     const $area = $(this);
+
     const areaId = $area.data('area');
     if(!link_idLocked){
         $('#link-name').text($area.data('name'));
@@ -53,24 +92,5 @@ function toggleLock(e){
         $(`#area-detail-${$(this).attr('data-area')}`).show();
     }
 }
-function showAreas(e){
-    e.preventDefault();
-    for (const area in areaTimers){
-        clearTimeout(areaTimers[area]);
-    }
-    areaTimers = {};
-    $('area').each(function(i) {
-        const $area = $(this);
-        const areaId = $area.data('area');
-        var data = $area.data('maphilight') || {};
-        data.alwaysOn = true;
-        $area.data('maphilight', data).trigger('alwaysOn.maphilight');
-        const timeout = setTimeout(function(){
-            data.alwaysOn = false;
-            $area.data('maphilight', data).trigger('alwaysOn.maphilight');
-            $(`#area-detail-${areaId}`).hide();
-        }, 2000);
-        areaTimers[areaId] = timeout;
-    });
-}
+
 

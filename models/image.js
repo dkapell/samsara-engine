@@ -12,6 +12,7 @@ const models = {
 const tableFields = ['name', 'display_name', 'description', 'status', 'is_gamestate', 'is_popup', 'is_inventory'];
 
 exports.get = async function(id){
+    if(!id) { console.trace('no'); return; }
     let image = await cache.check('image', id);
     if (image) { return image; }
     const query = 'select * from images where id = $1';

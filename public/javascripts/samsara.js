@@ -1,4 +1,4 @@
-/* global currentLocation xs md lg xl */
+/* global currentLocation xs md lg xl resizeImageMap */
 $(function(){
     $('.select2').select2({
         theme:'bootstrap4',
@@ -75,7 +75,7 @@ function collapseChatSidebar(e){
     setTimeout(function() {
         $('#chat-show').show();
         if ($('.imageHolder')){
-            $('img[usemap]').rwdImageMaps();
+            resizeImageMap();
         }
     }, 350);
 }

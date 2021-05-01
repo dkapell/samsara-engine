@@ -1,0 +1,48 @@
+extends ../layout
+
+block content
+    a.btn.btn-outline-success(href='/meeting/new')
+        span(class="fa fa-plus")
+        |  New Meeting
+    .table-responsive
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+            thead
+                tr
+                    th
+                    if checkPermission('creator')
+                        th(data-priority="4") Id
+                    th(data-priority="1", data-order='asc') Name
+                    th Meeting Id
+                    th(data-priority="2") GM
+                    th(data-priority="3") Active
+                    th
+
+            tbody
+                for meeting in meetings
+                    tr(class='clickable-row', data-click-object='meeting' data-click-id=meeting.id)
+                        td.dtr-expand
+                        if checkPermission('creator')
+                            th= meeting.id
+                        td
+                            a(href='/meeting/' + meeting.id)= meeting.name
+                        td= meeting.meeting_id
+                        td= meeting.gm
+                        td= meeting.active?'Yes':'No'
+                        td.text-right
+                            a.btn.btn-primary.btn-sm.action-btn(
+                                role="button",
+                                href=`/meeting/${meeting.id}/open`
+                            )
+                                i.fas.fa-video.fa-fw
+                                span.ml-2 Open Meeting
+                            if checkPermission('creator')
+                                a.btn.btn-outline-danger.btn-sm.delete-btn.ml-2(
+                                    role="button",
+                                    url=`/meeting/${meeting.id}`,
+                                    data-back='/meeting'
+                                )
+                                    i.fas.fa-trash.fa-fw
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

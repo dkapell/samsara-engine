@@ -1,10 +1,17 @@
 extends layout
 
 block content
-    .row.my-2
-        .col#game-content
-    .row.my-2
-        .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
+    d-flex.flex-column.h-100
+        .gamestate-container.d-flex.flex-column.container#gamestate-container
+            .row.my-2.h-100
+                .col.px-0#game-content
+            .row.my-2
+                .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
+        .resizer.d-none#video-adjust(data-direction="vertical")
+        .video-container.p-2.d-none#video-container
+
+
+
 
     .modal.fade#popupModal(role="dialog" tabindex="-1" aria-labelledby="popupModalLabel" aria-hidden="true")
         .modal-dialog.modal-lg.modal-dialog-centered(role="document")

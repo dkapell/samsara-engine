@@ -4,9 +4,9 @@ block content
     .row
         .col-sm-8.offset-sm-2
             .card
-                .card-header New Link
+                .card-header New Meeting
                 .card-body
-                    form.form.needs-validation(method="POST" action="/link" novalidate)
+                    form.form.needs-validation(method="POST" action="/meeting" novalidate)
                         input(type="hidden", name='_csrf',value=csrfToken)
                         include ./_form.pug
 

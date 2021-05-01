@@ -1,33 +1,29 @@
 mixin gamestate(gamestate)
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
-        .row.mb-2
+        .d-flex.justify-content-center.mb-2
             .col-10.offset-1
                 form#code-form
                     .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
     if gamestate.image_id
-        .row.mb-2
-            .col.text-center
-                .row.mb-1
-                    .col
-                        .lead.text-center#link-name &nbsp;
-
-                .row.my-1
-                    .col.h-50.imageHolder
-                        image.map.mx-auto.img-fluid(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id, style='max-height:60vh')
-                        map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
-                            for area in gamestate.map
-                                area(
-                                    id=`area-${area.uuid?area.uuid:area.id}`,
-                                    shape=area.shape,
-                                    coords=area.coords,
-                                    data-name=area.name,
-                                    data-gamestate-id=gamestate.id
-                                    data-area=area.uuid?area.uuid:area.id
-                                    href='#',
-                                    target="_self",
-                                    data-maphilight='{}'
-                                )
+        .d-flex.justify-content-center.mb-1
+            .lead.text-center#link-name &nbsp;
+        .d-flex.justify-content-center.mb-1
+            image.imageHolder.map.mx-auto.img-fluid#gamestate-image(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id,style='max-height:60vh')
+            map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
+                for area in gamestate.map
+                    area(
+                        id=`area-${area.uuid?area.uuid:area.id}`,
+                        shape=area.shape,
+                        coords=area.coords,
+                        data-name=`${area.name}`,
+                        data-groups=`${area.name},all`,
+                        data-gamestate-id=gamestate.id
+                        data-area=area.uuid?area.uuid:area.id
+                        href='#',
+                        target="_self",
+                        data-maphilight='{}'
+                        )
     .row
         .col !{gamestate.description}
 

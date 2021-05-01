@@ -11,11 +11,11 @@ async function list(req, res, next){
         path: [
             { url: '/', name: 'Home'},
         ],
-        current: pluralize(config.get('game.linkName'))
+        current: 'Links'
     };
     try {
         res.locals.links = await req.models.link.list();
-        res.render('link/list', { pageTitle: pluralize(config.get('game.linkName')) });
+        res.render('link/list', { pageTitle: 'Links' });
     } catch (err){
         next(err);
     }
@@ -31,7 +31,7 @@ function showNew(req, res, next){
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/link', name: pluralize(config.get('game.linkName'))},
+            { url: '/link', name: 'Links'},
         ],
         current: 'New'
     };
@@ -58,7 +58,7 @@ async function showEdit(req, res, next){
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
-                { url: '/link', name: pluralize(config.get('game.linkName'))},
+                { url: '/link', name: 'Links'},
             ],
             current: 'Edit: ' + link.name
         };
@@ -80,7 +80,7 @@ async function create(req, res, next){
     try{
         await req.models.link.create(link);
         delete req.session.linkData;
-        req.flash('success', `Created ${config.get('game.linkName')} ${link.name}`);
+        req.flash('success', `Created Link ${link.name}`);
         res.redirect('/link');
     } catch (err) {
         req.flash('error', err.toString());
@@ -104,7 +104,7 @@ async function update(req, res, next){
 
         await req.models.link.update(id, link);
         delete req.session.linkData;
-        req.flash('success', `Updated ${config.get('game.linkName')} ${link.name}`);
+        req.flash('success', `Updated Link ${link.name}`);
         res.redirect('/link');
     } catch(err) {
         req.flash('error', err.toString());
@@ -117,7 +117,7 @@ async function remove(req, res, next){
     const id = req.params.id;
     try {
         await req.models.link.delete(id);
-        req.flash('success', `Removed ${config.get('game.linkName')}`);
+        req.flash('success', 'Removed Link');
         res.redirect('/link');
     } catch(err) {
         return next(err);

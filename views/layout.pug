@@ -43,9 +43,12 @@ html.h-100(lang="en")
                                     a.dropdown-item(href='/run/current')
                                         i.fas.fa-theater-masks.fa-fw.mr-1
                                         | Current Run
+                                    a.dropdown-item(href='/meeting')
+                                        i.fas.fa-video.fa-fw.mr-1
+                                        | Meeting List
                                     a.dropdown-item(href='/link')
                                         i.fas.fa-building.fa-fw.mr-1
-                                        | #{config.get('game.linkName')} List
+                                        | Link List
                                     a.dropdown-item(href='/player')
                                         i.fas.fa-users.fa-fw.mr-1
                                         | Players List
@@ -170,7 +173,7 @@ html.h-100(lang="en")
             .float-left(aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px; z-index:9999")
                 #toastHolder(style="position: absolute; top: 0; left: 0; min-width:350px; padding-top:10px")
 
-        .d-flex.w-100.flex-grow-1.align-items-stretch
+        .d-flex.w-100.h-100.flex-grow-1.align-items-stretch
             .p-1.flex-grow-1#main-content
                 - if(breadcrumbs)
                     .container(role="breadcrumbs")
@@ -209,7 +212,7 @@ html.h-100(lang="en")
                         div.alert.alert-success(role='alert')
                             = messages.success.join(', ')
 
-                main.container(role="main")
+                main.container.px-2.h-100(role="main")
                     block content
 
                 if !activeUser
@@ -237,8 +240,8 @@ html.h-100(lang="en")
             script(src="https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap4.min.js")
             script(src=`https://kit.fontawesome.com/${config.get('app.fontawesome')}.js` crossorigin="anonymous")
             script(src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js")
-            script(src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-rwdImageMaps/1.6/jquery.rwdImageMaps.min.js")
-            script(src="https://cdnjs.cloudflare.com/ajax/libs/maphilight/1.4.0/jquery.maphilight.min.js")
+            script(src="https://cdn.jsdelivr.net/npm/jquery-imagemapster@1.2.10/dist/jquery.imagemapster.min.js")
+
             script(src="/javascripts/vendor/bootstrap-confirmation.min.js")
             script(src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js")
             script(src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.12.0/underscore-min.js")
@@ -250,6 +253,9 @@ html.h-100(lang="en")
             script(src='/javascripts/chat.js')
             script(src='/javascripts/templates/chatMessage.js')
             script(src='/javascripts/templates/chatEvent.js')
-            if (checkPermission('gm'))
+            if checkPermission('gm')
                 script(src='/javascripts/templates/chatReport.js')
+            if config.get("jitsi.server")
+                script(src=`https://${config.get('jitsi.server')}/external_api.js`)
+                script(src="/javascripts/jitsi.js")
 

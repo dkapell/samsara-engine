@@ -33,5 +33,12 @@ block content
                 each link, key in validation.unused.links
                     li=link.name
 
+        if _.keys(validation.unused.meetings).length
+            h4
+                a.text-warning(href='/meeting') Meetings
+            ul
+                each meeting, key in validation.unused.meetings
+                    li=meeting.name
+
     if !hasErrors
         h3.text-success No Issues Found

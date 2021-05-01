@@ -4,12 +4,12 @@ block content
     .row
         .col-sm-8.offset-sm-2
             .card
-                .card-header Edit Link: #{link.name}
+                .card-header Edit Meeting: #{meeting.name}
                 .card-body
-                    form.form.needs-validation(method="POST" action="/link/" + link.id novalidate)
+                    form.form.needs-validation(method="POST" action="/meeting/" + meeting.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='link[id]',value=link.id)
+                        input(type="hidden", name='meeting[id]',value=meeting.id)
                         include ./_form.pug
 
 append scripts

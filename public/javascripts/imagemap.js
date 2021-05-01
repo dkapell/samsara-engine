@@ -20,12 +20,12 @@ function prepImageMapGM(){
         strokeWidth:1,
     };
     const singleOpts ={
-        strokeColor: '3498db',
-        strokeOpacity: 1,
-        fillColor: '000000',
+        strokeColor: 'e74c3c',
+        strokeOpacity: 0.6,
+        fillColor: 'e74c3c',
         fillOpacity: 0.3,
         stroke:true,
-        strokeWidth:3,
+        strokeWidth:1,
     };
     const initialOpts = {
         mapKey: 'data-groups',

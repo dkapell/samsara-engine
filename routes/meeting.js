@@ -5,6 +5,7 @@ const config = require('config');
 const _ = require('underscore');
 const { nanoid } = require('nanoid');
 const permission = require('../lib/permission');
+const jitsi = require('../lib/jitsi');
 
 /* GET meetings listing. */
 async function list(req, res, next){
@@ -26,6 +27,7 @@ async function show(req, res, next){
     try {
         const meeting = await req.models.meeting.get(req.params.id);
         meeting.domain = config.get('jitsi.server');
+        meeting.jwt = jitsi.token(meeting.meeting_id);
         res.locals.meeting = meeting;
         res.locals.page_breadcrumbs = {
             path: [

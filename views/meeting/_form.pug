@@ -1,11 +1,13 @@
 .form-group
     label.control-label(for="meeting_name") Name
     input.form-control(type="text",placeholder="Name",name="meeting[name]",value=meeting.name,id='meeting_name',required)
+    small.form-text.text-muted#meeting_meeting_id_help The name for the meeting.  This will be displayed to players.
     div.invalid-feedback Please choose a valid name
 
 .form-group
     label.control-label(for="meeting_meeting_id") Meeting ID
     input.form-control(type="text", placeholder="Meeting ID", name="meeting[meeting_id]",id="meeting_meeting_id",value=meeting.meeting_id,required)
+    small.form-text.text-muted#meeting_meeting_id_help The code for the meeting.  This should probably not be guessable.  Players should never see this normally.
 
 .form-group
     label.control-label(for="meeting_gm") GM

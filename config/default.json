@@ -49,6 +49,7 @@
     },
     "jitsi": {
         "server": false,
+        "active": false,
         "jwt": {
             "issuer": "samsara",
             "audience": "samsara-jitsi",

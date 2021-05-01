@@ -29,12 +29,13 @@ block content
                         td= meeting.gm
                         td= meeting.active?'Yes':'No'
                         td.text-right
-                            a.btn.btn-primary.btn-sm.action-btn(
-                                role="button",
-                                href=`/meeting/${meeting.id}/open`
-                            )
-                                i.fas.fa-video.fa-fw
-                                span.ml-2 Open Meeting
+                            if config.get('jitsi.server') && config.get('jitsi.active')
+                                a.btn.btn-primary.btn-sm.action-btn(
+                                    role="button",
+                                    href=`/meeting/${meeting.id}/open`
+                                )
+                                    i.fas.fa-video.fa-fw
+                                    span.ml-2 Open Meeting
                             if checkPermission('creator')
                                 a.btn.btn-outline-danger.btn-sm.delete-btn.ml-2(
                                     role="button",

@@ -24,6 +24,9 @@ async function list(req, res, next){
 }
 
 async function show(req, res, next){
+    if (!(config.get('jitsi.server') && config.get('jitsi.active'))){
+        return res.render('meeting/noservice');
+    }
     try {
         const meeting = await req.models.meeting.get(req.params.id);
         meeting.domain = config.get('jitsi.server');

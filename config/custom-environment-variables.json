@@ -45,6 +45,7 @@
     },
     "jitsi": {
         "server": "JITSI_SERVER",
+        "active": "JITSI_ACTIVE",
         "jwt":{
             "issuer": "JITSI_JWT_ISSUER",
             "audience": "JITSI_JWT_AUDIENCE",

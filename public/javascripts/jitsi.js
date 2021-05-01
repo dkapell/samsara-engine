@@ -25,6 +25,16 @@ function startVideo(meeting){
                 'tileview', 'select-background'
             ],
         };
+    } else {
+         options.configOverwrite = {
+            toolbarButtons: [
+                'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+                'fodeviceselection', 'hangup', 'profile', 'recording',
+                'etherpad', 'sharedvideo', 'shareaudio', 'settings',
+                'videoquality', 'filmstrip', 'stats', 'shortcuts',
+                'tileview', 'select-background', 'mute-everyone', 'mute-video-everyone', 'security'
+            ],
+        };
     }
 
     if (gamedata && gamedata.character){

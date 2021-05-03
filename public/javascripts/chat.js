@@ -73,6 +73,7 @@ async function handleChat(data){
             await refreshPlayerList();
         }
         $('.chat-location').change();
+
     } else if (_.has(data, 'remove')){
         removeMessage(data.remove);
     }

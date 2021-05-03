@@ -110,7 +110,6 @@ exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
-    console.trace ('update user '+ id);
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){

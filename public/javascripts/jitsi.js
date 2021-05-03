@@ -3,7 +3,7 @@
 let activeMeeting = null;
 let currentMeeting = null;
 
-function startVideo(meeting){
+function startVideo(meeting, postStart){
     const $videoContainer = $('#video-container');
     if (activeMeeting){
         if (currentMeeting === meeting.meetingName){
@@ -62,6 +62,9 @@ function startVideo(meeting){
     activeMeeting.addListener('videoConferenceJoined', function(data) {
         if (gamedata && gamedata.character){
             activeMeeting.executeCommand('displayName', gamedata.character);
+        }
+        if (meeting.postStart && _.isFunction(meeting.postStart)){
+            meeting.postStart(data);
         }
     });
     activeMeeting.addListener('participantRoleChanged', function(data){

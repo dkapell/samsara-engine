@@ -25,11 +25,11 @@ append scripts
                 subject: $('#video-container').data('subject'),
                 jwt: $('#video-container').data('jwt'),
                 fullscreen:true,
-                gm: true
+                gm: true,
+                postStart: function(data){
+                    expandChatSidebar();
+                }
             });
-            setTimeout(()=> {
-                expandChatSidebar();
-            }, 200);
         });
 
 

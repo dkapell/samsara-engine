@@ -9,7 +9,7 @@ block content
             each issue in validation.issues
                 li= issue
 
-    if _.keys(validation.unused.gamestates).length || _.keys(validation.unused.links).length || _.keys(validation.unused.imagemaps).length
+    if _.keys(validation.unused.gamestates).length || _.keys(validation.unused.links).length || _.keys(validation.unused.imagemaps).length ||  _.keys(validation.unused.meetings).length
         - hasErrors=true;
         h3.text-warning Unused Items
         if _.keys(validation.unused.gamestates).length

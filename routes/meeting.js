@@ -17,6 +17,13 @@ async function list(req, res, next){
     };
     try {
         res.locals.meetings = await req.models.meeting.list();
+        res.locals.jitsi = {
+            configured: config.get('jitsi.server'),
+            instance: config.get('jitsi.instance.id'),
+            status: await jitsi.server.status()
+        };
+        res.locals.csrfToken = req.csrfToken();
+
         res.render('meeting/list', { pageTitle: 'Meetings' });
     } catch (err){
         next(err);
@@ -24,7 +31,7 @@ async function list(req, res, next){
 }
 
 async function show(req, res, next){
-    if (!(config.get('jitsi.server') && config.get('jitsi.active'))){
+    if (! await jitsi.active()){
         return res.render('meeting/noservice');
     }
     try {
@@ -146,6 +153,24 @@ async function remove(req, res, next){
     }
 }
 
+async function startJitsi(req, res, next){
+    try{
+        await jitsi.server.start();
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
+async function stopJitsi(req, res, next){
+    try{
+        await jitsi.server.stop();
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
 const router = express.Router();
 
 router.use(permission('gm'));
@@ -154,7 +179,7 @@ router.use(function(req, res, next){
     next();
 });
 
-router.get('/', list);
+router.get('/', csrf(), list);
 router.get('/new', csrf(), showNew);
 router.get('/:id', csrf(), showEdit);
 router.get('/:id/open', csrf(), show);
@@ -162,4 +187,6 @@ router.post('/', csrf(), create);
 router.put('/:id', csrf(), update);
 router.delete('/:id', remove);
 
+router.put('/jitsi/start', csrf(), permission('admin'), startJitsi);
+router.put('/jitsi/stop', csrf(), permission('admin'), stopJitsi);
 module.exports = router;

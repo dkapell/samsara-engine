@@ -18,6 +18,7 @@ const OAuth2Strategy = require('passport-oauth2').Strategy;
 
 const models = require('./lib/models');
 const permission = require('./lib/permission');
+const jitsi = require('./lib/jitsi');
 
 const app = express();
 
@@ -168,7 +169,7 @@ if (config.get('auth.intercode.clientID')){
 
 
 // Set common helpers for the view
-app.use(function(req, res, next){
+app.use(async function(req, res, next){
     res.locals.config = config;
     res.locals.session = req.session;
     res.locals.title = config.get('app.name');
@@ -176,6 +177,7 @@ app.use(function(req, res, next){
     res.locals.moment = moment;
     res.locals.activeUser = req.user;
     res.locals.includeChatSidebar = true;
+    res.locals.jitsiActive = await jitsi.active();
     res.locals.capitalize = function(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };

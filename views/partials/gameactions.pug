@@ -152,8 +152,18 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     data-required=true
                 )
                     option
-                    each name, type in {'link': 'Link', 'text': 'Document/Text', 'transition': 'Transition', 'image': 'Image', 'script': 'Script', 'meeting': 'Meeting', 'closemeeting': 'Close Meeting'}
+                    -
+                        const actionTypes = {
+                            'link': 'Link',
+                            'meeting': 'Meeting',
+                            'closemeeting': 'Close Meeting',
+                            'transition': 'Transition',
+                            'text': 'Document/Text',
+                            'image': 'Image',
+                            'script': 'Script'
+                        }
 
+                    each name, type in actionTypes
                         option(value=type, selected=action.type === type)= name
 
             // Group ID

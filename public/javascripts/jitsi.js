@@ -1,14 +1,18 @@
 /* global JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata */
 
 let activeMeeting = null;
+let currentMeeting = null;
 
 function startVideo(meeting){
     const $videoContainer = $('#video-container');
-    console.log(meeting);
     if (activeMeeting){
+        if (currentMeeting === meeting.meetingName){
+            return;
+        }
         activeMeeting.executeCommand('hangup');
         closeVideo();
     }
+
     var options = {
         roomName: meeting.meetingName,
         width: '100%',
@@ -67,6 +71,7 @@ function startVideo(meeting){
     });
     activeMeeting.addListener('videoConferenceLeft', closeVideo);
     resizeImageMap();
+    currentMeeting = meeting.meetingName;
 }
 
 function closeVideo(){

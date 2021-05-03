@@ -50,6 +50,10 @@
     "jitsi": {
         "server": false,
         "active": false,
+        "instance": {
+            "region": "us-east-1",
+            "id": false
+        },
         "jwt": {
             "issuer": "samsara",
             "audience": "samsara-jitsi",

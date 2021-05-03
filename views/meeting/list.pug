@@ -1,9 +1,34 @@
 extends ../layout
 
 block content
-    a.btn.btn-outline-success(href='/meeting/new')
-        span(class="fa fa-plus")
-        |  New Meeting
+    .row
+        .col
+            a.btn.btn-outline-success(href='/meeting/new')
+                span.fas.fa-plus.mr-1
+                | New Meeting
+        if jitsi.configured && jitsi.instance
+            if checkPermission('admin') && jitsi.instance
+                .col.text-center
+                    case jitsi.status
+                        when 'running'
+                            a.btn.btn-danger#stop-jitsi-btn(data-csrf=csrfToken)
+                                span.fas.fa-power-off.mr-1
+                                | Stop Jitsi Server
+                        when 'stopped'
+                            a.btn.btn-success#start-jitsi-btn(data-csrf=csrfToken)
+                                span.fas.fa-power-off.mr-1
+                                | Start Jitsi Server
+
+            .col.lead.text-right Jitsi Server Status
+                case jitsi.status
+                    when 'running'
+                        .badge.badge-success.ml-1= capitalize(jitsi.status)
+                    when 'stopped'
+                        .badge.badge-danger.ml-1= capitalize(jitsi.status)
+                    default
+                        .badge.badge-warning.ml-1= capitalize(jitsi.status)
+
+
     .table-responsive
         table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
@@ -29,7 +54,7 @@ block content
                         td= meeting.gm
                         td= meeting.active?'Yes':'No'
                         td.text-right
-                            if config.get('jitsi.server') && config.get('jitsi.active')
+                            if jitsiActive
                                 a.btn.btn-primary.btn-sm.action-btn(
                                     role="button",
                                     href=`/meeting/${meeting.id}/open`
@@ -47,3 +72,4 @@ block content
 
 append scripts
     script(src='/javascripts/data-table.js')
+    script(src='/javascripts/meeting.js')

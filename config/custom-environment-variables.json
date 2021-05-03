@@ -46,6 +46,10 @@
     "jitsi": {
         "server": "JITSI_SERVER",
         "active": "JITSI_ACTIVE",
+        "instance": {
+            "region": "JITSI_REGION",
+            "id": "JITSI_INSTANCE"
+        },
         "jwt":{
             "issuer": "JITSI_JWT_ISSUER",
             "audience": "JITSI_JWT_AUDIENCE",

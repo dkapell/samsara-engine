@@ -255,7 +255,7 @@ html.h-100(lang="en")
             script(src='/javascripts/templates/chatEvent.js')
             if checkPermission('gm')
                 script(src='/javascripts/templates/chatReport.js')
-            if config.get("jitsi.server")
+            if jitsiActive
                 script(src=`https://${config.get('jitsi.server')}/external_api.js`)
                 script(src="/javascripts/jitsi.js")
 

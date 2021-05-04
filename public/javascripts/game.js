@@ -163,9 +163,7 @@ async function renderPage(gamestate){
         } else {
             hideChatSidebar();
         }
-        $('.resizer').each(function(){
-            resizable($(this)[0]);
-        });
+
     }
 }
 
@@ -390,6 +388,14 @@ function resizable(resizer) {
 
         nextSibling.style.userSelect = 'none';
         nextSibling.style.pointerEvents = 'none';
+
+        if (parseInt(prevSibling.style.height) < 3){
+            $('#video-adjust >> .resizer-expand').hide();
+            $('#video-adjust >> .resizer-restore').show();
+        } else {
+            $('#video-adjust >> .resizer-expand').show();
+            $('#video-adjust >> .resizer-restore').hide();
+        }
     };
 
     const mouseUpHandler = function() {
@@ -405,6 +411,7 @@ function resizable(resizer) {
         // Remove the handlers of `mousemove` and `mouseup`
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
+
         resizeImageMap();
     };
 

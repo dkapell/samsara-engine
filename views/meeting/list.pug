@@ -2,13 +2,13 @@ extends ../layout
 
 block content
     .row
-        .col
+        .col-md.pt-1
             a.btn.btn-outline-success(href='/meeting/new')
                 span.fas.fa-plus.mr-1
                 | New Meeting
         if jitsi.configured && jitsi.instance
             if checkPermission('admin') && jitsi.instance
-                .col.text-center
+                .col-md.text-md-center.pt-1
                     case jitsi.status
                         when 'running'
                             a.btn.btn-danger#stop-jitsi-btn(data-csrf=csrfToken)
@@ -19,7 +19,7 @@ block content
                                 span.fas.fa-power-off.mr-1
                                 | Start Jitsi Server
 
-            .col.lead.text-right Jitsi Server Status
+            .col-md.lead.text-md-right.pt-1 Jitsi Server Status
                 case jitsi.status
                     when 'running'
                         .badge.badge-success.ml-1= capitalize(jitsi.status)
@@ -38,9 +38,9 @@ block content
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
                     th Meeting Id
-                    th(data-priority="2") GM
-                    th(data-priority="3") Active
-                    th
+                    th(data-priority="3") GM
+                    th(data-priority="4") Active
+                    th(data-priority="2")
 
             tbody
                 for meeting in meetings
@@ -58,9 +58,12 @@ block content
                                 a.btn.btn-primary.btn-sm.action-btn(
                                     role="button",
                                     href=`/meeting/${meeting.id}/open`
+                                    data-toggle="tooltip"
+                                    data-delay={ "show": 500, "hide": 100 }
+                                    title="Open Meeting"
                                 )
                                     i.fas.fa-video.fa-fw
-                                    span.ml-2 Open Meeting
+                                    span.ml-2.d-none.d-md-inline Open Meeting
                             if checkPermission('creator')
                                 a.btn.btn-outline-danger.btn-sm.delete-btn.ml-2(
                                     role="button",

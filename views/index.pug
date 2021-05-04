@@ -7,7 +7,37 @@ block content
                 .col.px-0#game-content
             .row.my-2
                 .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
-        .resizer.d-none#video-adjust(data-direction="vertical")
+        .resizer.d-none.my-2.bg-light#video-adjust(data-direction="vertical")
+            .button-bar.py-1.position-relative(style="top:-13px; left:5px; font-size:90%;z-index:5")
+                .badge.badge-pill.badge-danger.mr-2.resizer-close(
+                    style="cursor:pointer;"
+                    data-toggle="tooltip"
+                    data-delay={ "show": 500, "hide": 100 }
+                    title="Close"
+                )
+                    .fa.fas.fa-fw.fa-times
+                .badge.badge-pill.badge-warning.mr-2.resizer-move(
+                    data-toggle="tooltip"
+                    data-delay={ "show": 500, "hide": 100 }
+                    title="Drag to Resize"
+                )
+                    .fa.fas.fa-fw.fa-arrows-alt-v
+
+                .badge.badge-pill.badge-success.mr-2.resizer-expand(
+                    style="cursor:pointer;"
+                    data-toggle="tooltip"
+                    data-delay={ "show": 500, "hide": 100 }
+                    title="Expand"
+                )
+                    .fa.fas.fa-fw.fa-expand-alt
+
+                .badge.badge-pill.badge-success.mr-2.resizer-restore(
+                    style="cursor:pointer;"
+                    data-toggle="tooltip"
+                    data-delay={ "show": 500, "hide": 100 }
+                    title="Restore"
+                )
+                    .fa.fas.fa-fw.fa-compress-alt
         .video-container.p-2.d-none#video-container
 
 
@@ -29,3 +59,9 @@ append scripts
     script(src='/javascripts/templates/page.js')
     script(src='/javascripts/templates/toast.js')
     script(src='/javascripts/templates/popup.js')
+    script.
+        $(function(){
+            $('.resizer').each(function(){
+                resizable($(this)[0]);
+            });
+        });

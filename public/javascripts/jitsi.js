@@ -3,6 +3,21 @@
 let activeMeeting = null;
 let currentMeeting = null;
 
+$(function(){
+    $('#video-adjust >> .resizer-expand').on('click', function(e){
+        e.stopPropagation();
+        fullVideo();
+    });
+    $('#video-adjust >> .resizer-restore').on('click', function(e){
+        e.stopPropagation();
+        halfVideo();
+    });
+    $('#video-adjust >> .resizer-close').on('click', function(e){
+        e.stopPropagation();
+        closeVideo();
+    });
+});
+
 function startVideo(meeting, postStart){
     const $videoContainer = $('#video-container');
     if (activeMeeting){
@@ -109,6 +124,8 @@ function fullVideo(hideAdjust){
         .removeClass('d-none')
         .addClass('d-flex')
         .css({height:'100%'});
+    $('#video-adjust >> .resizer-expand').hide();
+    $('#video-adjust >> .resizer-restore').show();
     resizeImageMap();
 }
 
@@ -121,6 +138,9 @@ function halfVideo(){
     $('#video-container')
         .removeClass('d-none')
         .css({height:'50%'});
+    $('#video-adjust >> .resizer-expand').show();
+    $('#video-adjust >> .resizer-restore').hide();
+
     resizeImageMap();
 }
 

@@ -270,7 +270,6 @@ img {
 }
 
 .resizer[data-direction="horizontal"] {
-    background-color: #cbd5e0;
     cursor: ew-resize;
     height: 100%;
     margin-left:5px;
@@ -278,23 +277,7 @@ img {
     width: 2px;
 }
 .resizer[data-direction="vertical"] {
-    background-color: #888;
     cursor: ns-resize;
     height: 2px;
     width: 100%;
-}
-.resizer[data-direction="vertical"]:after{
-    font-size: .7rem;
-    position:relative;
-    white-space: pre;
-    background-color: #888;
-    color: black;
-    left: 10px;
-    top: -12px;
-    padding: 2px 15px;
-    border-radius: 8px;
-    z-index:5;
-    font-weight: bolder;
-    font-family: "Font Awesome 5 Free";
-    content: "\f338";
 }

@@ -9,24 +9,24 @@ block content
         if jitsi.configured && jitsi.instance
             if checkPermission('admin') && jitsi.instance
                 .col-md.text-md-center.pt-1
-                    case jitsi.status
-                        when 'running'
-                            a.btn.btn-danger#stop-jitsi-btn(data-csrf=csrfToken)
-                                span.fas.fa-power-off.mr-1
-                                | Stop Jitsi Server
-                        when 'stopped'
-                            a.btn.btn-success#start-jitsi-btn(data-csrf=csrfToken)
-                                span.fas.fa-power-off.mr-1
-                                | Start Jitsi Server
+                    if jitsi.status.indexOf('running') !== -1
+                        a.btn.btn-danger#stop-jitsi-btn(data-csrf=csrfToken)
+                            span.fas.fa-power-off.mr-1
+                            | Stop Jitsi Server
+                    if jitsi.status.indexOf('stopped') !== -1
+                        a.btn.btn-success#start-jitsi-btn(data-csrf=csrfToken)
+                            span.fas.fa-power-off.mr-1
+                            | Start Jitsi Server
 
             .col-md.lead.text-md-right.pt-1 Jitsi Server Status
-                case jitsi.status
-                    when 'running'
-                        .badge.badge-success.ml-1= capitalize(jitsi.status)
-                    when 'stopped'
-                        .badge.badge-danger.ml-1= capitalize(jitsi.status)
-                    default
-                        .badge.badge-warning.ml-1= capitalize(jitsi.status)
+                for status in jitsi.status
+                    case status
+                        when 'running'
+                            .badge.badge-success.ml-1= capitalize(status)
+                        when 'stopped'
+                            .badge.badge-danger.ml-1= capitalize(status)
+                        default
+                            .badge.badge-warning.ml-1= capitalize(status)
 
 
     .table-responsive

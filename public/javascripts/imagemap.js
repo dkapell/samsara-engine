@@ -20,8 +20,8 @@ function prepImageMapGM(){
         strokeWidth:1,
     };
     const singleOpts ={
-        strokeColor: 'e74c3c',
-        strokeOpacity: 0.6,
+        strokeColor: 'ffffff',
+        strokeOpacity: 0.5,
         fillColor: 'e74c3c',
         fillOpacity: 0.3,
         stroke:true,

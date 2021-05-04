@@ -1,4 +1,4 @@
-/* global JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable */
+/* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable */
 
 let activeMeeting = null;
 let currentMeeting = null;

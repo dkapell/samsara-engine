@@ -10,23 +10,24 @@ block content
             if checkPermission('admin') && jitsi.instance
                 .col-md.text-md-center.pt-1
                     if jitsi.status.indexOf('running') !== -1
-                        a.btn.btn-danger#stop-jitsi-btn(data-csrf=csrfToken)
+                        a.btn.btn-danger#stop-jitsi-btn.mx-1(data-csrf=csrfToken)
                             span.fas.fa-power-off.mr-1
                             | Stop Jitsi Server
                     if jitsi.status.indexOf('stopped') !== -1
-                        a.btn.btn-success#start-jitsi-btn(data-csrf=csrfToken)
+                        a.btn.btn-success#start-jitsi-btn.mx-1(data-csrf=csrfToken)
                             span.fas.fa-power-off.mr-1
                             | Start Jitsi Server
 
-            .col-md.lead.text-md-right.pt-1 Jitsi Server Status
-                for status in jitsi.status
+            .col-md.lead.text-md-right.pt-1 Jitsi Server#{jitsi.status.length>1?'s':''} Status
+                - const statuses = _.countBy(jitsi.status, (val) => {return val} )
+                for status in _.keys(statuses)
                     case status
                         when 'running'
-                            .badge.badge-success.ml-1= capitalize(status)
+                            .badge.badge-success.ml-1 #{statuses[status]}: #{capitalize(status)}
                         when 'stopped'
-                            .badge.badge-danger.ml-1= capitalize(status)
+                            .badge.badge-danger.ml-1 #{statuses[status]}: #{capitalize(status)}
                         default
-                            .badge.badge-warning.ml-1= capitalize(status)
+                            .badge.badge-warning.ml-1 #{statuses[status]}: #{capitalize(status)}
 
 
     .table-responsive

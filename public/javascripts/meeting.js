@@ -1,5 +1,5 @@
 $(function() {
-    $('#start-jitsi-btn').confirmation({
+    $('.start-jitsi-btn').confirmation({
         title: 'Start Jitsi Server?'
     }).on('click', startJitsiServer);
 
@@ -16,8 +16,12 @@ async function startJitsiServer(e){
     const result = await fetch(url, {
         method:'PUT',
         headers: {
-            'csrf-token': csrf
-        }
+            'csrf-token': csrf,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            videobridges: $(this).data('videobridges')
+        })
     });
     location.reload();
 }

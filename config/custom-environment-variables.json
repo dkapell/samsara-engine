@@ -48,7 +48,8 @@
         "active": "JITSI_ACTIVE",
         "instance": {
             "region": "JITSI_REGION",
-            "id": "JITSI_INSTANCE"
+            "id": "JITSI_INSTANCE",
+            "videobridges": "JITSI_VIDEOBRIDGES"
         },
         "jwt":{
             "issuer": "JITSI_JWT_ISSUER",

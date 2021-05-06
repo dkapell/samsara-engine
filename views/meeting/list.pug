@@ -8,26 +8,79 @@ block content
                 | New Meeting
         if jitsi.configured && jitsi.instance
             if checkPermission('admin') && jitsi.instance
-                .col-md.text-md-center.pt-1
-                    if jitsi.status.indexOf('running') !== -1
-                        a.btn.btn-danger#stop-jitsi-btn.mx-1(data-csrf=csrfToken)
-                            span.fas.fa-power-off.mr-1
-                            | Stop Jitsi Server
-                    if jitsi.status.indexOf('stopped') !== -1
-                        a.btn.btn-success#start-jitsi-btn.mx-1(data-csrf=csrfToken)
-                            span.fas.fa-power-off.mr-1
-                            | Start Jitsi Server
+                .col-md.text-md-center.pt-1.d-inline
+                    if jitsi.status.instance === 'running' || _.values(jitsi.status.videobridges).indexOf('running') !== -1
+                        .btn-group.btn-group-sm
+                            a.btn.btn-danger#stop-jitsi-btn.mr-1(data-csrf=csrfToken)
+                                span.fas.fa-power-off.mr-1
+                                | Stop All Jitsi Server(s)
+                        if _.values(jitsi.status.videobridges).indexOf('stopped') !== -1
+                            - const statuses = _.countBy(_.values(jitsi.status.videobridges), (val) => {return val} )
+                            .btn-group.btn-group-sm
+                                a.btn.btn-success.start-jitsi-btn(
+                                    data-csrf=csrfToken
+                                    data-videobridges=jitsi.videobridges.length
+                                )
+                                    span.fas.fa-power-off.mr-1
+                                    | Start All Videobridges
+                                if statuses.stopped > 1
+                                    button.btn.btn-success.dropdown-toggle.dropdown-toggle-split(
+                                        type="button"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                    )
+                                        span.sr-only Toggle Dropdown
+                                    .dropdown-menu
+                                        a.dropdown-item.start-jitsi-btn(
+                                            data-csrf=csrfToken
+                                            data-videobridges=0
+                                        ) Start Only Meet
+                                        - let n = 1;
+                                        while n < statuses.stopped.length
+                                            a.dropdown-item.start-jitsi-btn(
+                                                data-csrf=csrfToken
+                                                data-videobridges=n
+                                            ) Start #{n} Videobridge#{n>1?'s':''}
+                                            - n++
+                    if jitsi.status.instance === 'stopped'
+                        .btn-group.mr-1.btn-group-sm
+                            a.btn.btn-success.start-jitsi-btn(
+                                data-csrf=csrfToken
+                                data-videobridges=0
+                            )
+                                span.fas.fa-power-off.mr-1
+                                | Start Jitsi Meet
+                            if jitsi.videobridges.length
+                                button.btn.btn-success.dropdown-toggle.dropdown-toggle-split(
+                                    type="button"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                )
+                                    span.sr-only Toggle Dropdown
+                                .dropdown-menu
+                                    a.dropdown-item.start-jitsi-btn(
+                                        data-csrf=csrfToken
+                                        data-videobridges=jitsi.videobridges.length
+                                    ) Start Meet & All Videobridges
+                                    - let n = 1;
+                                    while n < jitsi.videobridges.length
+                                        a.dropdown-item.start-jitsi-btn(
+                                            data-csrf=csrfToken
+                                            data-videobridges=n
+                                        ) Start Meet & #{n} Videobridge#{n>1?'s':''}
+                                        - n++
 
-            .col-md.lead.text-md-right.pt-1 Jitsi Server#{jitsi.status.length>1?'s':''} Status
-                - const statuses = _.countBy(jitsi.status, (val) => {return val} )
-                for status in _.keys(statuses)
-                    case status
-                        when 'running'
-                            .badge.badge-success.ml-1 #{statuses[status]}: #{capitalize(status)}
-                        when 'stopped'
-                            .badge.badge-danger.ml-1 #{statuses[status]}: #{capitalize(status)}
-                        default
-                            .badge.badge-warning.ml-1 #{statuses[status]}: #{capitalize(status)}
+            .col-md.text-md-right.pt-1
+                ul.list-unstyled
+                    li Jitsi Server#{jitsi.status.length>1?'s':''}:
+                        +serverStatus(false, jitsi.status.instance)
+                    if jitsi.videobridges.length
+                        li Videobridge#{jitsi.videobridges.length>1?'s':''}:
+                            - const statuses = _.countBy(_.values(jitsi.status.videobridges), (val) => {return val} )
+                            for status in _.keys(statuses)
+                                +serverStatus(statuses[status], status)
 
 
     .table-responsive
@@ -77,3 +130,21 @@ block content
 append scripts
     script(src='/javascripts/data-table.js')
     script(src='/javascripts/meeting.js')
+
+mixin serverStatus(count, status)
+    case status
+        when 'running'
+            .badge.badge-success.ml-1
+                if count
+                    | #{count}
+                |  #{capitalize(status)}
+        when 'stopped'
+            .badge.badge-danger.ml-1
+                if count
+                    | #{count}
+                |  #{capitalize(status)}
+        default
+            .badge.badge-warning.ml-1
+                if count
+                    | #{count}
+                |  #{capitalize(status)}

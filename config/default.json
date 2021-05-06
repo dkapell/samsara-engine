@@ -52,7 +52,8 @@
         "active": false,
         "instance": {
             "region": "us-east-1",
-            "id": false
+            "id": false,
+            "videobridges": false
         },
         "jwt": {
             "issuer": "samsara",

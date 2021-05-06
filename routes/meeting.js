@@ -20,6 +20,7 @@ async function list(req, res, next){
         res.locals.jitsi = {
             configured: config.get('jitsi.server'),
             instance: config.get('jitsi.instance.id'),
+            videobridges: config.get('jitsi.instance.videobridges').split(/\s*,\s*/),
             status: await jitsi.server.status()
         };
         res.locals.csrfToken = req.csrfToken();
@@ -155,7 +156,8 @@ async function remove(req, res, next){
 
 async function startJitsi(req, res, next){
     try{
-        await jitsi.server.start();
+        console.log(`starting Jitsi with ${Number(req.body.videobridges)} videobridges`);
+        await jitsi.server.start(Number(req.body.videobridges));
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

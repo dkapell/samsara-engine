@@ -53,8 +53,8 @@ function startVideo(meeting, postStart){
             toolbarButtons: [
                 'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
                 'fodeviceselection', 'hangup', 'profile', 'recording',
-                'etherpad', 'sharedvideo', 'shareaudio', 'settings',
-                'videoquality', 'filmstrip', 'stats', 'shortcuts',
+                'etherpad', 'shareaudio', 'settings',
+                'videoquality', 'filmstrip', 'shortcuts',
                 'tileview', 'select-background', 'mute-everyone', 'mute-video-everyone', 'security'
             ],
         };

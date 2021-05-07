@@ -32,15 +32,11 @@ block content
                                     )
                                         span.sr-only Toggle Dropdown
                                     .dropdown-menu
-                                        a.dropdown-item.start-jitsi-btn(
-                                            data-csrf=csrfToken
-                                            data-videobridges=0
-                                        ) Start Only Meet
                                         - let n = 1;
-                                        while n < statuses.stopped.length
+                                        while n <= statuses.stopped
                                             a.dropdown-item.start-jitsi-btn(
                                                 data-csrf=csrfToken
-                                                data-videobridges=n
+                                                data-videobridges=n+statuses.running
                                             ) Start #{n} Videobridge#{n>1?'s':''}
                                             - n++
                     if jitsi.status.instance === 'stopped'

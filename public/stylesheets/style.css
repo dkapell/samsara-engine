@@ -281,3 +281,8 @@ img {
     height: 2px;
     width: 100%;
 }
+
+.editor-tabs .nav-link {
+    padding: 0.2rem 1rem;
+}
+

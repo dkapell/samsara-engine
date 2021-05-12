@@ -27,7 +27,7 @@ mixin htmlEditor(id, name, rows, size, contents)
                 aria-controls=`${id}-liquid`
                 aria-selected="false"
             ) Liquid
-    .tab-content.py-2(id=`${id}-editor`)
+    .tab-content.pb-2(id=`${id}-editor`)
         .tab-pane.fade.show.active(
             id=`${id}-code`
             role="tabpanel"
@@ -152,7 +152,7 @@ mixin jsEditor(id, name, rows, size, contents)
                     aria-selected="false"
                 ) Game Variables
 
-    .tab-content.py-2(id=`${id}-editor`)
+    .tab-content.pb-2(id=`${id}-editor`)
         .tab-pane.fade.show.active(
             id=`${id}-code`
             role="tabpanel"

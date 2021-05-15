@@ -7,7 +7,7 @@ block content
             span(class="fa fa-plus")
             |  New Trigger
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
@@ -18,7 +18,7 @@ block content
                     th Group
                     th Condition
                     if checkPermission('creator')
-                        th
+                        th(data-priority="1")
 
             tbody
                 for trigger in triggers
@@ -29,10 +29,10 @@ block content
                         td= trigger.description
                         td
                             if trigger.run
-                                 +triggerButton(trigger, 'none', true)(class='btn-sm mx-1')
+                                 +triggerButton(trigger, 'none', true)(class='btn-xs mx-1')
                         td
                             if trigger.player
-                                +triggerButton(trigger, 'none', false)(class='btn-sm mx-1')
+                                +triggerButton(trigger, 'none', false)(class='btn-xs mx-1')
                         td
                             if (trigger.group_id)
                                 span.mr-2= _.findWhere(groups, {id:Number(trigger.group_id)}).name
@@ -43,7 +43,7 @@ block content
 
                         if checkPermission('creator')
                             td.text-right
-                                a.btn.btn-outline-success.btn-sm.mr-1.action-btn(
+                                a.btn.btn-outline-success.btn-xs.mr-1.action-btn(
                                     role="button",
                                     href=`/trigger/new?clone=${trigger.id}`,
                                     title="Copy"
@@ -51,7 +51,7 @@ block content
                                 )
                                     i.fas.fa-copy.fa-fw
 
-                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                a.btn.btn-outline-danger.btn-xs.delete-btn(
                                     role="button",
                                     url=`/trigger/${trigger.id}`,
                                     data-back='/trigger'

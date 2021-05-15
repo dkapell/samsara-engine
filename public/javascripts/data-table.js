@@ -1,5 +1,18 @@
 $(function(){
     const ordering = [];
+    $('table.table-sorted').each(prepSortedTable);
+    $('.table-sorted  tbody').on('click', '.clickable-row', clickRow);
+    $('.table-sorted-loading').hide();
+    $('#exportCSV').click(exportCSV);
+
+    $('.table-sorted tbody').on('click', '.action-btn', function(e){
+        e.stopPropagation();
+    });
+});
+
+function prepSortedTable(){
+    const $table = $(this);
+    const ordering = [];
     const dataTable = $('.table-sorted').DataTable({
         paging: true,
         fixedHeader: true,
@@ -15,6 +28,11 @@ $(function(){
             orderable: false,
             targets:   0
         } ],
+        drawCallback: function(){
+            $table.find('.delete-btn').confirmation({
+                title: 'Delete this item'
+            }).on('click', deleteItem);
+        }
     });
 
     dataTable.columns().every( function( i ) {
@@ -28,28 +46,19 @@ $(function(){
     if( ordering.length > 0 ) {
         dataTable.order( ordering ).draw();
     }
+    $table.show();
+}
 
-    $('.clickable-row').on('click.data-table', function(e){
-        e.preventDefault();
-        if ($(e.target).hasClass('dtr-expand')){
-            return;
-        }
-        var object = $(this).attr('data-click-object');
-        var id = $(this).attr('data-click-id');
-        window.location.href='/'+ object + '/' + id;
-    });
-    $('.table-sorted').show();
-    $('.table-sorted-loading').hide();
-    $('#exportCSV').click(exportCSV);
-    $('.delete-btn').confirmation({
-        title: 'Delete this item'
-    }).on('click', deleteItem);
+function clickRow(e){
+    e.preventDefault();
+    if ($(e.target).hasClass('dtr-expand')){
+        return;
+    }
+    var object = $(this).attr('data-click-object');
+    var id = $(this).attr('data-click-id');
+    window.location.href='/'+ object + '/' + id;
+}
 
-    $('.action-btn').on('click', function(e){
-        e.stopPropagation();
-    });
-
-});
 
 function exportCSV(e){
     var query = { export:true };

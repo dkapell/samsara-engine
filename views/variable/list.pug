@@ -5,7 +5,7 @@ block content
         span(class="fa fa-plus")
         |  New Variable
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
@@ -14,7 +14,7 @@ block content
                     th Scope
                     th Public
                     th Default Value
-                    th
+                    th(data-priority="1")
 
             tbody
                 for variable in variables
@@ -31,7 +31,7 @@ block content
                             else
                                 = variable.base_value
                         td.text-right
-                            a.btn.btn-outline-danger.btn-sm.delete-btn(
+                            a.btn.btn-outline-danger.btn-xs.delete-btn(
                                 role="button",
                                 url=`/variable/${variable.id}`,
                                 data-back='/variable'

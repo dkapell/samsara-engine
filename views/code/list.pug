@@ -6,14 +6,14 @@ block content
             span(class="fa fa-plus")
             |  New Code
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
                     th(data-order='asc') Code
                     th Description
                     if checkPermission('creator')
-                        th
+                        th(data-priority="1")
 
             tbody
                 for code in codes
@@ -24,7 +24,7 @@ block content
                         td= code.description
                         if checkPermission('creator')
                             td.text-right
-                                a.btn.btn-outline-success.btn-sm.mr-1.action-btn(
+                                a.btn.btn-outline-success.btn-xs.mr-1.action-btn(
                                     role="button",
                                     href=`/code/new?clone=${code.id}`,
                                     title="Copy"
@@ -32,7 +32,7 @@ block content
                                 )
                                     i.fas.fa-copy.fa-fw
 
-                                a.btn.btn-outline-danger.btn-sm.delete-btn(
+                                a.btn.btn-outline-danger.btn-xs.delete-btn(
                                     role="button",
                                     url=`/code/${code.id}`,
                                     data-back='/code'

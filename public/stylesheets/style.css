@@ -286,3 +286,14 @@ img {
     padding: 0.2rem 1rem;
 }
 
+.table-sorted {
+    font-size:0.85rem;
+}
+
+.btn-xs
+{
+    padding: 1px 5px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    border-radius: 3px !important;
+}

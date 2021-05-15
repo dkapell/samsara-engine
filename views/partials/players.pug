@@ -61,7 +61,7 @@ mixin players(users, runId)
                                     | #{user.gamestate.transitionTime}
 
                         td.text-right
-                            a.btn.btn-outline-info.btn-sm.mx-1.player-message-btn(
+                            a.btn.btn-outline-info.btn-xs.mx-1.player-message-btn(
                                 style=user.connections.length?'':'display:none'
                                 role="button"
                                 data-toggle="modal"
@@ -76,11 +76,11 @@ mixin players(users, runId)
                             span.col-player-triggers
                                 for trigger in user.triggers
                                     if trigger.icon
-                                        +triggerButton(trigger, user.id, false)(class='btn-sm mx-1')
+                                        +triggerButton(trigger, user.id, false)(class='btn-xs mx-1')
 
 
 
-                            a.btn.btn-outline-info.btn-sm.mx-1.player-viewdata-btn(
+                            a.btn.btn-outline-info.btn-xs.mx-1.player-viewdata-btn(
                                 role="button"
                                 data-toggle="modal"
                                 data-target="#dataModal"
@@ -91,7 +91,7 @@ mixin players(users, runId)
                             )
                                 i.fas.fa-search
 
-                            a.btn.btn-outline-info.mr-1.btn-sm.player-advance-btn(
+                            a.btn.btn-outline-info.mr-1.btn-xs.player-advance-btn(
                                 role="button",
                                 url=`/player/${user.id}/advance`,
                                 data-csrf=csrfToken,
@@ -100,15 +100,15 @@ mixin players(users, runId)
                             )
                                 i.fas.fa-arrow-right
 
-                            a.btn.btn-success.mr-1.btn-sm.player-advance-btn-confirm(
+                            a.btn.btn-success.mr-1.btn-xs.player-advance-btn-confirm(
                                 role="button",
                                 url=`/player/${user.id}/advance`,
                                 data-csrf=csrfToken,
                             )
                                 o.fa.fa-check
-                            a.btn.btn-danger.mr-1.btn-sm.player-advance-btn-cancel(role="button")
+                            a.btn.btn-danger.mr-1.btn-xs.player-advance-btn-cancel(role="button")
                                 o.fa.fa-times
-                            a.btn.btn-outline-warning.btn-sm(
+                            a.btn.btn-outline-warning.btn-xs(
                                 role="button"
                                 href=`/player/${user.id}/assume`
                                 data-toggle="tooltip"

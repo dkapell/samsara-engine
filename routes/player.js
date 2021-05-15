@@ -21,7 +21,12 @@ async function list(req, res, next){
                 user.gamestate = await gameEngine.getGameState(user.id);
                 user.player = user.gamestate.player;
                 user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
-                user.triggers = await gameEngine.getTriggers(user.id);
+
+                user.triggers = (await req.models.player.getTriggers(user.player.id)).map(trigger => {
+                    delete trigger.actions;
+                    delete trigger.condition;
+                    return trigger;
+                });
 
                 return user;
             })

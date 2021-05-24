@@ -114,6 +114,7 @@ function prepFilteredTable(){
                         width:'resolve',
                         dropdownCssClass: 'filterDropdown'
                     });
+                addOptions(column);
 
                 const inputGroupAppend = $('<div>').addClass('input-group-append').appendTo(inputGroup);
 

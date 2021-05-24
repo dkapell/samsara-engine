@@ -5,7 +5,7 @@ block content
         span(class="fa fa-plus")
         |  New Variable
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
@@ -13,7 +13,7 @@ block content
                     th Type
                     th Scope
                     th Public
-                    th Default Value
+                    th(data-nofilter="true") Default Value
                     th(data-priority="1")
 
             tbody

@@ -286,7 +286,8 @@ img {
     padding: 0.2rem 1rem;
 }
 
-.table-sorted {
+.table-sorted,
+.table-filtered{
     font-size:0.85rem;
 }
 
@@ -296,4 +297,30 @@ img {
     font-size: 12px !important;
     line-height: 1.5 !important;
     border-radius: 3px !important;
+}
+
+
+.table-filtered .select2-container .select2-selection--single {
+  height: 29px !important;
+  font-weight: normal;
+  font-size: 0.77rem;
+}
+.table-filtered .select2-container .select2-selection--single .select2-selection__rendered,
+.filterDropdown .select2-results__option {
+  padding: 2px 4px 2px 12px !important;
+
+}
+.filterDropdown .select2-results__options{
+  font-size: 0.77rem;
+}
+
+.table-filtered .select2-selection__rendered {
+    line-height: 21px !important;
+}
+.table-filtered .select2-container .select2-selection--single .select2-selection__placeholder{
+      line-height: calc(1.5em + .2rem);
+}
+
+.filterDropdown .select2-container .select2-selection--single .select2-selection__rendered {
+   z-index:1;
 }

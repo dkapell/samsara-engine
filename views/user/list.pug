@@ -4,8 +4,11 @@ block content
     a.btn.btn-outline-success(href='/user/new')
         span(class="fa fa-plus")
         |  New User
-    .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+    .table-responsive.my-2
+        .col-sm-6.offset-sm-3.text-center#tableLoading
+            .spinner-border.m-5(role="status" style="width: 3rem; height: 3rem;")
+                .sr-only Table is Loading
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100( style="display: none")
             thead
                 tr
                     th
@@ -13,7 +16,7 @@ block content
                     th Email
                     th Type
                     th Run
-                    th Group(s)
+                    th(data-partialmatch="true") Group(s)
                     th Character
                     th(data-priority="1")
 

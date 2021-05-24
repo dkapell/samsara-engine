@@ -36,33 +36,35 @@ async function refreshPlayerList(){
     const result = await fetch(url);
     const data = await result.json();
     let hasTransitioning = false;
+    let changed = false;
     $table.DataTable().rows().every(function(){
         var $row = this.nodes().toJQuery();
         const user = _.findWhere(data.users, {id: $row.data('userid')});
 
-        let changed = false;
+        let rowChanged = false;
         //const $row = $table.find(`tr[data-userid=${user.id}]`);
         if (!$row[0]) { return; }
         // Group
         const $groupcol = $row.find('.col-player-groups');
         const grouptext = user.player.groups.length?_.pluck(user.player.groups, 'name').join(', '):null;
         if ($groupcol.html() !== grouptext){
-            changed = true;
+            rowChanged = true;
             $groupcol.html(grouptext);
         }
         // Name
         const $namecol = $row.find('.col-player-name');
         const nametext = user.name + ( user.connections.length?'<div class="badge badge-success ml-2">Connected</div>':'');
         if ($namecol.html() !== nametext){
-            changed = true;
+            rowChanged = true;
             $namecol.html(nametext);
+            $namecol.data('search', user.name);
         }
 
         // Character
         const $charactercol = $row.find('.col-player-character');
         const characterText = characternameTemplate({player:user.player});
         if($charactercol.html() !== characterText){
-            changed = true;
+            rowChanged = true;
             $charactercol.html(characterText);
         }
 
@@ -70,7 +72,7 @@ async function refreshPlayerList(){
         const $gamestatecol = $row.find('.col-player-gamestate');
         const gamestateText = gamestatebadgeTemplate({user:user});
         if($gamestatecol.html() !== gamestateText){
-            changed = true;
+            rowChanged = true;
             $gamestatecol.html(gamestateText);
         }
 
@@ -78,7 +80,7 @@ async function refreshPlayerList(){
         const $statetimecol = $row.find('.col-player-statetime');
         const statetimeText = user.gamestate.transitioning?user.gamestate.transitionTimeDelta:user.gamestate.transitionTime;
         if($statetimecol.html() !== statetimeText){
-            changed = true;
+            rowChanged = true;
             $statetimecol.html(statetimeText);
             $statetimecol.data('sort', user.player.statetime);
         }
@@ -112,15 +114,19 @@ async function refreshPlayerList(){
                 .on('click', runTrigger)
                 .tooltip();
 
-            changed = true;
+            rowChanged = true;
         }
 
         $row.find('.player-viewdata-btn').data('userdata', user.player.data);
 
-        if (changed){
-            $table.DataTable().row($row).invalidate().draw();
+        if (rowChanged){
+            changed = true;
+            $table.DataTable().row($row).invalidate();
         }
     });
+    if (changed){
+        $table.DataTable().draw();
+    }
 
     if (hasTransitioning){
         playerRefreshTimer = setTimeout(async () => {

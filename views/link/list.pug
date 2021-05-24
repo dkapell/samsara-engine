@@ -5,15 +5,15 @@ block content
         span(class="fa fa-plus")
         |  New Link
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-filtered-small.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
                     if checkPermission('creator')
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
-                    th URL
-                    th(data-priority="2") GM
+                    th(data-nofilter="true") URL
+                    th(data-priority="2" data-partialmatch="true") GM
                     th(data-priority="3") Active
                     if checkPermission('creator')
                         th(data-priority="1")
@@ -26,7 +26,11 @@ block content
                             th= link.id
                         td
                             a(href='/link/' + link.id)= link.name
-                        td
+                        td.text-truncate(
+                            style="max-width:200px"
+                            data-toggle='tooltip'
+                            title=link.stub?'stub':link.url
+                        )
                             if link.url === 'stub'
                                 i Stub
                             else

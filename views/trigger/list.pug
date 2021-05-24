@@ -7,16 +7,16 @@ block content
             span(class="fa fa-plus")
             |  New Trigger
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
                     th(data-order='asc') Name
                     th Description
-                    th Execute on Run
-                    th Execute on Players
-                    th Group
-                    th Condition
+                    th(data-nofilter="true") Execute on Run
+                    th(data-nofilter="true") Execute on Players
+                    th(data-partialmatch="true") Group
+                    th(data-nofilter="true") Condition
                     if checkPermission('creator')
                         th(data-priority="1")
 

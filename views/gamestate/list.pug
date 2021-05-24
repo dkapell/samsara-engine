@@ -6,7 +6,7 @@ block content
             span(class="fa fa-plus")
             |  New Gamestate
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
@@ -14,7 +14,7 @@ block content
                         th(data-priority="6") Id
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Image
-                    th(data-priority="3") Codes
+                    th(data-priority="3" data-partialmatch="true") Codes
                     th(data-priority="4") Has Chat
                     th(data-priority="5") Public Count
                     th(data-priority="6") Public Name

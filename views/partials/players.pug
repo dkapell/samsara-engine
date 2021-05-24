@@ -1,17 +1,23 @@
 mixin players(users, runId)
     - moment.relativeTimeThreshold('ss', 0);
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm#players-table(data-runid=run?run.id:null)
+        .col-sm-6.offset-sm-3.text-center#tableLoading
+            .spinner-border.m-5(role="status" style="width: 3rem; height: 3rem;")
+                .sr-only Table is Loading
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm#players-table.w-100(
+            data-runid=run?run.id:null
+            style= 'display:none'
+        )
             thead
                 tr
                     th
                     if runs
                         th(data-priority="7") Run
-                    th(data-priority="6") Group
+                    th(data-priority="6" data-partialmatch="true" ) Group
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Character
                     th(data-priority="4") Game State
-                    th(data-priority="5") State Time
+                    th(data-priority="5" data-nofilter="true") State Time
                     th(data-priority="3")
             tbody
                 for user in users
@@ -24,7 +30,7 @@ mixin players(users, runId)
                                 | #{_.pluck(user.player.groups, 'name').join(', ')}
                             else
                                 i Ungrouped
-                        td.col-player-name= user.name
+                        td.col-player-name(data-search=user.name)= user.name
                             if (user.connected)
                                 .badge.badge-success.ml-2 Connected
                         td.col-player-character

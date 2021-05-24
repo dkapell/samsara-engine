@@ -5,7 +5,7 @@ block content
         span(class="fa fa-plus")
         |  New Player Group
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
@@ -21,7 +21,7 @@ block content
                         td
                             a(href='/group/' + group.id)= group.name
                         td= group.chat?"Yes":"No"
-                        td= group.description
+                        td.text-truncate(style="max-width:300px")= group.description
                         td.text-right
                             a.btn.btn-outline-danger.btn-xs.delete-btn(
                                 role="button",

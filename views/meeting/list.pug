@@ -80,15 +80,15 @@ block content
 
 
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm
             thead
                 tr
                     th
                     if checkPermission('creator')
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
-                    th Meeting Id
-                    th(data-priority="3") GM
+                    th(data-nofilter="true") Meeting Id
+                    th(data-priority="3" data-partialmatch="true") GM
                     th(data-priority="4") Active
                     th(data-priority="2")
 

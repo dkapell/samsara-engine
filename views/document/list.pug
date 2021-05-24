@@ -6,14 +6,14 @@ block content
             span(class="fa fa-plus")
             |  New Document
     .table-responsive
-        table.table.table-striped.table-sorted.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
                     th
                     if checkPermission('creator')
                         th Id
                     th(data-order='asc') Name
-                    th Description
+                    th(data-nofilter='true') Description
                     if checkPermission('creator')
                         th(data-priority="1")
 
@@ -25,7 +25,7 @@ block content
                             th=document.id
                         td
                             a(href='/document/' + document.id)= document.name
-                        td= document.description
+                        td.text-truncate(style="max-width:300px")= document.description
                         if checkPermission('creator')
                             td.text-right
                                 a.btn.btn-outline-danger.btn-xs.delete-btn(

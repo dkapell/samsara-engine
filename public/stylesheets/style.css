@@ -89,6 +89,7 @@ map, image {
 #chat-sidebar{
     min-width: 360px;
     max-width: 360px;
+    flex: 0 0 360px;
     transition: all 0.3s;
     display: none;
 }
@@ -323,4 +324,8 @@ img {
 
 .filterDropdown .select2-container .select2-selection--single .select2-selection__rendered {
    z-index:1;
+}
+
+.hide{
+  display: none !important;
 }

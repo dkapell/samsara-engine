@@ -8,8 +8,8 @@ mixin gamestate(gamestate)
     if gamestate.image_id
         .d-flex.justify-content-center.mb-1
             .lead.text-center#link-name &nbsp;
-        .d-flex.justify-content-center.mb-1
-            image.imageHolder.map.mx-auto.img-fluid#gamestate-image(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id,style='max-height:60vh')
+        .d-flex.justify-content-center.mb-1.mw-100#gamestate-image-holder
+            image.imageHolder.map.mx-auto.img-fluid.mw-100#gamestate-image(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id,style='max-height:60vh; max-width:100%')
             map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
                 for area in gamestate.map
                     area(

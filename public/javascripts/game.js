@@ -13,6 +13,9 @@ $(function(){
     $('#game-text').hide();
     openWebSocket();
 
+    $( window ).resize(function() {
+        resizeImageMap();
+    });
 });
 
 function openWebSocket(){
@@ -256,11 +259,23 @@ function prepImageMap(){
 }
 
 function resizeImageMap(){
-    if ($('#gamestate-image')[0]){
+    if ($('#gamestate-image-holder')[0] && $('#gamestate-image-holder').is(':visible')){
+        $('#gamestate-image-holder').addClass('hide');
+
         const imageHeight = $('#gamestate-image')[0].naturalHeight;
         const panelHeight = $('#gamestate-container').height();
         const newHeight = Math.min(imageHeight, panelHeight*0.60);
-        $('#gamestate-image').mapster('resize', null, newHeight);
+
+        const imageWidth = $('#gamestate-image')[0].naturalWidth;
+        const panelWidth = $('#gamestate-container').width();
+        const newWidth = Math.min(imageWidth, panelWidth);
+
+        if (newWidth < newHeight * (imageWidth/imageHeight)){
+            $('#gamestate-image').mapster('resize', newWidth, null);
+        } else {
+            $('#gamestate-image').mapster('resize', null, newHeight);
+        }
+        $('#gamestate-image-holder').removeClass('hide');
     }
 }
 

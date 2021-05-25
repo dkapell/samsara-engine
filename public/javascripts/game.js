@@ -262,9 +262,13 @@ function resizeImageMap(){
     if ($('#gamestate-image-holder')[0] && $('#gamestate-image-holder').is(':visible')){
         $('#gamestate-image-holder').addClass('hide');
 
+
         const imageHeight = $('#gamestate-image')[0].naturalHeight;
         const panelHeight = $('#gamestate-container').height();
-        const newHeight = Math.min(imageHeight, panelHeight*0.60);
+        let newHeight = Math.min(imageHeight, panelHeight*0.55);
+        if ($('#gamestate-image-holder').data('height')){
+            newHeight = Math.max(newHeight, Number($('#gamestate-image-holder').data('height')))
+        }
 
         const imageWidth = $('#gamestate-image')[0].naturalWidth;
         const panelWidth = $('#gamestate-container').width();

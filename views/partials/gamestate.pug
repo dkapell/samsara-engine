@@ -1,4 +1,4 @@
-mixin gamestate(gamestate)
+mixin gamestate(gamestate, gmView)
     if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
         .d-flex.justify-content-center.mb-2
             .col-10.offset-1
@@ -7,8 +7,8 @@ mixin gamestate(gamestate)
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
     if gamestate.image_id
         .d-flex.justify-content-center.mb-1
-            .lead.text-center#link-name &nbsp;
-        .d-flex.justify-content-center.mb-1.mw-100#gamestate-image-holder
+            .lead.text-center#link-name.text-truncate(style="overflow:none") &nbsp;
+        .d-flex.justify-content-center.mb-1.mw-100#gamestate-image-holder(data-height= gmView?350:null)
             image.imageHolder.map.mx-auto.img-fluid.mw-100#gamestate-image(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id,style='max-height:60vh; max-width:100%')
             map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
                 for area in gamestate.map

@@ -186,11 +186,11 @@ function halfVideo(){
     $('#gamestate-container')
         .removeClass('d-none')
         .addClass('d-flex')
-        .css({height:'50%', overflow:'scroll'});
+        .css({height:'40%', overflow:'scroll'});
     $('#video-adjust').removeClass('d-none');
     $('#video-container')
         .removeClass('d-none')
-        .css({height:'50%'});
+        .css({height:'60%'});
     $('#video-adjust >> .resizer-expand').show();
     $('#video-adjust >> .resizer-restore').hide();
 

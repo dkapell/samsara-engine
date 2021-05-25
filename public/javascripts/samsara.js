@@ -94,6 +94,7 @@ function expandChatSidebar(e){
         $('#main-content').hide();
     }
     setTimeout(function() {
+        resizeImageMap();
         $('#chat-actions').show();
         scrollSmoothToBottom($(`#chat-${currentLocation}-tab >> .chat-container`), true);
     }, 200);
@@ -104,14 +105,14 @@ function hideChatSidebar(){
     $('#chat-sidebar').addClass('notransition');
     $('#chat-sidebar').addClass('d-none');
     $('#chat-sidebar').removeClass('d-flex');
-    $('#chat-sidebar').hide();
+    $('#chat-sidebar').addClass('hide');
     setTimeout(function() {
         $('#chat-show').hide();
     }, 350);
 }
 
 function showChatSidebar(expand){
-    $('#chat-sidebar').show();
+    $('#chat-sidebar').removeClass('hide');
     $('#chat-sidebar').removeClass('notransition');
     $('#chat-sidebar').removeClass('d-none');
     $('#chat-sidebar').addClass('d-flex');

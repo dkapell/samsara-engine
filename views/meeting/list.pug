@@ -8,7 +8,7 @@ block content
                 | New Meeting
         if jitsi.configured && jitsi.instance
             if checkPermission('admin') && jitsi.instance
-                .col-md.text-md-center.pt-1.d-inline
+                .col-md-auto.text-md-center.pt-1.d-inline
                     if jitsi.status.instance === 'running' || _.values(jitsi.status.videobridges).indexOf('running') !== -1
                         .btn-group.btn-group-sm
                             a.btn.btn-danger#stop-jitsi-btn.mr-1(data-csrf=csrfToken)
@@ -80,7 +80,13 @@ block content
 
 
     .table-responsive
-        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm
+        .col-sm-6.offset-sm-3.text-center#tableLoading
+            .spinner-border.m-5(role="status" style="width: 3rem; height: 3rem;")
+                .sr-only Table is Loading
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100(
+            style='display:none'
+        )
+
             thead
                 tr
                     th

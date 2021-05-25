@@ -26,6 +26,7 @@ function renderEditor(id, type, size){
 
 
     editor = CodeMirror.fromTextArea($textarea[0], editorConfig);
+    $textarea.data('editor', editor);
     editor.setSize(null, size);
     if (type === 'html'){
         $('#' + id + '-edit-tabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {

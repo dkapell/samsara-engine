@@ -1,0 +1,22 @@
+.form-group
+    label.control-label(for="character_name") Name
+    input.form-control(type="text",placeholder="Character",name="character[name]",value=character.name,id='character_name')
+
+.form-group
+    label.control-label(for="user_groups") Groups
+    select.form-control.select2(multiple, name="character[groups]",id="user_groups")
+        for group in groups
+            option(value=group.id selected=_.findWhere(character.groups, {id:group.id}))= group.name
+
+.form-group
+    label.control-label(for="character_sheet") Character Sheet URL
+    input.form-control#character_sheet(type="url",placeholder="URL",name="character[character_sheet]",value=character.character_sheet)
+    div.invalid-feedback Must be a valid URL
+
+.form-group
+    label.control-label(for="user_data") Custom Data
+    +jsonEditor('user_data', 'character[data]', 6, 300, character.data)
+
+.form-group
+    button.btn.btn-primary(type="submit")= character.id?'Update':'Create'
+    a.btn.btn-link(href="/user") Cancel

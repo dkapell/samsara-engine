@@ -167,6 +167,25 @@ create table player_groups(
         ON UPDATE NO ACTION ON DELETE CASCADE
 )
 
+create table characters (
+    id          serial,
+    name   varchar(255),
+    character_sheet varchar(255),
+    data jsonb,
+    primary key (id)
+);
+
+create table character_groups(
+    character_id int not null,
+    group_id int not null,
+    CONSTRAINT character_fk FOREIGN KEY (character_id)
+        REFERENCES "characters" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT group_fk FOREIGN KEY (group_id)
+        REFERENCES "groups" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
 create type variable_type as ENUM(
     'integer',
     'string',

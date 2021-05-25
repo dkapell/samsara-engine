@@ -37,12 +37,14 @@ async function showNew(req, res, next){
                 groups: [],
                 character: null,
                 data: await gameData.getStartData('player'),
-                character_sheet: null
+                character_sheet: null,
+                character_id: -1
             }
         };
         res.locals.runs = await req.models.run.list();
         res.locals.groups = await req.models.group.list();
         res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.characters = await req.models.character.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -79,12 +81,14 @@ async function showEdit(req, res, next){
                 gamestate_id: startState.id,
                 character: null,
                 data: await gameData.getStartData('player'),
-                character_sheet: null
+                character_sheet: null,
+                character_id: -1,
             };
         }
         res.locals.runs = await req.models.run.list();
         res.locals.groups = await req.models.group.list();
         res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.characters = await req.models.character.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.user = req.session.userData;

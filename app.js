@@ -39,6 +39,7 @@ const documentRouter = require('./routes/document');
 const codeRouter = require('./routes/code');
 const triggerRouter = require('./routes/trigger');
 const meetingRouter = require('./routes/meeting');
+const characterRouter = require('./routes/character');
 
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
@@ -201,6 +202,7 @@ app.use('/document', documentRouter);
 app.use('/code', codeRouter);
 app.use('/trigger', triggerRouter);
 app.use('/meeting', meetingRouter);
+app.use('/character', characterRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

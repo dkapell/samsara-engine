@@ -267,7 +267,7 @@ function resizeImageMap(){
         const panelHeight = $('#gamestate-container').height();
         let newHeight = Math.min(imageHeight, panelHeight*0.55);
         if ($('#gamestate-image-holder').data('height')){
-            newHeight = Math.max(newHeight, Number($('#gamestate-image-holder').data('height')))
+            newHeight = Math.max(newHeight, Number($('#gamestate-image-holder').data('height')));
         }
 
         const imageWidth = $('#gamestate-image')[0].naturalWidth;

@@ -1,51 +1,68 @@
-.form-group
-    label.control-label(for="user_name") Name
-    input.form-control(type="text",placeholder="Name",name="user[name]",value=user.name,id='user_name',required)
-    div.invalid-feedback Please choose a valid name
+.form-row.my-2
+    .col
+        label.control-label(for="user_name") Name
+        input.form-control(type="text",placeholder="Name",name="user[name]",value=user.name,id='user_name',required)
+        div.invalid-feedback Please choose a valid name
 
-.form-group
-    label.control-label(for="user_email") Email
-    input.form-control(type="email", placeholder="Email", name="user[email]",id="user_email",value=user.email,required)
+.form-row.my-2
+    .col
+        label.control-label(for="user_email") Email
+        input.form-control(type="email", placeholder="Email", name="user[email]",id="user_email",value=user.email,required)
 
-.form-group
-    label.control-label(for="user_type") User Type
-    select.custom-select.select2(name="user[type]",id="user_type")
-        for type in ['admin', 'creator', 'gm', 'player', 'none']
-            option(value=type selected=user.type === type)= capitalize(type)
+.form-row.my-2
+    .col
+        label.control-label(for="user_type") User Type
+        select.custom-select.select2(name="user[type]",id="user_type")
+            for type in ['admin', 'creator', 'gm', 'player', 'none']
+                option(value=type selected=user.type === type)= capitalize(type)
 
 fieldset#player_fields
     label.my-2.w-auto.lead Player settings
-    .form-group
-        label.control-label(for="user_run_id") Run
-        select.form-control.select2(name="user[player][run_id]",id="user_run_id")
-            for run in runs
-                option(value=run.id selected=user.player.run_id===run.id)= run.name
-    .form-group
-        label.control-label(for="user_groups") Groups
-        select.form-control.select2(multiple, name="user[player][groups]",id="user_groups")
-            for group in groups
-                option(value=group.id selected=_.findWhere(user.player.groups, {id:group.id}))= group.name
+    .form-row.my-2
+        .col
+            label.control-label(for="user_run_id") Run
+            select.form-control.select2(name="user[player][run_id]",id="user_run_id")
+                for run in runs
+                    option(value=run.id selected=user.player.run_id===run.id)= run.name
+    .form-row.my-2
+        .col
+            label.control-label(for="user_gamestate_id") Game State
+            select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id" data-placeholder="Select Gamestate")
+                option
+                for gamestate in gamestates
+                    option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
 
-    .form-group
-        label.control-label(for="user_character") Character Name
-        input.form-control(type="text",placeholder="Character",name="user[player][character]",value=user.player.character,id='user_character')
+    .form-row.my-2
+        .col
+            label.control-label(for="user_character_template") Character Template
+            select.form-control.select2#user_character_template(name='user[player][character_id]')
+                option(value=-1) Custom
+                for character in characters
+                    option(value=character.id selected=user.player.character_id===character.id data-character=character)= character.name
 
-    .form-group
-        label.control-label(for="user_character_sheet") Character Sheet URL
-        input.form-control#user_character_sheet(type="url",placeholder="URL",name="user[player][character_sheet]",value=user.player.character_sheet)
-        div.invalid-feedback Must be a valid URL
+    .form-row.my-2
+        .col.pl-4
+            label.control-label(for="user_character") Character Name
+            input.form-control(type="text",placeholder="Character",name="user[player][character]",value=user.player.character,id='user_character')
 
-    .form-group
-        label.control-label(for="user_gamestate_id") Game State
-        select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id" data-placeholder="Select Gamestate")
-            option
-            for gamestate in gamestates
-                option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
+    .form-row.my-2
+        .col.pl-4
+            label.control-label(for="user_groups") Groups
+            select.form-control.select2(multiple, name="user[player][groups]",id="user_groups")
+                for group in groups
+                    option(value=group.id selected=_.findWhere(user.player.groups, {id:group.id}))= group.name
 
-    .form-group
-        label.control-label(for="user_data") Custom Data
-        +jsonEditor('user_data', 'user[player][data]', 6, 300, user.player.data)
+    .form-row.my-2
+        .col.pl-4
+            label.control-label(for="user_character_sheet") Character Sheet URL
+            input.form-control#user_character_sheet(type="url",placeholder="URL",name="user[player][character_sheet]",value=user.player.character_sheet)
+            div.invalid-feedback Must be a valid URL
 
-.form-group
+    .form-row.my-2
+        .col.pl-4
+            label.control-label(for="user_data") Custom Data
+            +jsonEditor('user_data', 'user[player][data]', 6, 300, user.player.data)
+
+.form-row.my-2
     button.btn.btn-primary(type="submit")= user.id?'Update':'Create'
     a.btn.btn-link(href="/user") Cancel

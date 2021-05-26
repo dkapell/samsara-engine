@@ -194,6 +194,7 @@ function prepFilteredTable(){
 }
 
 function addOptions(column){
+    const partialmatch = $(column.header()).data('partialmatch')
     const select = $('.table-filtered thead tr:eq(1) th').eq(column.index()).find('select');
     select
         .empty()
@@ -208,13 +209,18 @@ function addOptions(column){
         }
     });
     for (const val of _.uniq(values).sort()){
-        if (column.search() === '^' + val + '$') {
+        if (partialmatch && column.search() ===  val ) {
             select.append($('<option>')
                 .attr('value', val)
                 .attr('selected', 'selected')
                 .text(val.length>33?val.substr(0,30)+'...':val)
             );
-
+        } else if (column.search() ===   `^${val}$`) {
+            select.append($('<option>')
+                .attr('value', val)
+                .attr('selected', 'selected')
+                .text(val.length>33?val.substr(0,30)+'...':val)
+            );
         } else {
             select.append($('<option>')
                 .attr('value', val)

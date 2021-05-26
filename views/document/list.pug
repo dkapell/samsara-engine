@@ -14,7 +14,6 @@ block content
         )
             thead
                 tr
-                    th
                     if checkPermission('creator')
                         th Id
                     th(data-order='asc') Name
@@ -25,7 +24,6 @@ block content
             tbody
                 for document in documents
                     tr(class='clickable-row', data-click-object='document' data-click-id=document.id)
-                        td.dtr-expand
                         if checkPermission('creator')
                             th=document.id
                         td

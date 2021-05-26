@@ -11,7 +11,6 @@ block content
         table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100( style="display: none")
             thead
                 tr
-                    th
                     th(data-order='asc') Name
                     th Email
                     th Type
@@ -23,7 +22,6 @@ block content
             tbody
                 for user in users
                     tr(class='clickable-row', data-click-object='user' data-click-id=user.id)
-                        td.dtr-expand
                         td
                             a(href='/user/' + user.id)= user.name
                         td= user.email

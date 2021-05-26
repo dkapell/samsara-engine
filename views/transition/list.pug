@@ -14,7 +14,6 @@ block content
         )
             thead
                 tr
-                    th
                     th(data-order='asc') From
                     th To
                     th Player Group
@@ -26,7 +25,6 @@ block content
             tbody
                 for transition in transitions
                     tr(class=checkPermission('creator')?'clickable-row':'', data-click-object='transition' data-click-id=transition.id)
-                        td.dtr-expand
                         td
                             .badge.badge-light.badge-gamestate #{transition.from_state}
                         td

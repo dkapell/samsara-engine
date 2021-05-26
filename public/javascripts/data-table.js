@@ -14,7 +14,25 @@ $(function(){
     $('.table-filtered tbody').on('click', '.action-btn', function(e){
         e.stopPropagation();
     });
+    setTimeout( () => {
+        makeColumnsResponsive();
+    }, 10);
+    $( window ).resize(function() {
+        makeColumnsResponsive();
+    });
 });
+
+function makeColumnsResponsive() {
+    const visibleColumnCount = $('.table-filtered tbody tr:first-child td:visible').length;
+    for (let i = 0; i <= $('.table-filtered thead tr:eq(1) th').length; i++) {
+        const visibile = $(`.table-filtered thead tr:eq(0) th:eq(${i})`).is(':visible');
+        if (visibile){
+            $(`.table-filtered thead tr:eq(1) th:eq(${i})`).show();
+        } else {
+            $(`.table-filtered thead tr:eq(1) th:eq(${i})`).hide();
+        }
+    }
+}
 
 function prepSortedTable(){
     const $table = $(this);
@@ -65,10 +83,12 @@ function prepFilteredTable(){
         paging: true,
         scrollCollapse: true,
         stateSave: true,
+        responsive: true,
         orderCellsTop: true,
         fixedHeader: true,
         lengthMenu: [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 'All'] ],
         pageLength: 25,
+
         initComplete: function(){
             this.api().columns().every( function () {
                 const column = this;
@@ -104,7 +124,7 @@ function prepFilteredTable(){
                             clearBtn.hide();
                         }
                         setTimeout(()=>{
-                            $('.table-filtered').DataTable().columns.adjust().responsive.recalc();
+                            $table.DataTable().columns.adjust().responsive.recalc();
                         }, 10);
 
                     })
@@ -165,9 +185,12 @@ function prepFilteredTable(){
             });
         })
     );
-
-    $table.show();
-    $('#tableLoading').hide();
+    setTimeout( () => {
+        $('#tableLoading').hide();
+        $table.show();
+        $table.DataTable().columns.adjust().responsive.recalc();
+        makeColumnsResponsive();
+    }, 10);
 }
 
 function addOptions(column){
@@ -204,7 +227,7 @@ function addOptions(column){
 
 function clickRow(e){
     e.preventDefault();
-    if ($(e.target).hasClass('dtr-expand')){
+    if ($(e.target).hasClass('dtr-control')){
         return;
     }
     var object = $(this).attr('data-click-object');

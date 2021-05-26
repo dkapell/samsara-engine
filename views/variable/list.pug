@@ -13,7 +13,6 @@ block content
         )
             thead
                 tr
-                    th
                     th(data-order='asc') Name
                     th Type
                     th Scope
@@ -24,7 +23,6 @@ block content
             tbody
                 for variable in variables
                     tr(class='clickable-row', data-click-object='variable' data-click-id=variable.id)
-                        td.dtr-expand
                         td
                             a(href='/variable/' + variable.id)= variable.name
                         td= capitalize(variable.type)

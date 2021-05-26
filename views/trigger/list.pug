@@ -10,7 +10,6 @@ block content
         table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
-                    th
                     th(data-order='asc') Name
                     th Description
                     th(data-nofilter="true") Execute on Run
@@ -23,7 +22,6 @@ block content
             tbody
                 for trigger in triggers
                     tr(class='clickable-row', data-click-object='trigger' data-click-id=trigger.id)
-                        td.dtr-expand
                         td
                             a(href='/trigger/' + trigger.id)= trigger.name
                         td= trigger.description

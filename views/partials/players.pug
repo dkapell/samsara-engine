@@ -4,13 +4,12 @@ mixin players(users, runId)
         .col-sm-6.offset-sm-3.text-center#tableLoading
             .spinner-border.m-5(role="status" style="width: 3rem; height: 3rem;")
                 .sr-only Table is Loading
-        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm#players-table.w-100(
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100#players-table(
             data-runid=run?run.id:null
             style= 'display:none'
         )
             thead
                 tr
-                    th
                     if runs
                         th(data-priority="7") Run
                     th(data-priority="6" data-partialmatch="true" ) Group
@@ -22,7 +21,6 @@ mixin players(users, runId)
             tbody
                 for user in users
                     tr(data-userid=user.id)
-                        td.dtr-expand
                         if runs
                             td.col-run-name= runs[user.player.run_id].name
                         td.col-player-groups

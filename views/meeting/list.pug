@@ -89,7 +89,6 @@ block content
 
             thead
                 tr
-                    th
                     if checkPermission('creator')
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
@@ -101,7 +100,6 @@ block content
             tbody
                 for meeting in meetings
                     tr(class='clickable-row', data-click-object='meeting' data-click-id=meeting.id)
-                        td.dtr-expand
                         if checkPermission('creator')
                             th= meeting.id
                         td

@@ -11,7 +11,6 @@ block content
         table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100(style="display:none")
             thead
                 tr
-                    th
                     th(data-order='asc') Name
                     th Has Chat
                     th Description
@@ -20,7 +19,6 @@ block content
             tbody
                 for group in groups
                     tr(class='clickable-row', data-click-object='group' data-click-id=group.id)
-                        td.dtr-expand
                         td
                             a(href='/group/' + group.id)= group.name
                         td= group.chat?"Yes":"No"

@@ -25,10 +25,11 @@ function showGraph(req, res, next){
 async function getGraphData(req, res, next){
     try{
         const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        const run = await req.models.run.getCurrent();
         await Promise.all(
             gamestates.map( async gamestate => {
                 gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
-                gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id})).length;
+                gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id, run_id: run.id})).length;
                 return gamestate;
             })
         );

@@ -34,7 +34,7 @@ function openWebSocket(){
                         gamedata[key] = data.gamedata[key];
                     }
                 }
-                renderPage(data.gamestate);
+                renderPage(data.gamestate, data.force);
             }break;
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display':
@@ -129,8 +129,8 @@ async function renderDefault(data){
     }
 }
 
-async function renderPage(gamestate){
-    if (currentGameState !== gamestate.id){
+async function renderPage(gamestate, force){
+    if (currentGameState !== gamestate.id || force){
         let initialState = false;
         if (currentGameState === null){
             initialState = true;

@@ -459,8 +459,18 @@ function clickMessageLocation(e){
         }
     }
     $('.chat-location').change();
-
 }
+
+function showChatGamestate(id){
+    const $chatLocation = $('.chat-location');
+    const $option = $chatLocation.find(`option[value="${id}"]`);
+    if($option.length){
+        $option.attr('selected', 'selected');
+        $('.chat-location').change();
+        return;
+    }
+}
+
 function addLocations(locations){
     for (const type in locations){
         if (type === 'current'){

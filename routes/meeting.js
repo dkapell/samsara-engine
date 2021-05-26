@@ -2,6 +2,7 @@ const express = require('express');
 const csrf = require('csurf');
 const pluralize = require('pluralize');
 const config = require('config');
+const async = require('async');
 const _ = require('underscore');
 const { nanoid } = require('nanoid');
 const permission = require('../lib/permission');
@@ -17,6 +18,12 @@ async function list(req, res, next){
     };
     try {
         res.locals.meetings = await req.models.meeting.list();
+
+        await async.each(res.locals.meetings, async(meeting) => {
+            if (meeting.gamestate_id){
+                meeting.gamestate = await req.models.gamestate.get(meeting.gamestate_id);
+            }
+        });
         res.locals.jitsi = {
             configured: config.get('jitsi.server'),
             instance: config.get('jitsi.instance.id'),
@@ -25,6 +32,7 @@ async function list(req, res, next){
         };
         res.locals.csrfToken = req.csrfToken();
 
+        //res.locals.gamestates = await req.models.gamestate.list();
         res.render('meeting/list', { pageTitle: 'Meetings' });
     } catch (err){
         next(err);
@@ -37,6 +45,9 @@ async function show(req, res, next){
     }
     try {
         const meeting = await req.models.meeting.get(req.params.id);
+        if (meeting.gamestate_id){
+            meeting.gamestate = await req.models.gamestate.get(meeting.gamestate_id);
+        }
         meeting.domain = config.get('jitsi.server');
         meeting.jwt = jitsi.token(meeting.meeting_id);
         res.locals.meeting = meeting;
@@ -53,28 +64,33 @@ async function show(req, res, next){
     }
 }
 
-function showNew(req, res, next){
-    res.locals.meeting = {
-        name: null,
-        description: null,
-        meeting_id: nanoid(10),
-        active: true,
-        gm: null,
-    };
-    res.locals.breadcrumbs = {
-        path: [
-            { url: '/', name: 'Home'},
-            { url: '/meeting', name: 'Meetings'},
-        ],
-        current: 'New'
-    };
-
-    res.locals.csrfToken = req.csrfToken();
-    if (_.has(req.session, 'meetingData')){
-        res.locals.meeting = req.session.meetingData;
-        delete req.session.meetingData;
+async function showNew(req, res, next){
+    try{
+        res.locals.meeting = {
+            name: null,
+            description: null,
+            meeting_id: nanoid(10),
+            active: true,
+            gm: null,
+            gamestate_id: null,
+        };
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/meeting', name: 'Meetings'},
+            ],
+            current: 'New'
+        };
+        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.csrfToken = req.csrfToken();
+        if (_.has(req.session, 'meetingData')){
+            res.locals.meeting = req.session.meetingData;
+            delete req.session.meetingData;
+        }
+        res.render('meeting/new');
+    } catch(err){
+        next(err);
     }
-    res.render('meeting/new');
 }
 
 async function showEdit(req, res, next){
@@ -95,7 +111,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + meeting.name
         };
-
+        res.locals.gamestates = await req.models.gamestate.list();
         res.render('meeting/edit');
     } catch(err){
         next(err);

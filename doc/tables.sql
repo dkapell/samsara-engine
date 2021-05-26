@@ -171,6 +171,7 @@ create table characters (
     id          serial,
     name   varchar(255),
     character_sheet varchar(255),
+    description text,
     data jsonb,
     primary key (id)
 );
@@ -317,5 +318,9 @@ create table meetings(
     description text,
     gm          varchar(255),
     active      boolean default true,
-    PRIMARY KEY(id)
+    gamestate_id int,
+    PRIMARY KEY(id),
+    CONSTRAINT meeting_gamestate_fk FOREIGN KEY (gamestate_id)
+        REFERENCES "gamestates" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
 );

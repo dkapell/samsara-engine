@@ -14,6 +14,7 @@ block content
                     th(data-order='asc') Name
                     th(data-partialmatch="true") Group(s)
                     th(data-nofilter="true") Character Sheet
+                    th(data-nofilter="true") Description
                     th(data-priority="1")
 
             tbody
@@ -28,8 +29,13 @@ block content
                                 i Ungrouped
                         td
                             if character.character_sheet
-                                a.action-btn(href=character.character_sheet target="_blank") Sheet
+                                a.action-btn(href=character.character_sheet target="_blank") View Sheet
                                     i.fas.fa-external-link-alt.ml-1
+                        td.text-truncate(
+                            style="max-width:300px"
+                            data-toggle='tooltip'
+                            title=character.description
+                        )= character.description
 
                         td.text-right
                             a.btn.btn-outline-danger.btn-xs.delete-btn(

@@ -9,7 +9,6 @@ block content
         table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100
             thead
                 tr
-                    th
                     th(data-order='asc') Code
                     th Description
                     if checkPermission('creator')
@@ -18,7 +17,6 @@ block content
             tbody
                 for code in codes
                     tr(class='clickable-row', data-click-object='code' data-click-id=code.id)
-                        td.dtr-expand
                         td
                             a(href='/code/' + code.id)= code.code
                         td= code.description

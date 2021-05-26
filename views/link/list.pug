@@ -14,7 +14,6 @@ block content
 
             thead
                 tr
-                    th
                     if checkPermission('creator')
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
@@ -27,7 +26,6 @@ block content
             tbody
                 for link in links
                     tr(class='clickable-row', data-click-object='link' data-click-id=link.id)
-                        td.dtr-expand
                         if checkPermission('creator')
                             th= link.id
                         td

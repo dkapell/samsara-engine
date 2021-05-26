@@ -14,7 +14,6 @@ block content
         )
             thead
                 tr
-                    th
                     if checkPermission('creator')
                         th(data-priority="6") Id
                     th(data-priority="1", data-order='asc') Name
@@ -29,7 +28,6 @@ block content
             tbody
                 for gamestate in gamestates
                     tr(class='clickable-row', data-click-object='gamestate' data-click-id=gamestate.id)
-                        td.dtr-expand
                         if checkPermission('creator')
                             th=gamestate.id
                         td

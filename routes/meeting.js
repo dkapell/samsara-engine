@@ -124,6 +124,9 @@ async function create(req, res, next){
     req.session.meetingData = meeting;
 
     try{
+        if (meeting.gamestate_id === ''){
+            meeting.gamestate_id = null;
+        }
         await req.models.meeting.create(meeting);
         delete req.session.meetingData;
         req.flash('success', `Created Meeting ${meeting.name}`);
@@ -141,8 +144,8 @@ async function update(req, res, next){
     if (!_.has(meeting, 'active')){
         meeting.active = false;
     }
-    if (meeting.code === ''){
-        meeting.code = null;
+    if (meeting.gamestate_id === ''){
+        meeting.gamestate_id = null;
     }
 
     try {

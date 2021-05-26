@@ -93,6 +93,7 @@ block content
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
                     th(data-nofilter="true") Meeting Id
+                    th For Gamestate
                     th(data-priority="3" data-partialmatch="true") GM
                     th(data-priority="4") Active
                     th(data-priority="2")
@@ -105,11 +106,17 @@ block content
                         td
                             a(href='/meeting/' + meeting.id)= meeting.name
                         td= meeting.meeting_id
+                        td
+                            if meeting.gamestate_id
+                                a.action-btn(href=`/gamestate/${meeting.gamestate.id}`)
+                                    .badge.badge-light.badge-gamestate= meeting.gamestate.name
+                            else
+                                i None Specified
                         td= meeting.gm
                         td= meeting.active?'Yes':'No'
                         td.text-right
                             if jitsiActive
-                                a.btn.btn-primary.btn-xs.action-btn(
+                                a.btn.btn-primary.btn-sm.action-btn(
                                     role="button",
                                     href=`/meeting/${meeting.id}/open`
                                     data-toggle="tooltip"
@@ -119,7 +126,7 @@ block content
                                     i.fas.fa-video.fa-fw
                                     span.ml-2.d-none.d-md-inline Open Meeting
                             if checkPermission('creator')
-                                a.btn.btn-outline-danger.btn-xs.delete-btn.ml-2(
+                                a.btn.btn-outline-danger.btn-sm.delete-btn.ml-2(
                                     role="button",
                                     url=`/meeting/${meeting.id}`,
                                     data-back='/meeting'

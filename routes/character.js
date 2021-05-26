@@ -28,7 +28,8 @@ async function showNew(req, res, next){
             groups: [],
             name: null,
             data: await gameData.getStartData('player'),
-            character_sheet: null
+            character_sheet: null,
+            description: null
 
         };
         res.locals.groups = await req.models.group.list();

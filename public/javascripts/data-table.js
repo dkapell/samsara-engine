@@ -194,7 +194,7 @@ function prepFilteredTable(){
 }
 
 function addOptions(column){
-    const partialmatch = $(column.header()).data('partialmatch')
+    const partialmatch = $(column.header()).data('partialmatch');
     const select = $('.table-filtered thead tr:eq(1) th').eq(column.index()).find('select');
     select
         .empty()

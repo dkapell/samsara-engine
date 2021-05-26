@@ -3,8 +3,8 @@
     input.form-control(type="text",placeholder="Character",name="character[name]",value=character.name,id='character_name')
 
 .form-group
-    label.control-label(for="user_groups") Groups
-    select.form-control.select2(multiple, name="character[groups]",id="user_groups")
+    label.control-label(for="character__groups") Groups
+    select.form-control.select2(multiple, name="character[groups]",id="character__groups")
         for group in groups
             option(value=group.id selected=_.findWhere(character.groups, {id:group.id}))= group.name
 
@@ -14,9 +14,14 @@
     div.invalid-feedback Must be a valid URL
 
 .form-group
-    label.control-label(for="user_data") Custom Data
-    +jsonEditor('user_data', 'character[data]', 6, 300, character.data)
+    label.control-label(for="character__data") Custom Data
+    +jsonEditor('character__data', 'character[data]', 6, 300, character.data)
+
+.form-group
+    label.control-label(for="character_description") Description
+    textarea.form-control#character_description(name="character[description]",rows=3)
+        = character.description
 
 .form-group
     button.btn.btn-primary(type="submit")= character.id?'Update':'Create'
-    a.btn.btn-link(href="/user") Cancel
+    a.btn.btn-link(href="/character") Cancel

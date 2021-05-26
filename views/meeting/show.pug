@@ -14,11 +14,13 @@ block content
             data-meeting_id=meeting.meeting_id,
             data-subject=meeting.name
             data-jwt=meeting.jwt
+            data-gamestate_id=meeting.gamestate_id
         )
 
 append scripts
     script.
        $(function() {
+            const gamestate_id = $('#video-container').data('gamestate_id');
             startVideo({
                 domain: $('#video-container').data('domain'),
                 meetingName: $('#video-container').data('meeting_id'),
@@ -28,6 +30,9 @@ append scripts
                 gm: true,
                 postStart: function(data){
                     expandChatSidebar();
+                    if (gamestate_id){
+                        showChatGamestate(gamestate_id);
+                    }
                 }
             });
         });

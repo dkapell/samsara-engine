@@ -49,7 +49,7 @@ block content
                         a.btn.btn-outline-info.mt-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken)
                                 i.fas.fa-arrow-right.pr-1
                                 | Advance All
-                        if (_.pluck(users, 'connected').reduce((o, e) => {o += e; return o }, 0))
+                        if (_.pluck(users, 'connections').reduce((o, e) => {o += e.length; return o }, 0))
                             a.btn.btn-outline-info.ml-2.mt-2(
                                 role="button"
                                 data-toggle="modal"
@@ -59,7 +59,7 @@ block content
                             )
                                 i.fas.fa-comment.pr-1
                                 | Message All
-                                .badge.badge-light.ml-1=_.pluck(users, 'connected').filter(e => {return e;}).length
+                                .badge.badge-light.ml-1=_.pluck(users, 'connections').filter(e => {return e.length;}).length
                                 .sr-only Connected Users
 
             if triggers.filter(trigger => { return trigger.run; }).length

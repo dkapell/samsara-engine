@@ -105,6 +105,9 @@ function addChatMessage(message, fastScroll){
             message.direct_location_name = message.recipient_type === 'player'?message.sender:message.sender.full;
         }
         addLocationOption(message.direct_location_name, 'direct', message.self?message.location_id:message.user_id);
+        if(!currentLocationId.direct){
+            currentLocationId.direct = message.self?message.location_id:message.user_id;
+        }
     }
     if (!message.self && !$chatContainer.find('.first-new').length){
         if (_.has(messagesSeen, message.location)){

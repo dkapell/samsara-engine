@@ -89,9 +89,8 @@ async function refreshPlayerList(){
             hasTransitioning = true;
         }
 
-
         // Actions
-        if (user.connected){
+        if (user.connections.length){
             $row.find('.player-message-btn').show();
         } else {
             $row.find('.player-message-btn').hide();

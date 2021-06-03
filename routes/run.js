@@ -1,8 +1,8 @@
 const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
-const moment = require('moment');
 const async = require('async');
+const moment = require('moment');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameData = require('../lib/gameData');
@@ -17,7 +17,11 @@ async function list(req, res, next){
         current: 'Runs'
     };
     try {
-        res.locals.runs = await req.models.run.list();
+        res.locals.runs = await async.map(await req.models.run.list(), async (run) => {
+            run.players = await req.models.player.listByRunId(run.id);
+            return run;
+        });
+
         res.render('run/list', { pageTitle: 'Runs' });
     } catch (err){
         next(err);

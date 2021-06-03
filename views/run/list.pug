@@ -14,6 +14,7 @@ block content
                     th(style="max-width:50px") ID
                     th(data-order='asc') Name
                     th Current
+                    th Players
                     th Show Stubs
                     th(data-priority="1")
             tbody
@@ -23,6 +24,7 @@ block content
                         td
                             a(href='/run/' + run.id)= run.name
                         td= run.current?'Yes':''
+                        td= run.players.length
                         td
                             if run.show_stubs
                                 span.px-3.py-1 Yes

@@ -30,7 +30,7 @@ block content
                     tr(class='clickable-row', data-click-object='gamestate' data-click-id=gamestate.id)
                         if checkPermission('creator')
                             th=gamestate.id
-                        td
+                        td(data-search=gamestate.name)
                             a(href='/gamestate/' + gamestate.id)= gamestate.name
                             if gamestate.start
                                 span.badge.badge-success.ml-2 Start

@@ -3,6 +3,7 @@
         "name": "SAMSARA_NAME",
         "dbURL": "DATABASE_URL",
         "dbSSL": "DATABASE_SSL",
+        "dbPoolSize": "DATABASE_POOL_SIZE",
         "sessionType": "SESSION_TYPE",
         "sessionSecret": "SESSION_SECRET",
         "redis": {

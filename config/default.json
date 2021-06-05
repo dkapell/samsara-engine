@@ -5,6 +5,7 @@
         "dbURL": "postgres://samsara:samsara@localhost:5432/samsara",
         "dbSSL": false,
         "dbPoolSize": 1,
+        "logRequests": true,
         "sessionType": "local",
         "sessionSecret": "samsara",
         "redis":{

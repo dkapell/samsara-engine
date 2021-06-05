@@ -1,5 +1,6 @@
 {
     "app": {
-        "dbSSL": true
+        "dbSSL": true,
+        "logRequests": false
     }
 }

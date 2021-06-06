@@ -198,14 +198,14 @@ function cancelAdvance(e){
 function showToastModal(event){
     const $this = $(this);
     const $button = $(event.relatedTarget);
-    const type = $button.data('type');
+    const type = $button.attr('data-type');
     if (type === 'user'){
-        const userId = $button.data('user');
-        const name = $button.data('name');
+        const userId = $button.attr('data-user');
+        const name = $button.attr('data-name');
         $this.find('.modal-title').text(`Send message to ${name}`);
         $('#toastSend').attr('data-user', userId);
     } else {
-        const runId = $button.data('run');
+        const runId = $button.attr('data-run');
         $this.find('.modal-title').text('Send message to all players');
         $('#toastSend').attr('data-run', runId);
     }
@@ -218,11 +218,12 @@ async function sendToast(e){
 
     const message = $('#toastText').val();
 
-    const type = $this.data('type');
+    const type = $this.attr('data-type');
     let url = null;
 
     if (type === 'user'){
-        const userId = $this.data('user');
+        const userId = $this.attr('data-user');
+        console.log(userId)
         url = `/player/${userId}/toast`;
     } else {
         const runId = $this.data('run');

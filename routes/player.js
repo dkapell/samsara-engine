@@ -1,6 +1,7 @@
 const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
+const async = require('async');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 
@@ -16,21 +17,20 @@ async function list(req, res, next){
         const players = (await req.models.user.list()).filter(user => {
             return user.type === 'player';
         });
-        res.locals.users = await Promise.all(
-            players.map( async user => {
-                user.gamestate = await gameEngine.getGameState(user.id);
-                user.player = user.gamestate.player;
-                user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
+        res.locals.users = await async.map(players, async user => {
+            user.gamestate = await gameEngine.getGameState(user.id);
+            user.player = user.gamestate.player;
+            user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
 
-                user.triggers = (await req.models.player.getTriggers(user.player.id)).map(trigger => {
-                    delete trigger.actions;
-                    delete trigger.condition;
-                    return trigger;
-                });
+            user.triggers = (await req.models.player.getTriggers(user.player.id)).map(trigger => {
+                delete trigger.actions;
+                delete trigger.condition;
+                return trigger;
+            });
 
-                return user;
-            })
-        );
+            return user;
+        });
+
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
         res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
         res.locals.triggers = await req.models.trigger.list();

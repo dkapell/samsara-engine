@@ -102,7 +102,7 @@ async function show(req, res, next){
 
 async function filter(arr, callback) {
     const fail = Symbol();
-    return (await Promise.all(arr.map(async item => (await callback(item)) ? item : fail))).filter(i=>i!==fail);
+    return (await async.map(arr, async item => (await callback(item)) ? item : fail)).filter(i=>i!==fail);
 }
 
 function showNew(req, res, next){
@@ -237,12 +237,10 @@ async function resetRun(req, res, next){
         }
         const players = await req.models.player.listByRunId(req.params.id);
         const initialState = await req.models.gamestate.getStart();
-        await Promise.all(
-            players.map( async player => {
-                await gameEngine.changeState(player.user_id, initialState.id, 0);
-                return req.app.locals.gameServer.sendGameState(player.user_id);
-            })
-        );
+        await async.each(players, async player => {
+            await gameEngine.changeState(player.user_id, initialState.id, 0);
+            return req.app.locals.gameServer.sendGameState(player.user_id);
+        });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialState.id);
         await gameEngine.updateAllTriggers();
         res.json({success:true});
@@ -262,14 +260,12 @@ async function updateAllPlayers(req, res, next){
         const state = await req.models.gamestate.get(req.body.state_id);
         let group = false;
         if (!state) { throw new Error('State not found'); }
-        await Promise.all(
-            players.map( async player => {
-                if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
-                    await gameEngine.changeState(player.user_id, state.id, 0, true);
-                    return req.app.locals.gameServer.sendGameState(player.user_id);
-                }
-            })
-        );
+        await async.each( players, async player => {
+            if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
+                await gameEngine.changeState(player.user_id, state.id, 0, true);
+                return req.app.locals.gameServer.sendGameState(player.user_id);
+            }
+        });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, state.id);
         await gameEngine.updateAllTriggers();
         res.json({success:true});
@@ -286,15 +282,13 @@ async function advanceAll(req, res, next){
             throw new Error ('Run not found');
         }
         const players = await req.models.player.listByRunId(req.params.id);
-        await Promise.all(
-            players.map( async player => {
-                const changed = await gameEngine.nextState(player.user_id);
-                if (changed){
-                    await req.app.locals.gameServer.sendGameState(player.user_id);
-                }
-                return;
-            })
-        );
+        await async.each(players, async player => {
+            const changed = await gameEngine.nextState(player.user_id);
+            if (changed){
+                await req.app.locals.gameServer.sendGameState(player.user_id);
+            }
+            return;
+        });
         await gameEngine.updateAllTriggers();
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
         res.json({success:true});
@@ -338,11 +332,10 @@ async function runTriggerAll(req, res, next){
             throw new Error('Trigger not enabled for all players in a run');
         }
         const players = await req.models.player.listByRunId(req.params.id);
-        await Promise.all(
-            players.map(async player => {
-                const user = await req.models.user.get(player.user_id);
-                return req.app.locals.gameServer.runTrigger(trigger, user);
-            }));
+        await async.each(players, async player => {
+            const user = await req.models.user.get(player.user_id);
+            return req.app.locals.gameServer.runTrigger(trigger, user);
+        });
         await req.app.locals.gameServer.sendPlayerUpdate();
         res.json({success:true});
     } catch(err){

@@ -26,6 +26,9 @@
             "clientID": "INTERCODE_OAUTH_CLIENT_ID",
             "clientSecret": "INTERCODE_OAUTH_CLIENT_SECRET",
             "callbackURL": "INTERCODE_CALLBACK_URL"
+        },
+        "local":{
+            "key": "LOCAL_KEY"
         }
     },
     "game": {

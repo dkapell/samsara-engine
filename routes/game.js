@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('config');
 const _ = require('underscore');
+const async = require('async');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameValidator = require('../lib/gameValidator');
@@ -26,13 +27,11 @@ async function getGraphData(req, res, next){
     try{
         const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
         const run = await req.models.run.getCurrent();
-        await Promise.all(
-            gamestates.map( async gamestate => {
-                gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
-                gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id, run_id: run.id})).length;
-                return gamestate;
-            })
-        );
+        await async.each(gamestates,  async gamestate => {
+            gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
+            gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id, run_id: run.id})).length;
+            return gamestate;
+        });
         res.json({
             gamestates: gamestates,
             triggers: await req.models.trigger.list(),

@@ -30,6 +30,9 @@
             "callbackURL": "http://localhost:3000/auth/intercode/callback",
             "scope": "public openid",
             "passReqToCallback": true
+        },
+        "local": {
+            "key": null
         }
     },
     "aws": {

@@ -51,26 +51,26 @@ exports.find = async function(conditions){
         query += ' where ' + queryParts.join(' and ');
     }
     const result = await database.query(query, queryData);
-    return Promise.all(result.rows.map(fillGroups));
+    return async.map(result.rows, fillGroups);
 };
 
 exports.list = async function(){
     const query = 'select * from players';
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillGroups));
+    return async.map(result.rows, fillGroups);
 };
 
 exports.listByGroupAndRun = async function(group_id, run_id){
     const query = `select players.* from players left join player_groups on player_groups.player_id = players.id
         where player_groups.group_id = $1 and players.run_id = $2`;
     const result = await database.query(query, [group_id, run_id]);
-    return Promise.all(result.rows.map(fillGroups));
+    return async.map(result.rows, fillGroups);
 };
 
 exports.listByRunId = async function(run_id){
     const query = 'select * from players where run_id = $1';
     const result = await database.query(query, [run_id]);
-    return Promise.all(result.rows.map(fillGroups));
+    return async.map(result.rows, fillGroups);
 };
 
 exports.create = async function(data){
@@ -145,11 +145,10 @@ exports.updateState = async function(id, gamestate_id, cb){
 async function fillGroups(player){
     const query = 'select * from player_groups where player_id = $1';
     const result = await database.query(query, [player.id]);
-    player.groups = await Promise.all(
-        result.rows.map( async playerGroup => {
-            return models.group.get(playerGroup.group_id);
-        })
-    );
+    player.groups = await async.map(result.rows, async playerGroup => {
+        return models.group.get(playerGroup.group_id);
+    });
+
     player.groups = _.sortBy(player.groups, 'name');
     return player;
 }

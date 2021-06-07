@@ -1,6 +1,7 @@
 const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
+const async = require('async');
 const permission = require('../lib/permission');
 const mapParser = require('../lib/mapParser');
 const gameEngine = require('../lib/gameEngine');
@@ -15,14 +16,12 @@ async function list(req, res, next){
     };
     try {
         const gamestates = await req.models.gamestate.list();
-        res.locals.gamestates = await Promise.all(
-            gamestates.map( async gamestate => {
-                if (gamestate.image_id){
-                    gamestate.image = await req.models.image.get(gamestate.image_id);
-                }
-                return gamestate;
-            })
-        );
+        res.locals.gamestates = await async.map(gamestates, async gamestate => {
+            if (gamestate.image_id){
+                gamestate.image = await req.models.image.get(gamestate.image_id);
+            }
+            return gamestate;
+        });
         res.render('gamestate/list', { pageTitle: 'Gamestates' });
     } catch (err){
         next(err);

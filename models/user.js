@@ -63,16 +63,15 @@ exports.findOne = async function(conditions){
 exports.list = async function(){
     const query = 'select * from users order by name';
     const result = await database.query(query);
-    return Promise.all(
-        result.rows.map( async user => {
-            if (user.type === 'player'){
-                user.player = await models.player.getByUserId(user.id);
-            }
-            user.connections = await (models.connection.find({user_id: user.id}));
-            await cache.store('user', user.id, user);
-            return user;
-        })
-    );
+    return async.map(result.rows, async user => {
+        if (user.type === 'player'){
+            user.player = await models.player.getByUserId(user.id);
+        }
+        user.connections = await (models.connection.find({user_id: user.id}));
+        await cache.store('user', user.id, user);
+        return user;
+    });
+
 };
 
 exports.listGms = async function(){

@@ -40,7 +40,7 @@ exports.list = async function(){
     if (gamestates) { return gamestates; }
     const query = 'select * from gamestates order by name';
     const result = await database.query(query);
-    gamestates = await Promise.all(result.rows.map(fillCodes));
+    gamestates = await async.map(result.rows, fillCodes);
     await cache.store('gamestate', 'list', gamestates);
     return gamestates;
 };
@@ -49,7 +49,7 @@ exports.listSpecial = async function(){
     const query = `select * from gamestates where start = true or special = true or finish = true
         order by start desc nulls last, finish asc nulls first, name`;
     const result = await database.query(query);
-    return Promise.all(result.rows.map(fillCodes));
+    return async.map(result.rows, fillCodes);
 };
 
 exports.listForChat = async function(){

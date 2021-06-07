@@ -45,4 +45,4 @@ doc/scratchspace
 
 public/javascripts/bundles
 public/javascripts/templates
-scripts/tests
+scripts/devtests

@@ -64,6 +64,15 @@ router.get('/google/callback',
         }
     });
 
+if (config.get('auth.local.key') && config.util.getEnv('NODE_ENV') === 'development'){
+    // GET /auth/token
+    router.post('/token',
+        passport.authenticate('localapi', { failureRedirect: '/', failureFlash: true }),
+        function(req, res) {
+            res.json({ message: 'Authenticated' });
+        });
+}
+
 router.get('/logout',
     function logout(req, res, next){
         req.logout();

@@ -15,6 +15,7 @@ const jwt_decode = require('jwt-decode');
 const methodOverride = require('method-override');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const OAuth2Strategy = require('passport-oauth2').Strategy;
+const LocalStrategy = require('passport-localapikey').Strategy;
 
 const models = require('./lib/models');
 const permission = require('./lib/permission');
@@ -170,6 +171,24 @@ if (config.get('auth.intercode.clientID')){
     passport.use('intercode', intercodeStrategy);
 }
 
+if (config.get('auth.local.key') && app.get('env') === 'development'){
+    const localStrategy = new LocalStrategy(
+        async function(apikey, cb) {
+            const parts = apikey.split(/\//, 2);
+            if (parts[0] !== config.get('auth.local.key')){
+                cb(null, false);
+            }
+            try{
+                const user = await models.user.get(parts[1]);
+                console.log('API Token login for '+ user.name);
+                cb(null, user);
+            } catch(err){
+                cb(err);
+            }
+        });
+
+    passport.use('localapi', localStrategy);
+}
 
 // Set common helpers for the view
 app.use(async function(req, res, next){

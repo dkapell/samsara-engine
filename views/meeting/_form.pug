@@ -15,6 +15,11 @@
 
 .form-group
     .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="meeting[public]", id="meeting_public", checked=meeting.public)
+        label.custom-control-label(for="meeting_public") Public (does not require gm)
+
+.form-group
+    .custom-control.custom-switch
         input.custom-control-input(type="checkbox", name="meeting[active]", id="meeting_active", checked=meeting.active)
         label.custom-control-label(for="meeting_active") Active
 .form-group

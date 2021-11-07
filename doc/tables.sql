@@ -318,6 +318,7 @@ create table meetings(
     description text,
     gm          varchar(255),
     active      boolean default true,
+    public      boolean default false,
     gamestate_id int,
     PRIMARY KEY(id),
     CONSTRAINT meeting_gamestate_fk FOREIGN KEY (gamestate_id)

@@ -144,6 +144,10 @@ async function update(req, res, next){
     if (!_.has(meeting, 'active')){
         meeting.active = false;
     }
+    if (!_.has(meeting, 'public')){
+        meeting.public = false;
+    }
+
     if (meeting.gamestate_id === ''){
         meeting.gamestate_id = null;
     }

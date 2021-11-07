@@ -38,6 +38,9 @@ function startVideo(meeting, postStart){
     if (meeting.jwt){
         options.jwt = meeting.jwt;
     }
+    if (meeting.subject){
+        options.subject = meeting.subject;
+    }
 
     if (!meeting.gm){
         options.configOverwrite = {

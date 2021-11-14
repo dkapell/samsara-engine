@@ -118,7 +118,7 @@ block content
                         td= meeting.public?'Yes':'No'
                             if meeting.show_users
                                 | , Users Shown
-                        td= meeting.users
+                        td.text-right(data-toggle="popover" title='Meeting Participants' data-content=_.pluck(meeting.participants, 'name').join('<br>') )= meeting.users
                         td= meeting.active?'Yes':'No'
                         td.text-right
                             if jitsiActive
@@ -139,10 +139,14 @@ block content
                                 )
                                     i.fas.fa-trash.fa-fw
 
-
 append scripts
     script(src='/javascripts/data-table.js')
     script(src='/javascripts/meeting.js')
+    script.
+        $(function(){
+             $('[data-toggle="popover"]').popover({html:true, trigger:'hover'})
+        });
+
 
 mixin serverStatus(count, status)
     case status

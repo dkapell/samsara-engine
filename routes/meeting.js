@@ -33,6 +33,20 @@ async function list(req, res, next){
             } else {
                 meeting.users = 0;
             }
+            const participants = await req.models.participant.find({meeting_id: meeting.id});
+
+            meeting.participants = participants.map(participant => {
+                const doc = {
+                    user: participant.user.name,
+                    name: participant.user.name,
+                    joined: participant.joined,
+                };
+                if (participant.user.player && participant.user.player.character){
+                    doc.character = participant.user.player.character;
+                    doc.name += `: ${participant.user.player.character}`;
+                }
+                return doc;
+            });
         });
         res.locals.jitsi = {
             configured: config.get('jitsi.server'),

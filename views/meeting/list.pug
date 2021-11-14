@@ -95,7 +95,8 @@ block content
                     th(data-nofilter="true") Meeting Id
                     th For Gamestate
                     th(data-priority="3" data-partialmatch="true") GM
-                    th(data-priority="4") Player-only
+                    th(data-priority="4") Public
+                    th(data-priority="5" data-nofilter="true") Users
                     th(data-priority="5") Active
                     th(data-priority="2")
 
@@ -115,6 +116,9 @@ block content
                                 i None Specified
                         td= meeting.gm
                         td= meeting.public?'Yes':'No'
+                            if meeting.show_users
+                                | , Users Shown
+                        td= meeting.users
                         td= meeting.active?'Yes':'No'
                         td.text-right
                             if jitsiActive

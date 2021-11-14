@@ -18,6 +18,7 @@ function prepImageMapGM(){
         fillOpacity: 0.2,
         stroke:true,
         strokeWidth:1,
+        showToolTip: false,
     };
     const singleOpts ={
         strokeColor: 'ffffff',
@@ -26,8 +27,21 @@ function prepImageMapGM(){
         fillOpacity: 0.3,
         stroke:true,
         strokeWidth:1,
+        showToolTip: true,
+        toolTipClose: ['area-mouseout', 'area-click'],
+        toolTipContainer:  $('<div>')
+            .addClass('border')
+            .addClass('border-light')
+            .addClass('rounded')
+            .addClass('bg-dark')
+            .addClass('text-light')
+            .addClass('p-2')
+            .addClass('mb-1')
+            .addClass('shadow-sm'),
+        areas: []
     };
     const initialOpts = {
+        toolTipClose: ['area-mouseout', 'area-click'],
         mapKey: 'data-groups',
         onMouseover: function (data) {
             inArea = true;

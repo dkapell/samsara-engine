@@ -19,9 +19,19 @@ async function list(req, res, next){
     try {
         res.locals.meetings = await req.models.meeting.list();
 
+        let rooms = {};
+        if (await jitsi.active()){
+            rooms = await jitsi.rooms();
+        }
+
         await async.each(res.locals.meetings, async(meeting) => {
             if (meeting.gamestate_id){
                 meeting.gamestate = await req.models.gamestate.get(meeting.gamestate_id);
+            }
+            if (_.has(rooms, meeting.meeting_id.toLowerCase())){
+                meeting.users = rooms[meeting.meeting_id.toLowerCase()];
+            } else {
+                meeting.users = 0;
             }
         });
         res.locals.jitsi = {
@@ -73,6 +83,8 @@ async function showNew(req, res, next){
             active: true,
             gm: null,
             gamestate_id: null,
+            public: false,
+            show_users: false,
         };
         res.locals.breadcrumbs = {
             path: [
@@ -122,6 +134,15 @@ async function create(req, res, next){
     const meeting = req.body.meeting;
 
     req.session.meetingData = meeting;
+    if (!_.has(meeting, 'active')){
+        meeting.active = false;
+    }
+    if (!_.has(meeting, 'public')){
+        meeting.public = false;
+    }
+    if (!_.has(meeting, 'show_users')){
+        meeting.show_users = false;
+    }
 
     try{
         if (meeting.gamestate_id === ''){
@@ -146,6 +167,9 @@ async function update(req, res, next){
     }
     if (!_.has(meeting, 'public')){
         meeting.public = false;
+    }
+    if (!_.has(meeting, 'show_users')){
+        meeting.show_users = false;
     }
 
     if (meeting.gamestate_id === ''){

@@ -20,6 +20,11 @@
 
 .form-group
     .custom-control.custom-switch
+        input.custom-control-input(type="checkbox", name="meeting[show_users]", id="meeting_show_users", checked=meeting.show_users)
+        label.custom-control-label(for="meeting_show_users") Show Users
+
+.form-group
+    .custom-control.custom-switch
         input.custom-control-input(type="checkbox", name="meeting[active]", id="meeting_active", checked=meeting.active)
         label.custom-control-label(for="meeting_active") Active
 .form-group

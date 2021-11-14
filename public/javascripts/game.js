@@ -299,7 +299,7 @@ function updateImageMapTooltips(tooltips){
         opts.areas.push(doc);
 
     }
-    $gamestateImage.mapster('set_options', opts);
+    $gamestateImage.mapster('rebind', opts);
 }
 
 function resizeImageMap(){
@@ -506,12 +506,14 @@ function showMeetings(meetings){
             text+= '<br>';
             text+= _.pluck(meeting.users, 'name').join(', ');
         }
-
-        data.push({
+        const doc = {
             name: area.name,
-            text: text,
-            show:true,
-        });
+            text: text
+        };
+        if (meeting.count){
+            doc.show = true;
+        }
+        data.push(doc);
     }
     updateImageMapTooltips(data);
 }

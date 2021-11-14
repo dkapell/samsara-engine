@@ -495,24 +495,22 @@ function showMeetings(meetings){
         if (!area){
             continue;
         }
-        console.log(area);
-        console.log(meeting);
-
-        let text = meeting.name;
-        if (meeting.count){
-            text += ` (${meeting.count})`;
-        }
-        if (meeting.users){
-            text+= '<br>';
-            text+= _.pluck(meeting.users, 'name').join(', ');
-        }
         const doc = {
             name: area.name,
-            text: text
+            text: 'Empty'
         };
-        if (meeting.count){
-            doc.show = true;
+        if (meeting.count + meeting.users.length === 0 ){
+            data.push(doc);
+            continue;
         }
+        if (meeting.count && !meeting.users){
+            doc.text = `${meeting.name} (${meeting.count})`;
+        } else if (meeting.users){
+            doc.text = _.pluck(meeting.users, 'name').join(', ');
+        }
+
+        doc.show = true;
+
         data.push(doc);
     }
     updateImageMapTooltips(data);

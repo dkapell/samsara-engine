@@ -8,6 +8,9 @@ const reconnectInterval = 5000;
 let reconnectTimeout = null;
 let areaTimers = {};
 let gamedata = {};
+let activeMeeting = null;
+let currentMeeting = null;
+let currentAreas = {};
 
 $(function(){
     $('#game-text').hide();
@@ -58,6 +61,7 @@ function openWebSocket(){
             case 'gamedata':
                 gamedata = data.gamedata;
                 break;
+            case 'meetings': showMeetings(data.meetings); break;
             case 'playerupdate':
                 if (typeof refreshPlayerList === 'function'){
                     await refreshPlayerList();
@@ -90,6 +94,7 @@ function openWebSocket(){
             doc.options.limit = Number($('#chat-history-limit').val());
         }
         ws.send(JSON.stringify(doc));
+        sendJoinMeeting();
 
     };
 }
@@ -148,6 +153,9 @@ async function renderPage(gamestate, force){
                 $(this).removeClass('is-invalid');
             }
         });
+
+        currentAreas = gamestate.map.filter(area => {return _.has(area, 'meeting'); });
+
         prepImageMap();
         if (gamestate.chatSidebar){
             showChatSidebar(gamestate.chatExpanded);
@@ -217,13 +225,26 @@ function prepImageMap(){
             strokeColor: 'ffffff',
             strokeOpacity: 0.5,
             fillColor: 'e74c3c',
-            fillOpacity: 0.3,
+            fillOpacity: 0.4,
             stroke:true,
             strokeWidth:1,
+            showToolTip: true,
+            toolTipContainer:  $('<div>')
+                .addClass('border')
+                .addClass('border-light')
+                .addClass('rounded')
+                .addClass('bg-dark')
+                .addClass('text-light')
+                .addClass('p-2')
+                .addClass('mb-1')
+                .addClass('shadow-sm'),
+            //areas: []
         };
+
         const initialOpts = {
             mapKey: 'data-groups',
             isSelectable: false,
+            toolTipClose: ['area-mouseout', 'area-click'],
             onMouseover: function (data) {
                 showAreaName(data.key);
                 inArea = true;
@@ -244,7 +265,8 @@ function prepImageMap(){
                         .mapster('set', true, 'all')
                         .mapster('set_options', singleOpts);
                 }
-            }).bind('mouseout', function () {
+            })
+            .bind('mouseout', function () {
                 if (!inArea) {
                     $gamestateImage.mapster('set', false, 'all');
                 }
@@ -252,10 +274,32 @@ function prepImageMap(){
 
         $('area').on('click', clickArea);
         resizeImageMap();
+
         return;
     } else {
         setTimeout(prepImageMap, 150);
     }
+}
+
+function updateImageMapTooltips(tooltips){
+    const $gamestateImage = $('#gamestate-image');
+    const opts = $gamestateImage.mapster('get_options');
+    opts.areas = [];
+    for (const area of tooltips){
+        const doc = {
+            key: area.name,
+            toolTip: area.text
+        };
+        if (area.show){
+            doc.selected=true;
+            doc.staticState=true;
+            doc.fillColor='00bc8c';
+            doc.fillOpacity= 0.2;
+        }
+        opts.areas.push(doc);
+
+    }
+    $gamestateImage.mapster('set_options', opts);
 }
 
 function resizeImageMap(){
@@ -443,4 +487,42 @@ function resizable(resizer) {
             fullVideo();
         }
     });
+}
+function showMeetings(meetings){
+    const data = [];
+    for (const meeting of meetings){
+        const area = _.findWhere(currentAreas, {meeting: meeting.id});
+        if (!area){
+            continue;
+        }
+        console.log(area);
+        console.log(meeting);
+
+        let text = meeting.name;
+        if (meeting.count){
+            text += ` (${meeting.count})`;
+        }
+        if (meeting.users){
+            text+= '<br>';
+            text+= _.pluck(meeting.users, 'name').join(', ');
+        }
+
+        data.push({
+            name: area.name,
+            text: text,
+            show:true,
+        });
+    }
+    updateImageMapTooltips(data);
+}
+
+function sendJoinMeeting(){
+    if (!activeMeeting){
+        return;
+    }
+    ws.send(JSON.stringify({
+        action:'meeting',
+        meetingId: currentMeeting,
+        type: 'join'
+    }));
 }

@@ -65,6 +65,10 @@
             "audience": "samsara-jitsi",
             "secret": null,
             "duration": 3600
+        },
+        "auth": {
+            "username": "user",
+            "password": "password"
         }
     }
 }

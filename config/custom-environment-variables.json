@@ -60,6 +60,10 @@
             "audience": "JITSI_JWT_AUDIENCE",
             "secret": "JITSI_JWT_SECRET",
             "duration": "JITSI_JWT_DURATION"
+        },
+        "auth": {
+            "username": "JITSI_USER",
+            "password": "JITSI_PASSWORD"
         }
     }
 }

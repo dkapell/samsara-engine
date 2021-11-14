@@ -319,9 +319,24 @@ create table meetings(
     gm          varchar(255),
     active      boolean default true,
     public      boolean default false,
+    show_users  boolean default false,
     gamestate_id int,
     PRIMARY KEY(id),
     CONSTRAINT meeting_gamestate_fk FOREIGN KEY (gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
+);
+
+create table participants(
+    id serial,
+    meeting_id int not null,
+    user_id int not null,
+    joined timestamp with time zone default now(),
+    primary key(id),
+    constraint participant_meeting_fk foreign key (meeting_id)
+        REFERENCES "meetings" (id) match simple
+        on update no action on delete CASCADE,
+    constraint participant_user_fk foreign key (user_id)
+        REFERENCES "users" (id) match simple
+        on update no action on delete CASCADE
 );

@@ -1,7 +1,5 @@
-/* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable */
-
-let activeMeeting = null;
-let currentMeeting = null;
+/* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable ws sendJoinMeeting*/
+/* global activeMeeting:writable currentMeeting:writable */
 
 $(function(){
     $('#video-adjust >> .resizer-expand').on('click', function(e){
@@ -132,6 +130,7 @@ function startVideo(meeting, postStart){
         if (meeting.postStart && _.isFunction(meeting.postStart)){
             meeting.postStart(data);
         }
+        sendJoinMeeting();
     });
     activeMeeting.addListener('participantRoleChanged', function(data){
         if (data.role === 'moderator' && meeting.subject){
@@ -146,6 +145,7 @@ function startVideo(meeting, postStart){
     });
     resizeImageMap();
     currentMeeting = meeting.meetingName;
+
 }
 
 function closeVideo(){
@@ -164,6 +164,11 @@ function closeVideo(){
         activeMeeting.dispose();
         activeMeeting = null;
     }
+    ws.send(JSON.stringify({
+        action:'meeting',
+        meetingId: currentMeeting,
+        type: 'leave'
+    }));
 }
 
 function fullVideo(hideAdjust){
@@ -199,4 +204,3 @@ function halfVideo(){
 
     resizeImageMap();
 }
-

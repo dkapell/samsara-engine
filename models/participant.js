@@ -1,39 +1,35 @@
 'use strict';
 const async = require('async');
+const config = require('config');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
 const cache = require('../lib/cache');
 
 const models = {
+    user: require('./user')
 };
 
-const tableFields = ['meeting_id', 'name', 'description', 'gm', 'active', 'gamestate_id', 'public', 'show_users'];
+const tableFields = ['meeting_id', 'user_id', 'joined'];
 
 exports.get = async function(id){
-    let meeting = await cache.check('meeting', id);
-    if (meeting) { return meeting; }
-    const query = 'select * from meetings where id = $1';
+    if(!id) { console.trace('no'); return; }
+    let participant = await cache.check('participant', id);
+    if (participant) { return participant; }
+    const query = 'select * from participants where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        meeting = result.rows[0];
-        await cache.store('meeting',id, meeting);
-        return meeting;
+        participant = postProcess(result.rows[0]);
+        await cache.store('participant', id, participant);
+        return participant;
     }
     return;
 };
 
-exports.getByMeetingId = async function(meetingId){
-    let meeting = await cache.check('meeting-id', meetingId);
-    if (meeting) { return meeting; }
-    const query = 'select * from meetings where meeting_id = $1';
-    const result = await database.query(query, [meetingId]);
-    if (result.rows.length){
-        meeting = result.rows[0];
-        await cache.store('meeting-id',meetingId, meeting);
-        return meeting;
-    }
-    return;
+exports.list = async function(){
+    const query = 'select * from participants order by meeting_id';
+    const result = await database.query(query);
+    return async.map(result.rows, postProcess);
 };
 
 exports.find = async function(conditions){
@@ -45,22 +41,33 @@ exports.find = async function(conditions){
             queryData.push(conditions[field]);
         }
     }
-    let query = 'select * from meetings';
+    let query = 'select * from participants';
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by name';
+    query += ' order by meeting_id, user_id';
     const result = await database.query(query, queryData);
-    return result.rows;
+    return async.map(result.rows, postProcess);
 };
 
-exports.list = async function(){
-    return exports.find();
+exports.findOne = async function( conditions){
+    const result = await exports.find(conditions);
+
+    if (!result.length){
+        return null;
+    }
+    return result[0];
 };
 
 exports.create = async function(data){
     if (! validate(data)){
         throw new Error('Invalid Data');
+    }
+    if (_.has(data, 'type')){
+        if(!_.isArray(data.type)){
+            data.type = [data.type];
+        }
+        data.type = data.type.sort((a,b)=>{return a.localecompare(b);});
     }
     const queryFields = [];
     const queryData = [];
@@ -73,7 +80,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into meetings (';
+    let query = 'insert into participants (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -87,6 +94,15 @@ exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
+
+    if (_.has(data, 'type')){
+        if(!_.isArray(data.type)){
+            data.type = [data.type];
+        }
+        data.type = data.type.sort((a,b)=>{return b.localeCompare(a);});
+    }
+
+
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){
@@ -96,27 +112,33 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update meetings set ';
+    let query = 'update participants set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    await cache.invalidate('meeting', id);
+    await cache.invalidate('participant', id);
+};
+
+exports.upsert = async function(data){
+    const participant = await exports.find(data);
+    if (participant) { return participant.id; }
+    return exports.create(data);
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from meetings where id = $1';
+    const query = 'delete from participants where id = $1';
     await database.query(query, [id]);
-    await cache.invalidate('meeting', id);
+    await cache.invalidate('participant', id);
 };
 
-function validate(data){
-    if (! validator.isLength(data.name, 2, 80)){
-        return false;
-    }
-    if (!_.has(data, 'meeting_id')){
-        return false;
-    }
 
+
+function validate(data){
     return true;
+}
+
+async function postProcess(participant){
+    participant.user = await models.user.get(participant.user_id);
+    return participant;
 }

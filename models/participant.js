@@ -7,7 +7,8 @@ const validator = require('validator');
 const cache = require('../lib/cache');
 
 const models = {
-    user: require('./user')
+    user: require('./user'),
+    meeting: require('./meeting')
 };
 
 const tableFields = ['meeting_id', 'user_id', 'joined'];
@@ -140,5 +141,6 @@ function validate(data){
 
 async function postProcess(participant){
     participant.user = await models.user.get(participant.user_id);
+    participant.meeting = await models.meeting.get(participant.meeting_id);
     return participant;
 }

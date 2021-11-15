@@ -1,4 +1,4 @@
-/* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable ws sendJoinMeeting*/
+/* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable ws sendJoinMeeting sendLeaveMeeting*/
 /* global activeMeeting:writable currentMeeting:writable */
 
 $(function(){
@@ -164,11 +164,8 @@ function closeVideo(){
         activeMeeting.dispose();
         activeMeeting = null;
     }
-    ws.send(JSON.stringify({
-        action:'meeting',
-        meetingId: currentMeeting,
-        type: 'leave'
-    }));
+    sendLeaveMeeting();
+
 }
 
 function fullVideo(hideAdjust){

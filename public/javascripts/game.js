@@ -507,9 +507,8 @@ function showMeetings(meetings){
             doc.text = `${meeting.name} (${meeting.count})`;
         } else if (meeting.users){
             doc.text = _.pluck(meeting.users, 'name').join(', ');
+            doc.show = true;
         }
-
-        doc.show = true;
 
         data.push(doc);
     }

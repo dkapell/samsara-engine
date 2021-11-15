@@ -11,6 +11,7 @@ let gamedata = {};
 let activeMeeting = null;
 let currentMeeting = null;
 let currentAreas = {};
+let initialPageLoad = true;
 
 $(function(){
     $('#game-text').hide();
@@ -94,7 +95,14 @@ function openWebSocket(){
             doc.options.limit = Number($('#chat-history-limit').val());
         }
         ws.send(JSON.stringify(doc));
-        sendJoinMeeting();
+        setTimeout( () => {
+            if (initialPageLoad){
+                sendLeaveMeeting();
+                initialPageLoad = false;
+            } else {
+                sendJoinMeeting();
+            }
+        }, 100);
 
     };
 }
@@ -295,11 +303,15 @@ function updateImageMapTooltips(tooltips){
             doc.staticState=true;
             doc.fillColor='00bc8c';
             doc.fillOpacity= 0.2;
+        } else {
+            doc.selected=false;
+
         }
         opts.areas.push(doc);
 
     }
     $gamestateImage.mapster('rebind', opts);
+    $gamestateImage.mapster('set', false, 'all');
 }
 
 function resizeImageMap(){
@@ -497,17 +509,21 @@ function showMeetings(meetings){
         }
         const doc = {
             name: area.name,
-            text: 'Empty'
+            text: 'Empty',
+            show: false
         };
         if (meeting.count + meeting.users.length === 0 ){
             data.push(doc);
             continue;
         }
-        if (meeting.count && !meeting.users){
+        if (meeting.count && !meeting.users.length){
             doc.text = `${meeting.name} (${meeting.count})`;
         } else if (meeting.users){
             doc.text = _.pluck(meeting.users, 'name').join(', ');
             doc.show = true;
+            if (meeting.count > meeting.users.length){
+                doc.text += `, +${meeting.count-meeting.users.length} more`;
+            }
         }
 
         data.push(doc);
@@ -523,5 +539,13 @@ function sendJoinMeeting(){
         action:'meeting',
         meetingId: currentMeeting,
         type: 'join'
+    }));
+}
+function sendLeaveMeeting(){
+    console.log('calling');
+    ws.send(JSON.stringify({
+        action:'meeting',
+        meetingId: currentMeeting,
+        type: 'leave'
     }));
 }

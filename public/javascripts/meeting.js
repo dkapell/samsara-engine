@@ -6,6 +6,16 @@ $(function() {
     $('#stop-jitsi-btn').confirmation({
         title: 'Stop Jitsi Server?'
     }).on('click', stopJitsiServer);
+
+    $('[data-toggle="popover"]').popover({
+        html:true,
+        trigger:'hover',
+        container: 'body',
+        content: function() {
+            var participants = $(this).data('participants');
+            return participants.join('<br>');
+        },
+    });
 });
 
 async function startJitsiServer(e){

@@ -149,6 +149,7 @@ async function renderPage(gamestate, force){
             initialState = true;
         }
         $('#popupModal').modal('hide');
+        $('#gamestate-image').mapster('tooltip');
         currentGameState = gamestate.id;
         gamestate.description = await(liquidify(gamestate.description));
         const rendered = pageTemplate({gamestate: gamestate});
@@ -542,7 +543,6 @@ function sendJoinMeeting(){
     }));
 }
 function sendLeaveMeeting(){
-    console.log('calling');
     ws.send(JSON.stringify({
         action:'meeting',
         meetingId: currentMeeting,

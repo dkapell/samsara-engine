@@ -96,6 +96,7 @@ exports.update = async function(id, data){
 
     await database.query(query, queryData);
     await cache.invalidate('run', id);
+    await cache.invalidate('run', 'current');
 };
 
 exports.delete = async  function(id){

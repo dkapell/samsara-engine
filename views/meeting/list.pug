@@ -121,7 +121,7 @@ block content
                         td.text-right(data-toggle="popover" title='Meeting Participants' data-participants=_.pluck(meeting.participants, 'name') )= meeting.users
                         td= meeting.active?'Yes':'No'
                         td.text-right
-                            if jitsiActive
+                            if jitsiActive && meeting.active
                                 a.btn.btn-primary.btn-sm.action-btn(
                                     role="button",
                                     href=`/meeting/${meeting.id}/open`

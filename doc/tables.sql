@@ -45,6 +45,8 @@ create table runs (
     primary key(id)
 );
 
+insert into runs (name, current) values ('Initial Run', 'true');
+
 create table groups (
     id          serial,
     name        varchar(80) not null unique,
@@ -131,7 +133,12 @@ create table triggers(
     actions jsonb default '[]'::jsonb,
     run boolean default false,
     player boolean default false,
-    primary key (id)
+    group_id int,
+    condition text
+    primary key (id),
+    CONSTRAINT triggers_group_fk FOREIGN KEY (group_id)
+        REFERENCES "groups" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
 create table players (
@@ -295,6 +302,7 @@ create table chat_reports(
 create table connections(
     id serial,
     user_id int not null,
+    client_id uuid not null,
     server_id varchar(255),
     created timestamp with time zone default now(),
     constraint connection_user_fk foreign key (user_id)

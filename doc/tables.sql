@@ -14,7 +14,7 @@ create table users (
     email       varchar(100),
     google_id   varchar(500),
     intercode_id varchar(500),
-    type        user_type default none,
+    type        user_type default 'none',
     PRIMARY KEY (id)
 );
 
@@ -50,7 +50,13 @@ create table groups (
     name        varchar(80) not null unique,
     description text,
     chat        boolean default false,
-    primary key (id),
+    primary key (id)
+);
+
+create type image_type as ENUM(
+    'gamestate',
+    'popup',
+    'inventory'
 );
 
 create table images (
@@ -73,7 +79,7 @@ create table gamestates (
     special     boolean default false,
     start       boolean default false,
     finish      boolean default false,
-    image_id    int not null,
+    image_id    int,
     map         jsonb default '[]'::jsonb,
     template    boolean default false,
     chat        boolean default false,
@@ -114,10 +120,7 @@ create table transitions(
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL,
-     CONSTRAINT transitions_link_fk FOREIGN KEY (link_id)
-        REFERENCES "links" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE CASCADE
+        ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
 create table triggers(
@@ -153,7 +156,7 @@ create table players (
         ON UPDATE NO ACTION ON DELETE SET NULL,
     CONSTRAINT players_prev_gamestate_fk FOREIGN KEY (prev_gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL,
+        ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
 create table player_groups(
@@ -165,7 +168,7 @@ create table player_groups(
     CONSTRAINT group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) match simple
         ON UPDATE NO ACTION ON DELETE CASCADE
-)
+);
 
 create table characters (
     id          serial,
@@ -309,7 +312,7 @@ create table player_triggers(
     CONSTRAINT trigger_fk FOREIGN KEY (trigger_id)
         REFERENCES "triggers" (id) match simple
         ON UPDATE NO ACTION ON DELETE CASCADE
-)
+);
 
 create table meetings(
     id serial,
@@ -324,7 +327,7 @@ create table meetings(
     PRIMARY KEY(id),
     CONSTRAINT meeting_gamestate_fk FOREIGN KEY (gamestate_id)
         REFERENCES "gamestates" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL,
+        ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
 create table participants(

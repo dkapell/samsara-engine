@@ -163,7 +163,11 @@ async function renderPage(gamestate, force){
             }
         });
 
-        currentAreas = gamestate.map.filter(area => {return _.has(area, 'meeting'); });
+        if (gamestate.map) {
+            currentAreas = gamestate.map.filter(area => {return _.has(area, 'meeting'); });
+        } else {
+            currentAreas = {};
+        }
 
         prepImageMap();
         if (gamestate.chatSidebar){

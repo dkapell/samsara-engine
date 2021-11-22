@@ -36,7 +36,7 @@
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-localapikey": "^0.0.3",
-    "passport-oauth2": "^1.5.0",
+    "passport-oauth2": "^1.6.1",
     "pg": "^8.6.0",
     "pluralize": "^8.0.0",
     "pug": "^3.0.2",

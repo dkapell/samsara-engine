@@ -13,7 +13,7 @@
     "aws-sdk": "^2.1034.0",
     "bent": "^7.3.12",
     "browserify": "^17.0.0",
-    "bufferutil": "^4.0.3",
+    "bufferutil": "^4.0.6",
     "config": "^3.3.6",
     "connect-redis": "^5.2.0",
     "cookie-parser": "~1.4.6",

@@ -123,6 +123,22 @@ async function runTrigger(req, res, next){
     }
 }
 
+async function resetInkStories(req, res, next){
+    try{
+        const user = await req.models.user.get(req.params.id);
+        if (!user){
+            throw new Error ('User not found');
+        }
+        const inkStates = await req.models.ink_state.find({player_id: user.player.id});
+        await async.each(inkStates, async (ink_state) => {
+            return req.models.ink_state.delete(ink_state.id);
+        });
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
 const router = express.Router();
 
 router.use(function(req, res, next){
@@ -135,6 +151,7 @@ router.get('/revert', revertPlayer);
 router.get('/:id/assume', csrf(), permission('gm'), assumePlayer);
 router.put('/:id/advance', csrf(), permission('gm'), advance);
 router.put('/:id/toast', csrf(), permission('gm'), sendToast);
+router.put('/:id/resetInk', csrf(), permission('admin'), resetInkStories);
 router.put('/:id/trigger/:triggerid', csrf(), permission('gm'), runTrigger);
 
 module.exports = router;

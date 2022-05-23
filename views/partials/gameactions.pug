@@ -160,7 +160,9 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                             'transition': 'Transition',
                             'text': 'Document/Text',
                             'image': 'Image',
-                            'script': 'Script'
+                            'script': 'Script',
+                            'ink': 'Ink Story',
+                            'closeink': 'Close Ink Story'
                         }
 
                     each name, type in actionTypes
@@ -415,6 +417,70 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                         i.fas.fa-edit.mr-2
                         | Edit
 
+        // Meeting Row
+        .form-row.my-1.action-ink
+            // Ink Selection
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-ink_id`
+                data-fieldtype='ink_id'
+            ) Ink Story
+            .col-md-8
+                select.custom-select.ink-select.action-input(
+                    name=`${namePrefix}[actions][${actionId}][ink_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-ink_id`,
+                    class=actionId!=='new'?'select2':'',
+                    data-placeholder="Select Ink Story",
+                    data-fieldtype='ink_id'
+                )
+                    option
+                    for ink in inks
+                        option(value=ink.id selected=action.ink_id && Number(action.ink_id)===ink.id)= ink.name
+
+
+        .form-row.my-1.action-ink
+
+            // Start Ink Story from Section
+            label.col-md-2.offset-md-1.col-form-label.action-input-label(
+                for=`${prefix}-${areaId}-action-${actionId}-ink_startPoint`
+                data-fieldtype='ink_startPoint'
+            ) Start From
+            .col-md-4
+                input.form-control.area-name.area-input(
+                    name=`${namePrefix}[actions][${actionId}][ink_startPoint]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-ink_startPoint`,
+                    value=action.ink_startPoint
+                    placeholder="Story Start.  Leave empty to use start of story.",
+                    data-fieldtype='ink_startPoint'
+                )
+
+            // Restart Ink Story
+            .col-md-2
+                .custom-control.custom-switch
+                    input.custom-control-input(
+
+                        type="checkbox"
+                        name=`${namePrefix}[actions][${actionId}][ink_restart]`,
+                        id=`${prefix}-${areaId}-action-${actionId}-ink_restart`,
+                        checked=action.ink_restart
+                    )
+                    label.custom-control-label(
+                        for=`${prefix}-${areaId}-action-${actionId}-ink_restart`
+                         data-fieldtype='ink_restart'
+                    ) Restart Story
+            //Fullscreen Ink
+            .col-md-2
+                .custom-control.custom-switch
+                    input.custom-control-input(
+
+                        type="checkbox"
+                        name=`${namePrefix}[actions][${actionId}][ink_fullscreen]`,
+                        id=`${prefix}-${areaId}-action-${actionId}-ink_fullscreen`,
+                        checked=action.ink_fullscreen
+                    )
+                    label.custom-control-label(
+                        for=`${prefix}-${areaId}-action-${actionId}-ink_fullscreen`
+                         data-fieldtype='ink_fullscreen'
+                    ) Fullscreen
 
 
 
@@ -481,6 +547,12 @@ mixin actionsCard(areaId, area)
                         when 'script'
                             strong.mr-1 Run Script
                             pre.mt-2 #{action.script}
+                        when 'ink'
+                            strong.mr-1 Run Ink Story
+                            i #{_.findWhere(inks, {id: action.ink_id}).name}
+                            if action.fullscreen
+                                |  Fullscreen
+
                         default
                             | None
 

@@ -11,6 +11,7 @@ const config = require('config');
 const flash = require('express-flash');
 const redis = require('redis');
 const moment = require('moment');
+const {marked} = require('marked');
 const jwt_decode = require('jwt-decode');
 const methodOverride = require('method-override');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
@@ -41,6 +42,7 @@ const codeRouter = require('./routes/code');
 const triggerRouter = require('./routes/trigger');
 const meetingRouter = require('./routes/meeting');
 const characterRouter = require('./routes/character');
+const inkRouter = require('./routes/ink');
 
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
@@ -200,6 +202,7 @@ app.use(async function(req, res, next){
     res.locals.activeUser = req.user;
     res.locals.includeChatSidebar = true;
     res.locals.jitsiActive = await jitsi.active();
+    res.locals.marked = marked;
     res.locals.capitalize = function(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
@@ -224,6 +227,7 @@ app.use('/code', codeRouter);
 app.use('/trigger', triggerRouter);
 app.use('/meeting', meetingRouter);
 app.use('/character', characterRouter);
+app.use('/ink', inkRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

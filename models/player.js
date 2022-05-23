@@ -54,6 +54,12 @@ exports.find = async function(conditions){
     return async.map(result.rows, fillGroups);
 };
 
+exports.findOne = async function(conditions){
+    const result = await exports.find(conditions);
+    if (!result.length){ return null; }
+    return result[0];
+};
+
 exports.list = async function(){
     const query = 'select * from players';
     const result = await database.query(query);

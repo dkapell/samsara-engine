@@ -3,6 +3,11 @@ $(function(){
         title: 'Reset this Run?'
     }).on('click', runAction);
 
+    $('#reset-ink-all-btn').confirmation({
+        title: 'Reset all Ink stories for this Run?'
+    }).on('click', runAction);
+
+
     $('#state-update-btn').confirmation({
         title: 'Update multiple Players?'
     }).on('click', updateAll);

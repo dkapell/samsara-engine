@@ -25,6 +25,11 @@
     +jsonEditor('variable_base_value', 'variable[base_value]', 3, 100, variable.base_value?JSON.parse(variable.base_value):null)
 
 .form-group
+    label.control-label(for="variable_ink_name") Ink Name
+    input.form-control(type="text",placeholder="Ink Name",name="variable[ink_name]",value=variable.ink_name,id='variable_ink_name')
+    div.invalid-feedback Please choose a valid name
+
+.form-group
     button.btn.btn-primary(type="submit")= variable.id?'Update':'Create'
     a.btn.btn-link(href="/variable") Cancel
 

@@ -34,7 +34,7 @@ async function show(req, res, next){
         res.locals.groups = await req.models.group.list();
         res.locals.links = await req.models.link.list();
         res.locals.meetings = await req.models.meeting.list();
-
+        res.locals.inks = await req.models.ink.list();
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -99,6 +99,7 @@ async function showNew(req, res, next){
         res.locals.groups = await req.models.group.list();
         res.locals.variables = await req.models.variable.list();
         res.locals.meetings = await req.models.meeting.list();
+        res.locals.inks = await req.models.ink.list();
         res.render('trigger/new');
     } catch (err){
         next(err);
@@ -131,6 +132,7 @@ async function showEdit(req, res, next){
         res.locals.groups = await req.models.group.list();
         res.locals.variables = await req.models.variable.list();
         res.locals.meetings = await req.models.meeting.list();
+        res.locals.inks = await req.models.ink.list();
 
         res.render('trigger/edit');
     } catch(err){

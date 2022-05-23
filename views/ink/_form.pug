@@ -1,0 +1,20 @@
+.form-group
+    label.control-label(for="ink_name") Name
+    input.form-control(type="text",placeholder="Name",name="ink[name]",value=ink.name,id='ink_name',required)
+    div.invalid-feedback Please choose a valid name
+
+.form-group
+    label.control-label(for="ink_description") Description
+    textarea.form-control#ink_description(name="ink[description]",rows=3)
+        = ink.description
+
+.form-group
+    label.control-label(for="ink_content") Content
+    textarea.form-control.text-monospace#ink_content(name="ink[content]",rows=10, style='font-size:0.75rem' spellcheck=false)
+        = ink.content
+
+.form-group
+    button.btn.btn-primary(type="submit")= ink.id?'Update':'Create'
+    a.btn.btn-link(href="/ink") Cancel
+
+

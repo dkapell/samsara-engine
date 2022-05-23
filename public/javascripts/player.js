@@ -2,14 +2,18 @@
 let playerRefreshTimer = null;
 let autoRefresh = true;
 $(function(){
-    $('.player-advance-btn-confirm').hide();
-    $('.player-advance-btn-cancel').hide();
-    $('.player-advance-btn').on('click', showAdvanceConfirm);
-    $('.player-advance-btn-confirm').on('click', advancePlayer);
-    $('.player-advance-btn-cancel').on('click', cancelAdvance);
+    $('.player-advance-btn')
+        .confirmation({title: 'Advance Player?'})
+        .on('click', advancePlayer);
+
+
     $('.player-trigger-btn')
         .confirmation({title: 'Run Trigger?'})
         .on('click', runTrigger);
+
+    $('.player-ink-reset-btn')
+        .confirmation({title: 'Reset Ink Stories?'})
+        .on('click', resetPlayerInkStories);
 
     $('.player-message-btn').tooltip();
     $('.player-viewdata-btn').tooltip();
@@ -148,9 +152,6 @@ async function advancePlayer(e){
     if($this.attr('data-back')){
         location = $this.attr('data-back');
     }
-    $this.closest('td').find('.player-advance-btn').show();
-    $this.closest('td').find('.player-advance-btn-cancel').hide();
-    $this.hide();
 }
 
 async function runTrigger(e){
@@ -179,20 +180,20 @@ async function runTrigger(e){
     }
 }
 
-function showAdvanceConfirm(e){
+async function resetPlayerInkStories(e){
     e.preventDefault();
     const $this = $(this);
-    $this.closest('td').find('.player-advance-btn-confirm').show();
-    $this.closest('td').find('.player-advance-btn-cancel').show();
-    $this.hide();
-}
-
-function cancelAdvance(e){
-    e.preventDefault();
-    const $this = $(this);
-    $this.closest('td').find('.player-advance-btn').show();
-    $this.closest('td').find('.player-advance-btn-confirm').hide();
-    $this.hide();
+    const url = $this.attr('url');
+    const csrf = $this.attr('data-csrf');
+    const result = await fetch(url, {
+        method:'PUT',
+        headers: {
+            'csrf-token': csrf
+        }
+    });
+    if($this.attr('data-back')){
+        location = $this.attr('data-back');
+    }
 }
 
 function showToastModal(event){

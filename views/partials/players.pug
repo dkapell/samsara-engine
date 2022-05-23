@@ -65,6 +65,8 @@ mixin players(users, runId)
                                     | #{user.gamestate.transitionTime}
 
                         td.text-right
+
+
                             a.btn.btn-outline-info.btn-xs.mx-1.player-message-btn(
                                 style=user.connections.length?'':'display:none'
                                 role="button"
@@ -81,7 +83,6 @@ mixin players(users, runId)
                                 for trigger in user.triggers
                                     if trigger.icon
                                         +triggerButton(trigger, user.id, false)(class='btn-xs mx-1')
-
 
 
                             a.btn.btn-outline-info.btn-xs.mx-1.player-viewdata-btn(
@@ -104,14 +105,16 @@ mixin players(users, runId)
                             )
                                 i.fas.fa-arrow-right
 
-                            a.btn.btn-success.mr-1.btn-xs.player-advance-btn-confirm(
-                                role="button",
-                                url=`/player/${user.id}/advance`,
-                                data-csrf=csrfToken,
-                            )
-                                o.fa.fa-check
-                            a.btn.btn-danger.mr-1.btn-xs.player-advance-btn-cancel(role="button")
-                                o.fa.fa-times
+                            if checkPermission('admin')
+                                a.btn.btn-outline-info.mr-1.btn-xs.player-ink-reset-btn(
+                                    role="button",
+                                    url=`/player/${user.id}/resetInk`,
+                                    data-csrf=csrfToken,
+                                    data-toggle="tooltip"
+                                    title="Reset Ink Stories"
+                                )
+                                    i.fas.fa-book
+
                             a.btn.btn-outline-warning.btn-xs(
                                 role="button"
                                 href=`/player/${user.id}/assume`

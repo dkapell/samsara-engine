@@ -3,63 +3,41 @@ const async = require('async');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
+const cache = require('../lib/cache');
 
 const models = {
 };
 
-const tableFields = ['name', 'type', 'public', 'player', 'base_value', 'ink_name'];
-
+const tableFields = ['name', 'description', 'content', 'compiled'];
 
 exports.get = async function(id){
-    const query = 'select * from "variables" where id = $1';
+    let doc = await cache.check('ink', id);
+    if (doc) { return doc; }
+    const query = 'select * from inks where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        return result.rows[0];
+        doc = result.rows[0];
+        await cache.store('ink', doc.id, doc);
+        await cache.store('ink-name', doc.name, doc);
+        return doc;
     }
     return;
 };
 
 exports.getByName = async function(name){
-    const query = 'select * from "variables" where name = $1';
+    const query = 'select * from inks where name = $1';
     const result = await database.query(query, [name]);
     if (result.rows.length){
-        return result.rows[0];
+        const doc = result.rows[0];
+        await cache.store('ink', doc.id, doc);
+        await cache.store('ink-name', doc.name, doc);
+        return doc;
     }
     return;
 };
 
 exports.list = async function(){
-    const query = 'select * from "variables" order by name';
-    const result = await database.query(query);
-    return result.rows;
-};
-
-exports.find = async function(conditions){
-    const queryParts = [];
-    const queryData = [];
-    for (const field of tableFields){
-        if (_.has(conditions, field)){
-            queryParts.push(field + ' = $' + (queryParts.length+1));
-            queryData.push(conditions[field]);
-        }
-    }
-    let query = 'select * from "variables"';
-    if (queryParts.length){
-        query += ' where ' + queryParts.join(' and ');
-    }
-    query += ' order by name';
-    const result = await database.query(query, queryData);
-    return result.rows;
-};
-
-exports.findOne = async function(conditions){
-    const result = await exports.find(conditions);
-    if (!result.length){ return null; }
-    return result[0];
-};
-
-exports.listInk = async function(){
-    const query = 'select * from "variables" where ink_name is not null order by ink_name';
+    const query = 'select * from inks order by name';
     const result = await database.query(query);
     return result.rows;
 };
@@ -79,7 +57,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into "variables" (';
+    let query = 'insert into inks (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -102,22 +80,27 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update "variables" set ';
+    let query = 'update inks set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
+
     await database.query(query, queryData);
+    await cache.invalidate('ink', id);
+    await cache.invalidate('ink-name', data.name);
 };
 
 exports.delete = async  function(id){
-    const query = 'delete from "variables" where id = $1';
+    const ink = await exports.get(id);
+    const query = 'delete from inks where id = $1';
     await database.query(query, [id]);
+    await cache.invalidate('ink', id);
+    await cache.invalidate('ink-name', ink.name);
 };
-
-
 
 function validate(data){
     if (! validator.isLength(data.name, 2, 80)){
         return false;
     }
+
     return true;
 }

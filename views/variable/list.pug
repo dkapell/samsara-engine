@@ -18,6 +18,7 @@ block content
                     th Scope
                     th Public
                     th(data-nofilter="true") Default Value
+                    th Ink Name
                     th(data-priority="1")
 
             tbody
@@ -33,6 +34,7 @@ block content
                                 i null
                             else
                                 = variable.base_value
+                        td=variable.ink_name
                         td.text-right
                             a.btn.btn-outline-danger.btn-xs.delete-btn(
                                 role="button",

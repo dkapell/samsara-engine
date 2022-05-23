@@ -1,14 +1,15 @@
 /* global _ JitsiMeetExternalAPI resizeImageMap prepImageMap gamedata resizable ws sendJoinMeeting sendLeaveMeeting*/
 /* global activeMeeting:writable currentMeeting:writable */
+/* global halfContent fullContent closeContent */
 
 $(function(){
     $('#video-adjust >> .resizer-expand').on('click', function(e){
         e.stopPropagation();
-        fullVideo();
+        fullContent();
     });
     $('#video-adjust >> .resizer-restore').on('click', function(e){
         e.stopPropagation();
-        halfVideo();
+        halfContent();
     });
     $('#video-adjust >> .resizer-close').on('click', function(e){
         e.stopPropagation();
@@ -116,9 +117,9 @@ function startVideo(meeting, postStart){
     }
 
     if (meeting.fullscreen || $('#game-content').height() < 600 || $('#game-content').width() < 768){
-        fullVideo();
+        fullContent();
     } else {
-        halfVideo();
+        halfContent();
     }
 
     activeMeeting = new JitsiMeetExternalAPI(meeting.domain, options);
@@ -149,55 +150,7 @@ function startVideo(meeting, postStart){
 }
 
 function closeVideo(){
-    $('#gamestate-container')
-        .removeClass('d-none')
-        .addClass('d-flex')
-        .css({height:'100%', overflow:'hidden'});
-    $('#video-container')
-        .addClass('d-none')
-        .css({height:0, overflow:'hidden'});
-    $('#video-adjust')
-        .removeClass('d-flex')
-        .addClass('d-none');
-    resizeImageMap();
-    if (activeMeeting){
-        activeMeeting.dispose();
-        activeMeeting = null;
-    }
+    closeContent();
     sendLeaveMeeting();
-
 }
 
-function fullVideo(hideAdjust){
-    $('#gamestate-container')
-        .removeClass('d-none')
-        .addClass('d-flex')
-        .css({height:0, overflow:'scroll'});
-    if(hideAdjust){
-        $('#video-adjust').addClass('d-none');
-    } else {
-        $('#video-adjust').removeClass('d-none');
-    }
-    $('#video-container')
-        .removeClass('d-none')
-        .addClass('d-flex')
-        .css({height:'100%'});
-    $('#video-adjust >> .resizer-expand').hide();
-    $('#video-adjust >> .resizer-restore').show();
-    resizeImageMap();
-}
-
-function halfVideo(){
-    $('#gamestate-container')
-        .removeClass('d-none')
-        .addClass('d-flex')
-        .css({height:'40%', overflow:'scroll'});
-    $('#video-adjust').removeClass('d-none');
-    $('#video-container')
-        .removeClass('d-none')
-        .css({height:'60%'});
-    $('#video-adjust >> .resizer-expand').show();
-    $('#video-adjust >> .resizer-restore').hide();
-
-    resizeImageMap();
-}

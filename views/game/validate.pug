@@ -40,5 +40,13 @@ block content
                 each meeting, key in validation.unused.meetings
                     li=meeting.name
 
+        if _.keys(validation.unused.inks).length
+            h4
+                a.text-warning(href='/ink') Ink Stories
+            ul
+                each ink, key in validation.unused.inks
+                    li=ink.name
+
+
     if !hasErrors
         h3.text-success No Issues Found

@@ -212,6 +212,7 @@ create table variables(
     type variable_type not null,
     player boolean default true,
     public boolean default false,
+    ink_name varchar(255),
     base_value text,
     primary key (id),
     unique(name, public)
@@ -351,3 +352,28 @@ create table participants(
         REFERENCES "users" (id) match simple
         on update no action on delete CASCADE
 );
+
+create table inks(
+    id serial,
+    name varchar(80) not null,
+    description text,
+    content text,
+    compiled json,
+    primary key (id)
+);
+
+create table ink_states(
+    id serial,
+    player_id int not null,
+    ink_id int not null,
+    state json not null,
+    complete boolean default false,
+    updated timestamp with time zone default now(),
+    primary key (id),
+    CONSTRAINT player_fk FOREIGN KEY (player_id)
+        REFERENCES "players" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT ink_fk FOREIGN KEY (ink_id)
+        REFERENCES "inks" (id) match simple
+        ON UPDATE NO ACTION ON DELETE CASCADE
+)

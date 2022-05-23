@@ -1,0 +1,10 @@
+include ../chat
+
+button.pt-3.pr-3#chat-show(role="button" aria-label="Show Chat" title='Show Chat' data-toggle='tooltip' href='#')
+    span(aria-hidden="true")
+        span.badge.badge-danger.mr-1.align-text-top#chat-new-messages
+        i.fas.fa-chevron-left#show-chat-chevron
+
+#chat-sidebar.ml-auto.flex-grow-1.d-none
+    .card.flex-grow-1.h-100.position-fixed#chat-pane
+        +chatSidebar()

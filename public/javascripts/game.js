@@ -1,5 +1,7 @@
 /* global _ pageTemplate toastTemplate popupTemplate addMessage handleChat hideChatSidebar showChatSidebar */
-/* global currentLocation lookup liquidjs addChatEvent refreshPlayerList startVideo closeVideo resizable halfVideo fullVideo*/
+/* global currentLocation lookup liquidjs addChatEvent refreshPlayerList startVideo closeVideo resizable closeInk */
+/* global handleInk */
+
 const engine = new liquidjs.Liquid();
 let currentGameState = null;
 let textTimeout = null;
@@ -74,6 +76,10 @@ function openWebSocket(){
             case 'closevideo':
                 closeVideo(data);
                 break;
+            case 'closeink':
+                closeInk(data);
+                break;
+            case 'ink': await handleInk(data); break;
         }
 
         if (data.codeAccept){
@@ -449,6 +455,9 @@ function resizable(resizer) {
                 const h = (prevSiblingHeight + dy) * 100 / resizer.parentNode.getBoundingClientRect().height;
                 prevSibling.style.height = `${h}%`;
                 nextSibling.style.height = `${100-h}%`;
+
+
+
                 break;
             }
             case 'horizontal':
@@ -468,13 +477,14 @@ function resizable(resizer) {
 
         nextSibling.style.userSelect = 'none';
         nextSibling.style.pointerEvents = 'none';
-
-        if (parseInt(prevSibling.style.height) < 3){
-            $('#video-adjust >> .resizer-expand').hide();
-            $('#video-adjust >> .resizer-restore').show();
-        } else {
-            $('#video-adjust >> .resizer-expand').show();
-            $('#video-adjust >> .resizer-restore').hide();
+        if (direction === 'vertical'){
+            if (parseInt(prevSibling.style.height) < 3){
+                $(resizer).find('.resizer-expand').hide();
+                $(resizer).find('.resizer-restore').show();
+            } else {
+                $(resizer).find('.resizer-expand').show();
+                $(resizer).find('.resizer-restore').hide();
+            }
         }
     };
 
@@ -499,9 +509,10 @@ function resizable(resizer) {
     resizer.addEventListener('mousedown', mouseDownHandler);
     resizer.addEventListener('dblclick', function(){
         if($('#gamestate-container').height() < 5){
-            halfVideo();
+            halfContent();
+
         } else {
-            fullVideo();
+            fullContent();
         }
     });
 }
@@ -552,4 +563,86 @@ function sendLeaveMeeting(){
         meetingId: currentMeeting,
         type: 'leave'
     }));
+}
+
+function sendInkChoice(idx){
+    ws.send(JSON.stringify({
+        action:'ink',
+        type: 'choice',
+        idx: idx
+    }));
+}
+
+function sendCloseInkStory(){
+    ws.send(JSON.stringify({
+        action:'ink',
+        type: 'close'
+    }));
+}
+
+
+function closeContent(){
+    $('#gamestate-container')
+        .removeClass('d-none')
+        .addClass('d-flex')
+        .css({height:'100%', overflow:'hidden'});
+    $('#content-container')
+        .addClass('d-none')
+        .css({height:0, overflow:'hidden'});
+    $('#content-adjust')
+        .removeClass('d-flex')
+        .addClass('d-none');
+    resizeImageMap();
+}
+
+function fullContent(hideAdjust, hideClose = false){
+    $('#gamestate-container')
+        .removeClass('d-none')
+        .addClass('d-flex')
+        .css({height:0, overflow:'scroll'});
+    if(hideAdjust){
+        $('#content-adjust').addClass('d-none');
+    } else {
+        $('#content-adjust').removeClass('d-none');
+    }
+
+    if (hideClose){
+        $('#content-adjust >> .resizer-close').addClass('d-none');
+    } else {
+        $('#content-adjust >> .resizer-close').removeClass('d-none');
+    }
+
+    $('#content-container')
+        .removeClass('d-none')
+        .addClass('d-flex')
+        .css({height:'100%'});
+    $('#content-adjust >> .resizer-expand').hide();
+    $('#content-adjust >> .resizer-restore').show();
+    resizeImageMap();
+}
+
+function halfContent(hideAdjust, hideClose = false){
+    $('#gamestate-container')
+        .removeClass('d-none')
+        .addClass('d-flex')
+        .css({height:'40%', overflow:'scroll'});
+    if(hideAdjust){
+        $('#content-adjust').addClass('d-none');
+    } else {
+        $('#content-adjust').removeClass('d-none');
+    }
+
+    if (hideClose){
+        $('#content-adjust >> .resizer-close').addClass('d-none');
+    } else {
+        $('#content-adjust >> .resizer-close').removeClass('d-none');
+    }
+
+    $('#content-container')
+        .removeClass('d-none')
+        .css({height:'60%'});
+    $('#content-adjust >> .resizer-expand').show();
+    $('#content-adjust >> .resizer-restore').hide();
+
+    resizeImageMap();
 }

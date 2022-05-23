@@ -343,6 +343,25 @@ async function runTriggerAll(req, res, next){
     }
 }
 
+async function resetInkStories(req, res, next){
+    try{
+        const run = await req.models.run.get(req.params.id);
+        if (!run){
+            throw new Error ('Run not found');
+        }
+        const players = await req.models.player.listByRunId(req.params.id);
+        await async.each(players, async player => {
+            const inkStates = await req.models.ink_state.find({player_id: player.id});
+            await async.each(inkStates, async (ink_state) => {
+                return req.models.ink_state.delete(ink_state.id);
+            });
+        });
+        res.json({success:true});
+    } catch(err){
+        res.json({success:false, error: err.message});
+    }
+}
+
 const router = express.Router();
 
 router.use(permission('gm'));
@@ -361,6 +380,7 @@ router.put('/:id/stateChange', permission('admin'), csrf(), updateAllPlayers);
 router.put('/:id/advance', csrf(), advanceAll);
 router.put('/:id/toast', csrf(), toastAll);
 router.put('/:id/trigger/:triggerid', csrf(), runTriggerAll);
+router.put('/:id/resetInk', permission('admin'), csrf(), resetInkStories);
 router.post('/', permission('admin'), csrf(), create);
 router.put('/:id', permission('admin'), csrf(), update);
 router.delete('/:id', permission('admin'), remove);

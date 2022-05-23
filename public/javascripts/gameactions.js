@@ -132,6 +132,7 @@ function showAction($row) {
     $row.find('.action-transition').hide();
     $row.find('.action-image').hide();
     $row.find('.action-script').hide();
+    $row.find('.action-ink').hide();
     switch(type){
         case 'link':
             $row.find('.action-link').show();
@@ -150,6 +151,9 @@ function showAction($row) {
             break;
         case 'script':
             $row.find('.action-script').show();
+            break;
+        case 'ink':
+            $row.find('.action-ink').show();
             break;
 
     }

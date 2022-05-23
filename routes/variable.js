@@ -11,7 +11,7 @@ async function list(req, res, next){
         path: [
             { url: '/', name: 'Home'},
         ],
-        current: 'Player Groups'
+        current: 'Variables'
     };
     try {
         res.locals.variables = await req.models.variable.list();
@@ -27,6 +27,7 @@ function showNew(req, res, next){
         type: null,
         public: false,
         base_value: null,
+        ink_name: null,
     };
     res.locals.breadcrumbs = {
         path: [

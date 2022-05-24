@@ -555,7 +555,8 @@ mixin actionsCard(areaId, area)
                             if action.ink_fullscreen
                                 |  Restart
                             if action.ink_startPoint
-                                |  from ${action.ink_startPoint}
+                                |  from
+                                strong.ml-1 #{action.ink_startPoint}
 
                         default
                             | None

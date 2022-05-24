@@ -51,7 +51,7 @@ mixin htmlEditor(id, name, rows, size, contents)
                 .card-body.overflow-auto.editor-preview(
                     id=`${id}-preview-frame`
                     style=`height: ${size-2}px`)
-        .tab-pane.fade(
+        .tab-pane.fade.variables-help(
             id=`${id}-liquid`
             role="tabpanel"
             aria-labelledby=`${id}-liquid-tab`
@@ -151,6 +151,15 @@ mixin jsEditor(id, name, rows, size, contents)
                     aria-controls=`${id}-variables`
                     aria-selected="false"
                 ) Game Variables
+        li.nav-item(role="presentation")
+            a.nav-link(
+                id=`${id}-engine-functions-tab`
+                data-toggle="tab"
+                href=`#${id}-engine-functions`
+                role="tab"
+                aria-controls=`${id}-engine-functions`
+                aria-selected="false"
+            ) Engine Functions
 
     .tab-content.pb-2(id=`${id}-editor`)
         .tab-pane.fade.show.active(
@@ -192,7 +201,7 @@ mixin jsEditor(id, name, rows, size, contents)
                         | }
                         | private.statesVisited++;
                         | output.console `Increased statesVisited by 1 for ${player} (${character})`;
-        .tab-pane.fade(
+        .tab-pane.fade.variables-help(
             id=`${id}-engine`
             role='tabpanel'
             area-labelledby=`${id}-engine-tab`
@@ -227,30 +236,6 @@ mixin jsEditor(id, name, rows, size, contents)
                                 td Yes
                                 td Object with output.to_state_id, output.delay. Set these to change the player state.
                             tr
-                                td output.log("text")
-                                td No
-                                td Function to log text to the server console.
-                            tr
-                                td output.text("text", options)
-                                td No
-                                td Function to display text to the user.  <i>option</i> object has location (inline/popup/popout), duration (for inline), name, documentId (for documents)
-                            tr
-                                td output.link(id)
-                                td No
-                                td Function to open a link by ID
-                            tr
-                                td output.meeting(id)
-                                td No
-                                td Function to open a meeting by ID
-                            tr
-                                td output.image(id)
-                                td No
-                                td Function to open an image popup by ID
-                            tr
-                                td output.forceupdate()
-                                td No
-                                td Function to force the player to refresh the current gamestate, use after updating a variable, if needed.
-                            tr
                                 td player
                                 td No
                                 td Contains the current player name.
@@ -274,14 +259,9 @@ mixin jsEditor(id, name, rows, size, contents)
                                 td jitsiActive
                                 td No
                                 td Boolean for if Jisti Server is available
-                            tr
-                                td _
-                                td No
-                                td
-                                    a(href='http://underscorejs.org/' target='_blank') UnderscoreJS
-                                    |  object for assorted helper fucntions
 
-        .tab-pane.fade(
+
+        .tab-pane.fade.variables-help(
             id=`${id}-variables`
             role='tabpanel'
             area-labelledby=`${id}-variables-tab`
@@ -302,6 +282,59 @@ mixin jsEditor(id, name, rows, size, contents)
                                     td #{variable.type}
                                     td #{variable.player?'Player':'Run'}
                                     td #{variable.public?'Yes':'No'}
+
+        .tab-pane.fade.variables-help(
+            id=`${id}-engine-functions`
+            role='tabpanel'
+            area-labelledby=`${id}-engine-tab-functions`
+        )
+            .row
+                .col.p-4
+                    table.table.table-sm
+                        thead
+                            tr
+                                th.col-sm-2 Function
+                                th Usage
+                        tbody
+                            tr
+                                td output.log("text")
+                                td Log text to the server console.
+                            tr
+                                td output.text("text", options)
+                                td Display text to the user.
+                                    i.mx-1 options
+                                    | has location (inline/popup/popout), duration (for inline), name, documentId (for documents)
+                            tr
+                                td output.link(id)
+                                td Open a link by ID
+                            tr
+                                td output.meeting(id)
+                                td Open a meeting by ID
+                            tr
+                                td output.closemeeting()
+                                td Close the current meeting
+
+                            tr
+                                td output.image(id)
+                                td Open an image popup by ID
+                            tr
+                                td output.ink(id, options)
+                                td Start an Ink Story by ID.
+                                    i.mx-1 options
+                                    | has fullscreen(boolean), startPoint(string), restart(boolean)
+                            tr
+                                td output.closeink()
+                                td Close the current Ink Story
+
+                            tr
+                                td output.forceupdate()
+                                td Force the player to refresh the current gamestate, use after updating a variable, if needed.
+                            tr
+                                td _
+                                td
+                                    a(href='http://underscorejs.org/' target='_blank') UnderscoreJS
+                                    |  object for assorted helper functions
+
 
 
 

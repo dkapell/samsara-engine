@@ -286,6 +286,9 @@ img {
 .editor-tabs .nav-link {
     padding: 0.2rem 1rem;
 }
+.variables-help {
+    font-size:  0.9rem;
+}
 
 .table-sorted,
 .table-filtered{

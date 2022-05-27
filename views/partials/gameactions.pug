@@ -552,11 +552,13 @@ mixin actionsCard(areaId, area)
                             i #{_.findWhere(inks, {id: action.ink_id}).name}
                             if action.ink_fullscreen
                                 |  Fullscreen
-                            if action.ink_fullscreen
-                                |  Restart
+                            if action.ink_restart
+                                |  without State
                             if action.ink_startPoint
                                 |  from
                                 strong.ml-1 #{action.ink_startPoint}
+                        when 'closeink'
+                            strong.mr-1 Close Ink Story
 
                         default
                             | None

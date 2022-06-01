@@ -56,7 +56,7 @@ function fixActions(actions){
         for (const key in action){
             switch (key){
                 case 'gamestate_id': doc.screen_id = action[key]; break;
-                case 'to_screen_id': doc.to_screen_id = action[key]; break;
+                case 'to_state_id': doc.to_screen_id = action[key]; break;
                 default: doc[key] = action[key]; break;
             }
         }

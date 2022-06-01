@@ -25,8 +25,8 @@ async function list(req, res, next){
         }
 
         await async.each(res.locals.meetings, async(meeting) => {
-            if (meeting.gamestate_id){
-                meeting.gamestate = await req.models.gamestate.get(meeting.gamestate_id);
+            if (meeting.screen_id){
+                meeting.screen = await req.models.screen.get(meeting.screen_id);
             }
             if (_.has(rooms, meeting.meeting_id.toLowerCase())){
                 meeting.users = rooms[meeting.meeting_id.toLowerCase()];
@@ -56,7 +56,7 @@ async function list(req, res, next){
         };
         res.locals.csrfToken = req.csrfToken();
 
-        //res.locals.gamestates = await req.models.gamestate.list();
+        //res.locals.screens = await req.models.screen.list();
         res.render('meeting/list', { pageTitle: 'Meetings' });
     } catch (err){
         next(err);
@@ -69,8 +69,8 @@ async function show(req, res, next){
     }
     try {
         const meeting = await req.models.meeting.get(req.params.id);
-        if (meeting.gamestate_id){
-            meeting.gamestate = await req.models.gamestate.get(meeting.gamestate_id);
+        if (meeting.screen_id){
+            meeting.screen = await req.models.screen.get(meeting.screen_id);
         }
         meeting.domain = config.get('jitsi.server');
         meeting.jwt = jitsi.token(meeting.meeting_id);
@@ -96,7 +96,7 @@ async function showNew(req, res, next){
             meeting_id: nanoid(10),
             active: true,
             gm: null,
-            gamestate_id: null,
+            screen_id: null,
             public: false,
             show_users: false,
         };
@@ -107,7 +107,7 @@ async function showNew(req, res, next){
             ],
             current: 'New'
         };
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.screens = await req.models.screen.list();
         res.locals.csrfToken = req.csrfToken();
         if (_.has(req.session, 'meetingData')){
             res.locals.meeting = req.session.meetingData;
@@ -137,7 +137,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + meeting.name
         };
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.screens = await req.models.screen.list();
         res.render('meeting/edit');
     } catch(err){
         next(err);
@@ -159,8 +159,8 @@ async function create(req, res, next){
     }
 
     try{
-        if (meeting.gamestate_id === ''){
-            meeting.gamestate_id = null;
+        if (meeting.screen_id === ''){
+            meeting.screen_id = null;
         }
         await req.models.meeting.create(meeting);
         delete req.session.meetingData;
@@ -186,8 +186,8 @@ async function update(req, res, next){
         meeting.show_users = false;
     }
 
-    if (meeting.gamestate_id === ''){
-        meeting.gamestate_id = null;
+    if (meeting.screen_id === ''){
+        meeting.screen_id = null;
     }
 
     try {

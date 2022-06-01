@@ -28,15 +28,15 @@
         input.custom-control-input(type="checkbox", name="meeting[active]", id="meeting_active", checked=meeting.active)
         label.custom-control-label(for="meeting_active") Active
 .form-group
-    label.control-label(for="meeting_gamestate_id") Gamestate (Optional)
-    select.custom-select.select2#meeting_gamestate_id(name="meeting[gamestate_id]" data-placeholder="Gamestate")
+    label.control-label(for="meeting_screen_id") Screen (Optional)
+    select.custom-select.select2#meeting_screen_id(name="meeting[screen_id]" data-placeholder="Screen")
         option
-        for gamestate in gamestates
-            if (meeting.gamestate_id === gamestate.id)
-                option(value=gamestate.id selected=true)= gamestate.name
-            else if (gamestate.chat && ! gamestate.template)
-                option(value=gamestate.id )= gamestate.name
-    small.form-help.text-muted If specified, this gamestate's chat will be defaulted in the GM meeting view
+        for screen in screens
+            if (meeting.screen_id === screen.id)
+                option(value=screen.id selected=true)= screen.name
+            else if (screen.chat && ! screen.template)
+                option(value=screen.id )= screen.name
+    small.form-help.text-muted If specified, this screen's chat will be defaulted in the GM meeting view
 
 
 .form-group

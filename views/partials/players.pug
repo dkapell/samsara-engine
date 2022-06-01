@@ -15,8 +15,8 @@ mixin players(users, runId)
                     th(data-priority="6" data-partialmatch="true" ) Group
                     th(data-priority="1", data-order='asc') Name
                     th(data-priority="2") Character
-                    th(data-priority="4") Game State
-                    th(data-priority="5" data-nofilter="true") State Time
+                    th(data-priority="4") Game Screen
+                    th(data-priority="5" data-nofilter="true") Screen Time
                     th(data-priority="3")
             tbody
                 for user in users
@@ -44,25 +44,25 @@ mixin players(users, runId)
                                     span= user.player.character
                                 else
                                     i Unspecified
-                        td.col-player-gamestate
-                            if user.gamestate.current
-                                if user.gamestate.transitioning
-                                    a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.prev.id}`)
-                                        | #{user.gamestate.prev.name}
+                        td.col-player-screen
+                            if user.screen.current
+                                if user.screen.transitioning
+                                    a.badge.badge-light.badge-screen(href=`/screen/${user.screen.prev.id}`)
+                                        | #{user.screen.prev.name}
                                     i.fas.fa-arrow-right.fa-fw.mx-1
-                                    a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.next.id}`)
-                                        | #{user.gamestate.next.name}
+                                    a.badge.badge-light.badge-screen(href=`/screen/${user.screen.next.id}`)
+                                        | #{user.screen.next.name}
                                 else
-                                    a.badge.badge-light.badge-gamestate(href=`/gamestate/${user.gamestate.current.id}`)
-                                        | #{user.gamestate.current.name}
+                                    a.badge.badge-light.badge-screen(href=`/screen/${user.screen.current.id}`)
+                                        | #{user.screen.current.name}
                             else
                                 i Unknown
                         td.col-player-statetime(data-sort=user.player.statetime)
-                            if user.gamestate.current
-                                if user.gamestate.transitioning
+                            if user.screen.current
+                                if user.screen.transitioning
                                     | #{moment(user.player.statetime).fromNow()}
                                 else
-                                    | #{user.gamestate.transitionTime}
+                                    | #{user.screen.transitionTime}
 
                         td.text-right
 
@@ -101,7 +101,7 @@ mixin players(users, runId)
                                 url=`/player/${user.id}/advance`,
                                 data-csrf=csrfToken,
                                 data-toggle="tooltip"
-                                title="Advance User State"
+                                title="Advance User Screen"
                             )
                                 i.fas.fa-arrow-right
 

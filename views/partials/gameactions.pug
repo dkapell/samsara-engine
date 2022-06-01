@@ -1,6 +1,6 @@
 mixin area(area, id)
     .list-group-item.area-config(id=`area-${id}`)
-        input(type='hidden', name=`gamestate[map][${id}][uuid]` value=clone?'':area.uuid)
+        input(type='hidden', name=`screen[map][${id}][uuid]` value=clone?'':area.uuid)
         .form-row.mb-2
             .lead.col
                 strong Area
@@ -12,13 +12,13 @@ mixin area(area, id)
                     button.btn.btn-sm.btn-outline-danger.remove-area-btn(data-toggle="tooltip" title='Remove Area' data-placement="right")
                         i.fas.fa-trash.fa-fw
             label.col-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
-                for="gamestate_map_area_name-" + id
+                for="screen_map_area_name-" + id
                 data-fieldtype='name'
             ) Name
             .col-md-5
                 input.form-control.area-name.area-input(
-                    id=`gamestate_map_area_name-${id}`,
-                    name=`gamestate[map][${id}][name]`,
+                    id=`screen_map_area_name-${id}`,
+                    name=`screen[map][${id}][name]`,
                     value=area.name,
                     data-updated='self',
                     placeholder="Area Name.  Leave empty to calculate from actions",
@@ -26,13 +26,13 @@ mixin area(area, id)
                     data-fieldtype='name'
                 )
             label.col-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
-                for="gamestate_map_area_shape-" + id
+                for="screen_map_area_shape-" + id
                 data-fieldtype='shape'
             ) Shape
             .col-md-2
                 select.custom-select.area-input(
-                    name=`gamestate[map][${id}][shape]`,
-                    id=`gamestate_map_area_shape-${id}`,
+                    name=`screen[map][${id}][shape]`,
+                    id=`screen_map_area_shape-${id}`,
                     class=id!=='new'?'select2':'',
                     data-placeholder="Select Shape"
                     required=id!== 'new'
@@ -51,14 +51,14 @@ mixin area(area, id)
 
         .form-row.mb-2
             label.col-md-1.offset-md-1.d-md-none.d-lg-block.col-form-label.area-input-label(
-                for=`gamestate_map_area_coords-${id}`
+                for=`screen_map_area_coords-${id}`
                 data-fieldtype='coords'
             ) Coords
             .col
                 input.form-control.area-input(
-                    name=`gamestate[map][${id}][coords]`,
+                    name=`screen[map][${id}][coords]`,
                     value=area.coords,
-                    id=`gamestate_map_area_coords-${id}`,
+                    id=`screen_map_area_coords-${id}`,
                     placeholder="Coordinates",
                     required=id!== 'new',
                     data-fieldtype='coords'
@@ -67,13 +67,13 @@ mixin area(area, id)
         .form-row.mb-3.area-criteria
             // Group ID
             label.col-md-1.offset-md-1.col-form-label.area-input-label(
-                for=`gamestate_map-${id}-group_id`
+                for=`screen_map-${id}-group_id`
                 data-fieldtype='group_id'
             ) Group
             .col-md-2
                 select.custom-select.area-input.area-group(
-                    name=`gamestate[map][${id}][group_id]`
-                    id=`gamestate_map-${id}-group_id`
+                    name=`screen[map][${id}][group_id]`
+                    id=`screen_map-${id}-group_id`
                     class=id!=='new'?'select2':'',
                     data-fieldtype='group_id'
                 )
@@ -87,7 +87,7 @@ mixin area(area, id)
 
             // Condition Input
             label.col-md-2.offset-md-1.col-form-label.area-input-label(
-                for=`gamestate_map-${id}-condition`
+                for=`screen_map-${id}-condition`
                 data-fieldtype='condition'
             )
                 span.d-md-none.d-xl-block.mr-1 Condition
@@ -104,8 +104,8 @@ mixin area(area, id)
                 )
                 input.form-control.script-input.area-input.area-condition-data(
                     type="hidden"
-                    name=`gamestate[map][${id}][condition]`,
-                    id=`gamestate_map-${id}-condition`,
+                    name=`screen[map][${id}][condition]`,
+                    id=`screen_map-${id}-condition`,
                     value=area.condition
                     data-fieldtype='condition'
                 )
@@ -116,7 +116,7 @@ mixin area(area, id)
         if _.isArray(area.actions)
             - let actionId = 0;
             for action in area.actions
-                +action('gamestate_map', `gamestate[map][${id}]`, action, id, actionId)
+                +action('screen_map', `screen[map][${id}]`, action, id, actionId)
                 - actionId++
 
 
@@ -336,20 +336,20 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
         .form-row.my-1.action-transition
             // Transition Selection
             label.col-md-2.offset-md-1.col-form-label.action-input-label(
-                for=`${prefix}-${areaId}-action-${actionId}-to_state_id`
-                data-fieldtype='to_state_id'
-            ) To State
+                for=`${prefix}-${areaId}-action-${actionId}-to_screen_id`
+                data-fieldtype='to_screen_id'
+            ) To Screen
             .col-md-5
                 select.custom-select.action-input(
-                    name=`${namePrefix}[actions][${actionId}][to_state_id]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-to_state_id`,
+                    name=`${namePrefix}[actions][${actionId}][to_screen_id]`,
+                    id=`${prefix}-${areaId}-action-${actionId}-to_screen_id`,
                     class=actionId!=='new'?'select2':'',
-                    data-placeholder="Select Gamestate",
-                    data-fieldtype='to_state_id'
+                    data-placeholder="Select Screen",
+                    data-fieldtype='to_screen_id'
                 )
                     option
-                    for gamestate in gamestates
-                        option(value=gamestate.id selected=action.to_state_id && Number(action.to_state_id)===gamestate.id)= gamestate.name
+                    for screen in screens
+                        option(value=screen.id selected=action.to_screen_id && Number(action.to_screen_id)===screen.id)= screen.name
 
             // Delay
             label.col-md-2.action-input-label.col-form-label(
@@ -534,8 +534,8 @@ mixin actionsCard(areaId, area)
                                 i.mr-1 #{action.content}
 
                         when 'transition'
-                            strong.mr-1 Transition to state
-                            i.mr-1 #{_.findWhere(gamestates, {id: action.to_state_id}).name}
+                            strong.mr-1 Transition to Screen
+                            i.mr-1 #{_.findWhere(screens, {id: action.to_screen_id}).name}
                             if action.delay
                                 | after #{moment.duration(action.delay, "seconds").humanize()}
                             else
@@ -553,7 +553,7 @@ mixin actionsCard(areaId, area)
                             if action.ink_fullscreen
                                 |  Fullscreen
                             if action.ink_restart
-                                |  without State
+                                |  without Screen
                             if action.ink_startPoint
                                 |  from
                                 strong.ml-1 #{action.ink_startPoint}

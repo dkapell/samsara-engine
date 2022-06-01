@@ -8,7 +8,7 @@ $(function(){
         title: 'Delete this item'
     }).on('click', deleteItem);
 
-    $('#gamestate_image_id').on('change', function(e){
+    $('#screen_image_id').on('change', function(e){
         showMapGroup();
         showImage();
     });
@@ -32,7 +32,7 @@ async function deleteItem(e){
 }
 
 function showMapGroup(e){
-    const image = $('#gamestate_image_id').val();
+    const image = $('#screen_image_id').val();
     if(image !== '-1'){
         $('#map-group').show();
     } else {
@@ -54,11 +54,11 @@ function hideMapArea(e){
 }
 
 function showImage(){
-    const image = $('#gamestate_image_id').val();
-    const url = $('#gamestate_image_id').find(':selected').attr('data-url');
+    const image = $('#screen_image_id').val();
+    const url = $('#screen_image_id').find(':selected').attr('data-url');
     if (image === '-1'){
-        $('#gamestate-image').attr('src','');
+        $('#screen-image').attr('src','');
     } else {
-        $('#gamestate-image').attr('src',url );
+        $('#screen-image').attr('src',url );
     }
 }

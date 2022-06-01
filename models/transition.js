@@ -8,7 +8,7 @@ const cache = require('../lib/cache');
 const models = {
 };
 
-const tableFields = ['from_state_id', 'to_state_id', 'group_id', 'manual', 'delay'];
+const tableFields = ['from_screen_id', 'to_screen_id', 'group_id', 'manual', 'delay'];
 
 exports.get = async function(id){
     let transition = await cache.check('transition', id);
@@ -36,7 +36,7 @@ exports.find = async function(conditions){
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by from_state_id nulls last';
+    query += ' order by from_screen_id nulls last';
     const result = await database.query(query, queryData);
     return result.rows;
 };

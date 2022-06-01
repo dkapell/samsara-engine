@@ -93,7 +93,7 @@ block content
                         th(data-priority="4") Id
                     th(data-priority="1", data-order='asc') Name
                     th(data-nofilter="true") Meeting Id
-                    th For Gamestate
+                    th For Screen
                     th(data-priority="3" data-partialmatch="true") GM
                     th(data-priority="4") Public
                     th(data-priority="5" data-nofilter="true") Users
@@ -109,9 +109,9 @@ block content
                             a(href='/meeting/' + meeting.id)= meeting.name
                         td= meeting.meeting_id
                         td
-                            if meeting.gamestate_id
-                                a.action-btn(href=`/gamestate/${meeting.gamestate.id}`)
-                                    .badge.badge-light.badge-gamestate= meeting.gamestate.name
+                            if meeting.screen_id
+                                a.action-btn(href=`/screen/${meeting.screen.id}`)
+                                    .badge.badge-light.badge-screen= meeting.screen.name
                             else
                                 i None Specified
                         td= meeting.gm

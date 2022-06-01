@@ -1,6 +1,6 @@
 extends ../layout
 
-include ../partials/gamestate
+include ../partials/screen
 include ../partials/players
 include ../partials/triggerButton
 
@@ -38,19 +38,19 @@ block content
                             .input-group.mt-2.mr-2
                                 .input-group-prepend.border-warning
                                     .input-group-text.border-warning Send
-                                select.custom-select.border-warning.select2.input-sm#run-update-state-group(data-placeholder='Pick Group' style='min-width:100px')
+                                select.custom-select.border-warning.select2.input-sm#run-update-screen-group(data-placeholder='Pick Group' style='min-width:100px')
                                     option(value=0) All
                                     for group in groups
                                         option(value=group.id)= group.name
                                 .input-group-prepend
                                     .input-group-text.border-warning.border-top.border-bottom to
 
-                                select.custom-select.border-warning.select2.input-sm#run-update-state(data-placeholder='Pick State' style='min-width:150px')
+                                select.custom-select.border-warning.select2.input-sm#run-update-screen(data-placeholder='Pick Screen' style='min-width:150px')
                                     option
-                                    for gamestate in gamestates
-                                        option(value=gamestate.id)= gamestate.name
+                                    for screen in screens
+                                        option(value=screen.id)= screen.name
                                 .input-group-append
-                                    button.btn.btn-warning#state-update-btn(type="button", url=`/run/${run.id}/stateChange`, data-csrf=csrfToken) Go
+                                    button.btn.btn-warning#screen-update-btn(type="button", url=`/run/${run.id}/screenChange`, data-csrf=csrfToken) Go
 
                         a.btn.btn-outline-info.mt-2.mr-2.next-step-all-btn(role="button" url=`/run/${run.id}/advance`, data-csrf=csrfToken)
                             i.fas.fa-arrow-right.pr-1
@@ -102,7 +102,7 @@ append scripts
     script(src='/javascripts/run.js')
     script(src='/javascripts/player.js')
     script(src='/javascripts/templates/triggerButton.js')
-    script(src='/javascripts/templates/gamestateBadge.js')
+    script(src='/javascripts/templates/screenBadge.js')
     script(src='/javascripts/templates/characterName.js')
     script(src='/javascripts/data-table.js')
 

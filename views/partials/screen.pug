@@ -1,51 +1,51 @@
-mixin gamestate(gamestate, gmView)
-    if gamestate.showCode || (gamestate.codes && gamestate.codes.length)
+mixin screen(screen, gmView)
+    if screen.showCode || (screen.codes && screen.codes.length)
         .d-flex.justify-content-center.mb-2
             .col-10.offset-1
                 form#code-form
                     .alert.alert-warning.col-md-8.offset-md-2#code-feedback(role='alert')
                     input.form-control.rounded-pill.col-md-8.offset-md-2.bg-dark.text-light#code-entry(type="input", placeholder="Code")
-    if gamestate.image_id
+    if screen.image_id
         .d-flex.justify-content-center.mb-1
             .lead.text-center#link-name.text-truncate(style="overflow:none") &nbsp;
-        .d-flex.justify-content-center.mb-1.mw-100#gamestate-image-holder(data-height= gmView?350:null)
-            image.imageHolder.map.mx-auto.img-fluid.mw-100#gamestate-image(src=gamestate.image.url, usemap='#gamestate-' + gamestate.id,style='max-height:60vh; max-width:100%')
-            map(name= 'gamestate-' + gamestate.id, id=`gamestate-${gamestate.id}` )
-                for area in gamestate.map
+        .d-flex.justify-content-center.mb-1.mw-100#screen-image-holder(data-height= gmView?350:null)
+            image.imageHolder.map.mx-auto.img-fluid.mw-100#screen-image(src=screen.image.url, usemap='#screen-' + screen.id,style='max-height:60vh; max-width:100%')
+            map(name= 'screen-' + screen.id, id=`screen-${screen.id}` )
+                for area in screen.map
                     area(
                         id=`area-${area.uuid?area.uuid:area.id}`,
                         shape=area.shape,
                         coords=area.coords,
                         data-name=`${area.name}`,
                         data-groups=`${area.name},all`,
-                        data-gamestate-id=gamestate.id
+                        data-screen-id=screen.id
                         data-area=area.uuid?area.uuid:area.id
                         href='#',
                         target="_self",
                         data-maphilight='{}'
                         )
     .row
-        .col !{gamestate.description}
+        .col !{screen.description}
 
 
-mixin transition(transition, gamestates, groups, current)
-    - const fromState = _.findWhere(gamestates, {id: transition.from_state_id});
-    - const toState = _.findWhere(gamestates, {id: transition.to_state_id});
+mixin transition(transition, screens, groups, current)
+    - const fromScreen = _.findWhere(screens, {id: transition.from_screen_id});
+    - const toScreen = _.findWhere(screens, {id: transition.to_screen_id});
     - moment.relativeTimeThreshold('ss', 0);
 
     .card.m-1
         .card-header
-            if current.id !== fromState.id
-                a(href=`/gamestate/${fromState.id}`)= fromState.name
+            if current.id !== fromScreen.id
+                a(href=`/screen/${fromScreen.id}`)= fromScreen.name
             else
-                | #{fromState.name}
+                | #{fromScreen.name}
             i.fas.fa-arrow-right.fa-fw.mx-1
-            if current.id !== toState.id
-                a(href=`/gamestate/${toState.id}`)= toState.name
+            if current.id !== toScreen.id
+                a(href=`/screen/${toScreen.id}`)= toScreen.name
             else
-                | #{toState.name}
+                | #{toScreen.name}
 
-            if transition.type === 'gamestate' && checkPermission('creator')
+            if transition.type === 'screen' && checkPermission('creator')
                 .float-right
                     a.btn.btn-sm.btn-outline-info(
                         role=button,
@@ -67,7 +67,7 @@ mixin transition(transition, gamestates, groups, current)
                             span.map-highlight(data-area=transition.areaId)
                                 | #{transition.name}
                                 i.fa.fa-search.ml-1
-                        when 'gamestate'
+                        when 'screen'
                             if transition.link_id
                                strong.mr-1 Code:
                                i.ml-1 #{links[transition.link_id].code}

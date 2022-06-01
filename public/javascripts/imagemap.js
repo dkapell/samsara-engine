@@ -51,19 +51,19 @@ function prepImageMapGM(){
         }
     };
     const opts = $.extend({}, allOpts, initialOpts, singleOpts);
-    const $gamestateImage = $('#gamestate-image');
-    $gamestateImage
+    const $screenImage = $('#screen-image');
+    $screenImage
         .mapster('unbind')
         .mapster(opts)
         .bind('mouseover', function () {
             if (!inArea) {
-                $gamestateImage.mapster('set_options', allOpts)
+                $screenImage.mapster('set_options', allOpts)
                     .mapster('set', true, 'all')
                     .mapster('set_options', singleOpts);
             }
         }).bind('mouseout', function () {
             if (!inArea) {
-                $gamestateImage.mapster('set', false, 'all');
+                $screenImage.mapster('set', false, 'all');
             }
         });
 

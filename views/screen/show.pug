@@ -1,0 +1,99 @@
+extends ../layout
+
+include ../partials/screen
+include ../partials/gameactions
+
+
+block content
+    .row.my-3
+        h2.d-inline-block Screen
+            i.ml-2 #{screen.name}
+
+        if screen.start
+            h3
+                .badge.badge-success.float-right.ml-2 Start
+        if screen.special
+            h3
+                .badge.badge-info.float-right.ml-2 Special
+
+        if screen.template
+            h3
+                .badge.badge-warning.float-right.ml-2 Template
+
+
+    if checkPermission('creator')
+        a.btn.btn-outline-info.mr-2(role="button" href='/screen/' + screen.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Screen
+        a.btn.btn-outline-danger.mx-2.delete-btn(role="button", url=`/screen/${screen.id}`, data-back='/screen')
+            i.fas.fa-trash
+            |  Delete Screen
+        a.btn.btn-outline-success.mx-2(href=`/transition/new?from_screen_id=${screen.id}`)
+            span(class="fa fa-plus")
+            |  New Transition
+
+    h4.my-2 Player View
+    .row.my-2
+        .col-md-8
+            .border-primary.border.rounded.p-2.m-2#screen-container(style='min-height:200px; max-height:700px;overflow-y:scroll;overflow-x:hidden')
+                +screen(screen, true)
+        .col-md-4.d-none.d-md-block
+            for area in screen.map
+                +actionsCard(area.uuid, area)
+    .row.my-2
+        if screen.chat
+            .col
+                h4 Chat
+                p Has Chat
+                if screen.show_name
+                    p Show Screen Name in Chat
+
+        if screen.codes.length
+            .col
+                h4 Codes Allowed
+                ul.list-unstyled
+                    for code in screen.codes
+                        li
+                            strong.mr-1 #{code.code}
+
+
+    if screen.transitions.from.length
+        .row.my-2
+            .col
+                h4.my-2 Transitions From #{screen.name}
+                    if checkPermission('creator')
+                        a.btn.btn-outline-success.btn-sm.mx-2(
+                            href=`/transition/new?from_screen_id=${screen.id}`
+                            role="button"
+                            data-toggle="tooltip"
+                            title=`New Transition from<br>${screen.name}`
+                            data-html="true"
+                        )
+                            span(class="fa fa-plus")
+
+                .row.row-cols-1.row-cols-md-2.row-cols-lg-3
+                    for transition in screen.transitions.from
+                        +transition(transition, screens, groups, screen)
+
+    if screen.transitions.to.length
+        .row.my-2
+            .col
+                h4.my-2 Transitions To #{screen.name}
+                    if checkPermission('creator')
+                        a.btn.btn-outline-success.btn-sm.mx-2(
+                            href=`/transition/new?to_screen_id=${screen.id}`
+                            role="button"
+                            data-toggle="tooltip"
+                            title=`New Transition to<br>${screen.name}`
+                            data-html="true"
+                        )
+                            span(class="fa fa-plus")
+                .row.row-cols-1.row-cols-md-2.row-cols-lg-3
+                    for transition in screen.transitions.to
+                        +transition(transition, screens, groups, screen)
+
+
+
+append scripts
+    script(src='/javascripts/imagemap.js')
+    script(src='/javascripts/screen.js')

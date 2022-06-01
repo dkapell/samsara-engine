@@ -8,7 +8,7 @@ $(function(){
     }).on('click', runAction);
 
 
-    $('#state-update-btn').confirmation({
+    $('#screen-update-btn').confirmation({
         title: 'Update multiple Players?'
     }).on('click', updateAll);
 
@@ -40,9 +40,9 @@ async function updateAll(e){
     const url = $this.attr('url');
     const csrf = $this.attr('data-csrf');
     const formData = new FormData();
-    const state_id = $('#run-update-state').val();
-    const group_id = $('#run-update-state-group').val();
-    if (!state_id || state_id === ''){
+    const screen_id = $('#run-update-screen').val();
+    const group_id = $('#run-update-screen-group').val();
+    if (!screen_id || screen_id === ''){
         return;
     }
     const result = await fetch(url, {
@@ -52,7 +52,7 @@ async function updateAll(e){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            state_id: state_id,
+            screen_id: screen_id,
             group_id: group_id
         })
     });

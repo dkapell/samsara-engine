@@ -48,23 +48,23 @@ async function show(req, res, next){
         const users = await async.mapLimit(players, 5, async function(player){
             const user = await req.models.user.get(player.user_id);
 
-            user.gamestate = await gameEngine.getGameState(user.id);
+            user.screen = await gameEngine.getScreen(user.id);
 
-            if (!user.gamestate){
+            if (!user.screen){
                 return user;
             }
             for (const type of ['next', 'prev', 'current']){
-                if (_.has(user.gamestate, type)){
-                    delete user.gamestate[type].map;
-                    delete user.gamestate[type].transitions;
-                    delete user.gamestate[type].codes;
-                    delete user.gamestate[type].image;
+                if (_.has(user.screen, type)){
+                    delete user.screen[type].map;
+                    delete user.screen[type].transitions;
+                    delete user.screen[type].codes;
+                    delete user.screen[type].image;
                 }
             }
-            user.gamestate.transitionTimeDelta = moment(player.statetime).fromNow();
-            user.gamestate.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
+            user.screen.transitionTimeDelta = moment(player.statetime).fromNow();
+            user.screen.transitionTime = moment(player.statetime).isSame(moment(), 'date')?moment(player.statetime).format('LT'):moment(player.statetime).format('lll');
 
-            user.player = user.gamestate.player;
+            user.player = user.screen.player;
 
             user.triggers = (await req.models.player.getTriggers(player.id)).map(trigger => {
                 delete trigger.actions;
@@ -90,7 +90,7 @@ async function show(req, res, next){
             .sort((a, b) => {
                 a.name.localeCompare(b.name);
             });
-        res.locals.gamestates = await req.models.gamestate.listSpecial();
+        res.locals.screens = await req.models.screen.listSpecial();
         res.locals.triggers = await req.models.trigger.list();
         res.locals.csrfToken = req.csrfToken();
         res.render('run/show');
@@ -236,12 +236,12 @@ async function resetRun(req, res, next){
             throw new Error ('Run not found');
         }
         const players = await req.models.player.listByRunId(req.params.id);
-        const initialState = await req.models.gamestate.getStart();
+        const initialScreen = await req.models.screen.getStart();
         await async.each(players, async player => {
-            await gameEngine.changeState(player.user_id, initialState.id, 0);
-            return req.app.locals.gameServer.sendGameState(player.user_id);
+            await gameEngine.changeScreen(player.user_id, initialScreen.id, 0);
+            return req.app.locals.gameServer.sendScreen(player.user_id);
         });
-        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialState.id);
+        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialScreen.id);
         await gameEngine.updateAllTriggers();
         res.json({success:true});
 
@@ -257,16 +257,16 @@ async function updateAllPlayers(req, res, next){
             throw new Error ('Run not found');
         }
         const players = await req.models.player.listByRunId(req.params.id);
-        const state = await req.models.gamestate.get(req.body.state_id);
+        const screen = await req.models.screen.get(req.body.screen_id);
         let group = false;
-        if (!state) { throw new Error('State not found'); }
+        if (!screen) { throw new Error('Screen not found'); }
         await async.each( players, async player => {
             if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
-                await gameEngine.changeState(player.user_id, state.id, 0, true);
-                return req.app.locals.gameServer.sendGameState(player.user_id);
+                await gameEngine.changeScreen(player.user_id, screen.id, 0, true);
+                return req.app.locals.gameServer.sendScreen(player.user_id);
             }
         });
-        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, state.id);
+        await req.app.locals.gameServer.sendLocationUpdate(run.id, null, screen.id);
         await gameEngine.updateAllTriggers();
         res.json({success:true});
 
@@ -283,9 +283,9 @@ async function advanceAll(req, res, next){
         }
         const players = await req.models.player.listByRunId(req.params.id);
         await async.each(players, async player => {
-            const changed = await gameEngine.nextState(player.user_id);
+            const changed = await gameEngine.nextScreen(player.user_id);
             if (changed){
-                await req.app.locals.gameServer.sendGameState(player.user_id);
+                await req.app.locals.gameServer.sendScreen(player.user_id);
             }
             return;
         });
@@ -351,8 +351,8 @@ async function resetInkStories(req, res, next){
         }
         const players = await req.models.player.listByRunId(req.params.id);
         await async.each(players, async player => {
-            const inkStates = await req.models.ink_state.find({player_id: player.id});
-            await async.each(inkStates, async (ink_state) => {
+            const inkScreens = await req.models.ink_state.find({player_id: player.id});
+            await async.each(inkScreens, async (ink_state) => {
                 return req.models.ink_state.delete(ink_state.id);
             });
         });
@@ -376,7 +376,7 @@ router.get('/current', showCurrent);
 router.get('/:id', csrf(), show);
 router.get('/:id/edit', permission('admin'), csrf(), showEdit);
 router.put('/:id/reset', permission('admin'), csrf(), resetRun);
-router.put('/:id/stateChange', permission('admin'), csrf(), updateAllPlayers);
+router.put('/:id/screenChange', permission('admin'), csrf(), updateAllPlayers);
 router.put('/:id/advance', csrf(), advanceAll);
 router.put('/:id/toast', csrf(), toastAll);
 router.put('/:id/trigger/:triggerid', csrf(), runTriggerAll);

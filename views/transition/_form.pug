@@ -1,17 +1,17 @@
 
 .form-group
-    label.control-label(for="transition_from_state") From State
-    select.custom-select.select2#transition_from_state(name="transition[from_state_id]",data-placeholder="Select a state")
+    label.control-label(for="transition_from_screen") From Screen
+    select.custom-select.select2#transition_from_screen(name="transition[from_screen_id]",data-placeholder="Select a screen")
         option
-        for gamestate in gamestates
-            option(value=gamestate.id selected=transition.from_state_id===gamestate.id)= gamestate.name
+        for screen in screens
+            option(value=screen.id selected=transition.from_screen_id===screen.id)= screen.name
 
 .form-group
-    label.control-label(for="transition_to_state") To State
-    select.custom-select.select2#transition_to_state(name="transition[to_state_id]",data-placeholder="Select a state")
+    label.control-label(for="transition_to_screen") To Screen
+    select.custom-select.select2#transition_to_screen(name="transition[to_screen_id]",data-placeholder="Select a screen")
         option
-        for gamestate in gamestates
-            option(value=gamestate.id selected=transition.to_state_id===gamestate.id)= gamestate.name
+        for screen in screens
+            option(value=screen.id selected=transition.to_screen_id===screen.id)= screen.name
 
 .form-group
     label.control-label(for="transition_group_id") Player Group

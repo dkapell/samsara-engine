@@ -91,10 +91,10 @@ mixin htmlEditor(id, name, rows, size, contents)
                                     br
                                     | e.g. {{ user.name }}
                             tr
-                                td gamestate
-                                td Object which contains gamestate IDs as keys with the number of playes in that gamestate as values.  Only includes gamestates where user count is public.
+                                td screen
+                                td Object which contains screen IDs as keys with the number of playes in that screen as values.  Only includes screens where user count is public.
                                     br
-                                    |e.g.  {{gamestate.37|default: 0}} to display the number of players in gamestate 37, or '0', if not found.
+                                    |e.g.  {{screen.37|default: 0}} to display the number of players in screen 37, or '0', if not found.
 
 
 mixin jsonEditor(id, name, rows, size, contents)
@@ -192,15 +192,15 @@ mixin jsEditor(id, name, rows, size, contents)
                     h3 Conditionals
                     p Your conditional code should evaluate to true or false
                     pre.border.border-light.rounded.p-2
-                        | private.statesVisited >= 20
+                        | private.screensVisited >= 20
                     h3 Scripts
-                    p Scripts can manipulate data in data.public or data.private and change gamestate by altering output.to_state_id (and optionally output.delay).
+                    p Scripts can manipulate data in data.public or data.private and change screen by altering output.to_screen_id (and optionally output.delay).
                     pre.border.border-light.rounded.p-2
-                        | if(!_.has(data.private, 'statesVisited')){
-                        |     private.statesVisited = 0;
+                        | if(!_.has(data.private, 'screensVisited')){
+                        |     private.screensVisited = 0;
                         | }
-                        | private.statesVisited++;
-                        | output.console `Increased statesVisited by 1 for ${player} (${character})`;
+                        | private.screensVisited++;
+                        | output.console `Increased screensVisited by 1 for ${player} (${character})`;
         .tab-pane.fade.variables-help(
             id=`${id}-engine`
             role='tabpanel'
@@ -234,7 +234,7 @@ mixin jsEditor(id, name, rows, size, contents)
                             tr
                                 td output
                                 td Yes
-                                td Object with output.to_state_id, output.delay. Set these to change the player state.
+                                td Object with output.to_screen_id, output.delay. Set these to change the player screen.
                             tr
                                 td player
                                 td No
@@ -248,13 +248,13 @@ mixin jsEditor(id, name, rows, size, contents)
                                 td No
                                 td Array of groups for the current player.
                             tr
-                                td gamestate_id
+                                td screen_id
                                 td No
-                                td Current gamestate id.
+                                td Current screen id.
                             tr
-                                td gamestates
+                                td screens
                                 td No
-                                td Array of all gamestate objects.
+                                td Array of all screen objects.
                             tr
                                 td jitsiActive
                                 td No
@@ -328,7 +328,7 @@ mixin jsEditor(id, name, rows, size, contents)
 
                             tr
                                 td output.forceupdate()
-                                td Force the player to refresh the current gamestate, use after updating a variable, if needed.
+                                td Force the player to refresh the current screen, use after updating a variable, if needed.
                             tr
                                 td _
                                 td

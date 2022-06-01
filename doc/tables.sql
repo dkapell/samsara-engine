@@ -55,26 +55,19 @@ create table groups (
     primary key (id)
 );
 
-create type image_type as ENUM(
-    'gamestate',
-    'popup',
-    'inventory'
-);
-
 create table images (
     id  serial,
     name varchar(255) not null,
     display_name varchar(255),
-    is_gamestate boolean default true,
+    is_screen boolean default true,
     is_popup boolean default false,
     is_inventory boolean default false,
-    type image_type not null default 'gamestate',
     description text,
     status varchar(20) default 'new' not null,
     primary key (id)
 );
 
-create table gamestates (
+create table screens (
     id serial,
     name varchar(255) not null,
     description text,
@@ -88,37 +81,37 @@ create table gamestates (
     show_count  boolean default false,
     show_name   boolean default false,
     primary key (id),
-    CONSTRAINT gamestate_image_fk FOREIGN KEY (image_id)
+    CONSTRAINT screen_image_fk FOREIGN KEY (image_id)
         REFERENCES "images" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
-insert into gamestates (name, start) values ('Initial', true);
+insert into screens (name, start) values ('Initial', true);
 
-create table gamestate_codes(
-    gamestate_id int not null,
+create table screen_codes(
+    screen_id int not null,
     code_id int not null,
-    primary key (gamestate_id, code_id),
-    CONSTRAINT gsc_gamestate_fk FOREIGN KEY (gamestate_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    primary key (screen_id, code_id),
+    CONSTRAINT sc_screen_fk FOREIGN KEY (screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT gsc_code_fk FOREIGN KEY (code_id)
+    CONSTRAINT sc_code_fk FOREIGN KEY (code_id)
         REFERENCES "codes" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table transitions(
     id serial,
-    from_state_id int not null,
-    to_state_id int not null,
+    from_screen_id int not null,
+    to_screen_id int not null,
     group_id int,
     delay int default 0,
     primary key(id),
-    CONSTRAINT transitions_from_fk FOREIGN KEY (from_state_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    CONSTRAINT transitions_from_fk FOREIGN KEY (from_screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT transitions_to_fk FOREIGN KEY (to_state_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    CONSTRAINT transitions_to_fk FOREIGN KEY (to_screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) MATCH SIMPLE
@@ -146,8 +139,8 @@ create table players (
     user_id     int,
     run_id      int,
     character   varchar(255),
-    gamestate_id int,
-    prev_gamestate_id int,
+    screen_id int,
+    prev_screen_id int,
     character_sheet varchar(255),
     statetime timestamp with time zone DEFAULT now(),
     data jsonb,
@@ -158,11 +151,11 @@ create table players (
     CONSTRAINT players_run_fk FOREIGN KEY (run_id)
         REFERENCES "runs" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
-    CONSTRAINT players_gamestate_fk FOREIGN KEY (gamestate_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    CONSTRAINT players_screen_fk FOREIGN KEY (screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL,
-    CONSTRAINT players_prev_gamestate_fk FOREIGN KEY (prev_gamestate_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    CONSTRAINT players_prev_screen_fk FOREIGN KEY (prev_screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
@@ -228,7 +221,7 @@ create table documents(
 );
 
 create type message_location as ENUM(
-    'gamestate',
+    'screen',
     'group',
     'gm',
     'direct',
@@ -332,10 +325,10 @@ create table meetings(
     active      boolean default true,
     public      boolean default false,
     show_users  boolean default false,
-    gamestate_id int,
+    screen_id int,
     PRIMARY KEY(id),
-    CONSTRAINT meeting_gamestate_fk FOREIGN KEY (gamestate_id)
-        REFERENCES "gamestates" (id) MATCH SIMPLE
+    CONSTRAINT meeting_screen_fk FOREIGN KEY (screen_id)
+        REFERENCES "screens" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 

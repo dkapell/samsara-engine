@@ -15,7 +15,7 @@ async function list(req, res, next){
     };
     try {
         res.locals.users = await req.models.user.list();
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.screens = await req.models.screen.list();
         res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
         res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
         res.render('user/list', { pageTitle: 'Users' });
@@ -26,14 +26,14 @@ async function list(req, res, next){
 
 async function showNew(req, res, next){
     try{
-        const startState = await req.models.gamestate.getStart();
+        const startScreen = await req.models.screen.getStart();
         res.locals.user = {
             name: null,
             email: null,
             type: 'none',
             player: {
                 run_id: (await req.models.run.getCurrent()).id,
-                gamestate_id: startState.id,
+                screen_id: startScreen.id,
                 groups: [],
                 character: null,
                 data: await gameData.getStartData('player'),
@@ -43,7 +43,7 @@ async function showNew(req, res, next){
         };
         res.locals.runs = await req.models.run.list();
         res.locals.groups = await req.models.group.list();
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.screens = await req.models.screen.list();
         res.locals.characters = await req.models.character.list();
         res.locals.breadcrumbs = {
             path: [
@@ -71,14 +71,14 @@ async function showEdit(req, res, next){
 
     try{
         const user = await req.models.user.get(id);
-        const startState = await req.models.gamestate.getStart();
+        const startScreen = await req.models.screen.getStart();
         if (user.type === 'player'){
             user.player = await req.models.player.getByUserId(id);
         }
         if (!user.player){
             user.player = {
                 run_id: (await req.models.run.getCurrent()).id,
-                gamestate_id: startState.id,
+                screen_id: startScreen.id,
                 character: null,
                 data: await gameData.getStartData('player'),
                 character_sheet: null,
@@ -87,7 +87,7 @@ async function showEdit(req, res, next){
         }
         res.locals.runs = await req.models.run.list();
         res.locals.groups = await req.models.group.list();
-        res.locals.gamestates = await req.models.gamestate.list();
+        res.locals.screens = await req.models.screen.list();
         res.locals.characters = await req.models.character.list();
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
@@ -124,8 +124,8 @@ async function create(req, res, next){
             await req.models.player.create({
                 user_id:id,
                 run_id:Number(user.player.run_id),
-                gamestate_id:Number(user.player.gamestate_id),
-                prev_gamestate_id:null,
+                screen_id:Number(user.player.screen_id),
+                prev_screen_id:null,
                 character: user.player.character,
                 groups: user.player.groups,
                 data: JSON.parse(user.player.data),
@@ -161,7 +161,7 @@ async function update(req, res, next){
             if (player){
                 player.run_id = Number(user.player.run_id);
                 player.character = user.player.character;
-                player.gamestate_id =  Number(user.player.gamestate_id);
+                player.screen_id =  Number(user.player.screen_id);
                 player.groups = user.player.groups;
                 player.data = JSON.parse(user.player.data);
                 player.character_sheet = user.player.character_sheet;
@@ -170,8 +170,8 @@ async function update(req, res, next){
                 await req.models.player.create({
                     user_id:id,
                     run_id:Number(user.player.run_id),
-                    gamestate_id:  Number(user.player.gamestate_id),
-                    prev_gamestate_id:null,
+                    screen_id:  Number(user.player.screen_id),
+                    prev_screen_id:null,
                     groups: user.player.groups,
                     data: JSON.parse(user.player.data),
                     character: user.player.character,
@@ -179,7 +179,7 @@ async function update(req, res, next){
                 });
             }
             await gameEngine.updateTriggers(id);
-            await req.app.locals.gameServer.sendGameState(id);
+            await req.app.locals.gameServer.sendScreen(id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         } else {
             const player = await req.models.player.getByUserId(id);

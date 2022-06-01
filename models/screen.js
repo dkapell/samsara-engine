@@ -13,20 +13,20 @@ const tableFields = ['name', 'description', 'image_id', 'start', 'finish', 'spec
 
 
 exports.get = async function(id){
-    let gamestate = await cache.check('gamestate', id);
-    if (gamestate) { return gamestate; }
-    const query = 'select * from gamestates where id = $1';
+    let screen = await cache.check('screen', id);
+    if (screen) { return screen; }
+    const query = 'select * from screens where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        gamestate = await fillCodes(result.rows[0]);
-        await cache.store('gamestate', id, gamestate);
-        return gamestate;
+        screen = await fillCodes(result.rows[0]);
+        await cache.store('screen', id, screen);
+        return screen;
     }
     return;
 };
 
 exports.getStart = async function(){
-    const query = 'select * from gamestates where start = true limit 1';
+    const query = 'select * from screens where start = true limit 1';
     const result = await database.query(query);
     if (result.rows.length){
         return fillCodes(result.rows[0]);
@@ -35,31 +35,31 @@ exports.getStart = async function(){
 };
 
 exports.list = async function(){
-    let gamestates = await cache.check('gamestate', 'list');
+    let screens = await cache.check('screen', 'list');
 
-    if (gamestates) { return gamestates; }
-    const query = 'select * from gamestates order by name';
+    if (screens) { return screens; }
+    const query = 'select * from screens order by name';
     const result = await database.query(query);
-    gamestates = await async.map(result.rows, fillCodes);
-    await cache.store('gamestate', 'list', gamestates);
-    return gamestates;
+    screens = await async.map(result.rows, fillCodes);
+    await cache.store('screen', 'list', screens);
+    return screens;
 };
 
 exports.listSpecial = async function(){
-    const query = `select * from gamestates where start = true or special = true or finish = true
+    const query = `select * from screens where start = true or special = true or finish = true
         order by start desc nulls last, finish asc nulls first, name`;
     const result = await database.query(query);
     return async.map(result.rows, fillCodes);
 };
 
 exports.listForChat = async function(){
-    let gamestates = await cache.check('gamestate', 'chatlist');
-    if (gamestates) { return gamestates; }
-    const query = 'select * from gamestates where template = false and start = false and finish = false and chat = true order by name';
+    let screens = await cache.check('screen', 'chatlist');
+    if (screens) { return screens; }
+    const query = 'select * from screens where template = false and start = false and finish = false and chat = true order by name';
     const result = await database.query(query);
-    gamestates = result.rows;
-    await cache.store('gamestate', 'chatlist', gamestates);
-    return gamestates;
+    screens = result.rows;
+    await cache.store('screen', 'chatlist', screens);
+    return screens;
 };
 
 exports.create = async function(data){
@@ -77,7 +77,7 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into gamestates (';
+    let query = 'insert into screens (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
@@ -104,43 +104,43 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update gamestates set ';
+    let query = 'update screens set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
     await database.query(query, queryData);
-    await cache.invalidate('gamestate', id);
-    await cache.invalidate('gamestate', 'list');
-    await cache.invalidate('gamestate', 'chatlist');
-    await cache.invalidate('gamestaterecord', id);
+    await cache.invalidate('screen', id);
+    await cache.invalidate('screen', 'list');
+    await cache.invalidate('screen', 'chatlist');
+    await cache.invalidate('screenrecord', id);
     if (_.has(data, 'codes')){
         await saveCodes(id, data.codes);
     }
 };
 
 exports.delete = async function(id){
-    const query = 'delete from gamestates where id = $1';
+    const query = 'delete from screens where id = $1';
     await database.query(query, [id]);
-    await cache.invalidate('gamestate', id);
-    await cache.invalidate('gamestate', 'list');
-    await cache.invalidate('gamestate', 'chatlist');
-    await cache.invalidate('gamestaterecord', id);
+    await cache.invalidate('screen', id);
+    await cache.invalidate('screen', 'list');
+    await cache.invalidate('screen', 'chatlist');
+    await cache.invalidate('screenrecord', id);
 };
 
-async function fillCodes(gamestate){
-    const query = 'select * from gamestate_codes where gamestate_id = $1';
-    const result = await database.query(query, [gamestate.id]);
-    gamestate.codes = await async.map(result.rows, async gamestateLink => {
-        return models.code.get(gamestateLink.code_id);
+async function fillCodes(screen){
+    const query = 'select * from screen_codes where screen_id = $1';
+    const result = await database.query(query, [screen.id]);
+    screen.codes = await async.map(result.rows, async screenLink => {
+        return models.code.get(screenLink.code_id);
     });
-    return gamestate;
+    return screen;
 }
 
-async function saveCodes(gamestate_id, codes){
-    const currentQuery  = 'select * from gamestate_codes where gamestate_id = $1';
-    const insertQuery = 'insert into gamestate_codes (gamestate_id, code_id) values ($1, $2)';
-    const deleteQuery = 'delete from gamestate_codes where gamestate_id = $1 and code_id = $2';
-    const current = await database.query(currentQuery, [gamestate_id]);
+async function saveCodes(screen_id, codes){
+    const currentQuery  = 'select * from screen_codes where screen_id = $1';
+    const insertQuery = 'insert into screen_codes (screen_id, code_id) values ($1, $2)';
+    const deleteQuery = 'delete from screen_codes where screen_id = $1 and code_id = $2';
+    const current = await database.query(currentQuery, [screen_id]);
 
     const  newCodes = [];
     for (const code of codes){
@@ -153,13 +153,13 @@ async function saveCodes(gamestate_id, codes){
 
     for (const codeId of newCodes){
         if(!_.findWhere(current.rows, {code_id: Number(codeId)})){
-            await database.query(insertQuery, [gamestate_id, codeId]);
+            await database.query(insertQuery, [screen_id, codeId]);
         }
     }
 
     for (const code of current.rows){
         if(_.indexOf(newCodes, code.code_id) === -1){
-            await database.query(deleteQuery, [gamestate_id, code.code_id]);
+            await database.query(deleteQuery, [screen_id, code.code_id]);
         }
     }
 }

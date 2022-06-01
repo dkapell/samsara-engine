@@ -1,0 +1,106 @@
+include ../partials/gameactions
+
+.row.my-2
+    .col
+        .row-my-2
+            .col.pl-0
+                .form-group
+                    label.control-label(for="screen_name") Name
+                    input.form-control(type="text",placeholder="Name",name="screen[name]",value=screen.name,id='screen_name',required)
+                    div.invalid-feedback Please choose a valid name
+
+                .form-group
+                    label.control-label(for="screen_image_id") Image
+                    select.custom-select.select2#screen_image_id(
+                        name="screen[image_id]",
+                        data-placeholder="Select Image, if any"
+                    )
+                        option(selected=!screen.image_id value="-1") None
+                        for image in images.filter(i=>{return i.is_screen})
+                            option(value=image.id selected=screen.image_id===image.id, data-url=image.url)= image.display_name?image.display_name:image.name
+    .col-md-3
+        img.img-fluid#screen-image(src=screen.image_id?_.findWhere(images, {id: screen.image_id}).url:'')
+
+
+.form-group#map-group
+    label.control-label.w-100#map-heading(for="screen_map", data-toggle="collapse" data-target="#map-container" aria-expanded="false") Map
+        .badge.badge-info.ml-1 #{screen.map.length} #{screen.map.length === 1?'item':'items'}
+        i.expand-text-shown.ml-4 (click to hide configuration)
+        i.expand-text.ml-4 (click to show configuration)
+        span.float-right.pl-2
+            i.fa.fa-chevron-up
+            i.fa.fa-chevron-down
+
+
+    .div#map-container.collapse(aria-labelledby="map-heading")
+        .list-group#screen_map
+
+            - let i = 0;
+            each area in screen.map
+                +area(area, i)
+                - i++;
+            +area({}, 'new')
+
+        .col.text-right.mt-2
+            button.btn.btn-outline-success#add-area-btn
+                i.fa.fa-plus
+                |  Add Area
+
+
+
+fieldset.mb-2
+    label Screen Options
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[start]", id="screen_start", checked=screen.start disabled=screen.start)
+                label.custom-control-label(for="screen_start") Start Screen
+
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[special]", id="screen_special", checked=screen.special)
+                label.custom-control-label(for="screen_special") Special Screen
+
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[finish]", id="screen_finish", checked=screen.finish)
+                label.custom-control-label(for="screen_finish") End/Finish Screen
+
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[template]", id="screen_template", checked=screen.template)
+                label.custom-control-label(for="screen_template") Is a Template
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[chat]", id="screen_chat", checked=screen.chat)
+                label.custom-control-label(for="screen_chat") Has Chat
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[show_name]", id="screen_show_name", checked=screen.show_name)
+                label.custom-control-label(for="screen_show_name") Show Screen Name in Chat
+    .row.mb-2
+        .col
+            .custom-control.custom-switch
+                input.custom-control-input(type="checkbox", name="screen[show_count]", id="screen_show_count", checked=screen.show_count)
+                label.custom-control-label(for="screen_show_count") User Count is Public
+
+
+.form-group
+    label.control-label(for="screen_description") Description (Player Facing)
+    +htmlEditor('screen_description', 'screen[description]', 4, 200, screen.description)
+
+.form-group
+    label.control-label(for="screen_codes") Codes Allowed
+    select.custom-select.select2(multiple, name="screen[codes]",id="screen_codes")
+        for code in codes
+            option(value=code.id selected=_.indexOf(screen.codes, code.id.toString()) !== -1)= code.code
+
+.form-group
+    button.btn.btn-primary(type="submit")= screen.id?'Update':'Create'
+    a.btn.btn-link(href="/screen") Cancel
+
+
++action('screen_map', 'screen[map][new]', {}, 'new', 'new')
++jsEditorModal()

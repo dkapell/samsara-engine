@@ -43,32 +43,32 @@ async function renderGraph(){
         };
 
         const transitions = {};
-        for (const state of data.gamestates.reverse()){
-            const name = state.player_count?`${state.name}\n(${pluralize('player', state.player_count, true)})`:state.name;
-            g.addNode(state.name, {label:name, render: render, data:state});
+        for (const screen of data.screens.reverse()){
+            const name = screen.player_count?`${screen.name}\n(${pluralize('player', screen.player_count, true)})`:screen.name;
+            g.addNode(screen.name, {label:name, render: render, data:screen});
 
-            transitions[state.name] = {};
+            transitions[screen.name] = {};
 
-            for (const transition of state.transitions){
-                const toState = _.findWhere(data.gamestates, {id: transition.to_state_id});
+            for (const transition of screen.transitions){
+                const toScreen = _.findWhere(data.screens, {id: transition.to_screen_id});
 
-                if (!_.has(transitions[state.name], toState.name)){
-                    transitions[state.name][toState.name] = [];
+                if (!_.has(transitions[screen.name], toScreen.name)){
+                    transitions[screen.name][toScreen.name] = [];
                 }
                 const group_name = transition.group_name ? transition.group_name : null;
                 if (group_name){
-                    transitions[state.name][toState.name].push(group_name);
+                    transitions[screen.name][toScreen.name].push(group_name);
                 }
             }
-            for (const code of state.codes){
+            for (const code of screen.codes){
                 for(const action of code.actions){
                     if (action.type === 'transition'){
 
-                        const toState = _.findWhere(data.gamestates, {id: action.to_state_id});
-                        if (!_.has(transitions[state.name], toState.name)){
-                            transitions[state.name][toState.name] = [];
+                        const toScreen = _.findWhere(data.screens, {id: action.to_screen_id});
+                        if (!_.has(transitions[screen.name], toScreen.name)){
+                            transitions[screen.name][toScreen.name] = [];
                         }
-                        transitions[state.name][toState.name].push(code.code);
+                        transitions[screen.name][toScreen.name].push(code.code);
                     }
                 }
             }
@@ -78,14 +78,14 @@ async function renderGraph(){
             let addNode = false;
             for(const action of trigger.actions){
                 if (action.type === 'transition'){
-                    const toState = _.findWhere(data.gamestates, {id: action.to_state_id});
+                    const toScreen = _.findWhere(data.screens, {id: action.to_screen_id});
                     if (!_.has(transitions, `trigger-${trigger.name}`)){
                         transitions[`trigger-${trigger.name}`] = {};
                     }
-                    if (!_.has(transitions[`trigger-${trigger.name}`], toState.name)){
-                        transitions[`trigger-${trigger.name}`][toState.name] = [];
+                    if (!_.has(transitions[`trigger-${trigger.name}`], toScreen.name)){
+                        transitions[`trigger-${trigger.name}`][toScreen.name] = [];
                     }
-                    transitions[`trigger-${trigger.name}`][toState.name].push('Trigger');
+                    transitions[`trigger-${trigger.name}`][toScreen.name].push('Trigger');
                     addNode = true;
                 }
             }
@@ -96,18 +96,18 @@ async function renderGraph(){
 
         }
 
-        for (const fromStateName in transitions){
-            for (const toStateName in transitions[fromStateName]){
+        for (const fromScreenName in transitions){
+            for (const toScreenName in transitions[fromScreenName]){
                 const options = {
                     style: {
-                        label: transitions[fromStateName][toStateName].join(', '),
+                        label: transitions[fromScreenName][toScreenName].join(', '),
                         'label-style': {
                             'font-size': '12px'
                         },
                         directed: true
                     }
                 };
-                g.addEdge(fromStateName, toStateName, options);
+                g.addEdge(fromScreenName, toScreenName, options);
             }
         }
 

@@ -16,11 +16,11 @@ mixin chatLoading()
 mixin chatSidebarTablist(showReports)
     ul.nav.nav-tabs.flex-shrink-0.chat-main#chat-tabs(role="tablist")
         li.nav-item(role="presentation")
-            a.nav-link.active#chat-gamestate-tab-nav(data-toggle="tab" href="#chat-gamestate-tab" role="tab" aria-controls="chat-gamestate-tab" aria-selected="true")
+            a.nav-link.active#chat-screen-tab-nav(data-toggle="tab" href="#chat-screen-tab" role="tab" aria-controls="chat-screen-tab" aria-selected="true")
                 if (session.assumed_user && session.assumed_user.type === 'player') || activeUser.type === 'player'
                     | Room
                 else
-                    | Gamestate
+                    | Screen
                 span.badge.badge-danger.ml-1.chat-new-message-indicator
         li.nav-item(role="presentation")
             a.nav-link#chat-group-tab-nav(data-toggle="tab" href="#chat-group-tab" role="tab" aria-controls="chat-group-tab" aria-selected="false")
@@ -42,11 +42,11 @@ mixin chatSidebarTablist(showReports)
 
 mixin chatTabs(showReports)
     .card-body.tab-content.p-0.m-0.chat-main.h-100#chat-tab-content
-        .tab-pane.fade.show.active.h-100#chat-gamestate-tab(role="tabpanel" aria-labelledby="chat-gamestate-tab-nav")
+        .tab-pane.fade.show.active.h-100#chat-screen-tab(role="tabpanel" aria-labelledby="chat-screen-tab-nav")
             .d-flex.flex-column.h-100
                 .my-1.py-1.px-2.chat-users.border-bottom.border-secondary.overflow-auto(style="max-height:300px; min-height:40px")
                 ul.list-unstyled.overflow-auto.my-0.px-2.mb-2.h-100.chat-container(
-                    data-location='gamestate'
+                    data-location='screen'
                 )
 
         .tab-pane.fade.h-100(id=`chat-group-tab` role="tabpanel" aria-labelledby=`chat-group-tab-nav`)
@@ -78,7 +78,7 @@ mixin chatActions()
         .card-footer.p-2#chat-actions
             .form-row
                 .col.mx-1.p-0
-                    select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-gamestate(data-location='gamestate')
+                    select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-screen(data-location='screen')
                     select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-group(data-location='group')
                     select.custom-select.my-1.mr-sm-2.custom-select-sm.chat-location#chat-location-direct(data-location='direct')
 

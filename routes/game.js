@@ -25,15 +25,15 @@ function showGraph(req, res, next){
 
 async function getGraphData(req, res, next){
     try{
-        const gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        const screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         const run = await req.models.run.getCurrent();
-        await async.each(gamestates,  async gamestate => {
-            gamestate.transitions = await gameEngine.getTransitionsFrom(gamestate);
-            gamestate.player_count = (await req.models.player.find({gamestate_id: gamestate.id, run_id: run.id})).length;
-            return gamestate;
+        await async.each(screens,  async screen => {
+            screen.transitions = await gameEngine.getTransitionsFrom(screen);
+            screen.player_count = (await req.models.player.find({screen_id: screen.id, run_id: run.id})).length;
+            return screen;
         });
         res.json({
-            gamestates: gamestates,
+            screens: screens,
             triggers: await req.models.trigger.list(),
             codes: await req.models.code.list()
         });

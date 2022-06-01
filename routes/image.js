@@ -25,7 +25,7 @@ function showNew(req, res, next){
     res.locals.image = {
         display_name: null,
         description:null,
-        is_gamestate:true,
+        is_screen:true,
         is_popup:false,
         is_inventory:false
     };
@@ -73,8 +73,8 @@ async function update(req, res, next){
     const id = req.params.id;
     const image = req.body.image;
     req.session.imageData = image;
-    if (!_.has(image, 'is_gamestate')){
-        image.is_gamestate = false;
+    if (!_.has(image, 'is_screen')){
+        image.is_screen = false;
     }
     if (!_.has(image, 'is_popup')){
         image.is_popup = false;

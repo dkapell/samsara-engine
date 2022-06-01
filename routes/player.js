@@ -18,8 +18,8 @@ async function list(req, res, next){
             return user.type === 'player';
         });
         res.locals.users = await async.map(players, async user => {
-            user.gamestate = await gameEngine.getGameState(user.id);
-            user.player = user.gamestate.player;
+            user.screen = await gameEngine.getScreen(user.id);
+            user.player = user.screen.player;
             user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
 
             user.triggers = (await req.models.player.getTriggers(user.player.id)).map(trigger => {
@@ -71,9 +71,9 @@ async function advance(req, res, next){
         if (!user){
             throw new Error ('User not found');
         }
-        const changed = await gameEngine.nextState(user.id);
+        const changed = await gameEngine.nextScreen(user.id);
         if (changed){
-            await req.app.locals.gameServer.sendGameState(user.id);
+            await req.app.locals.gameServer.sendScreen(user.id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         }
         res.json({success:true});
@@ -129,8 +129,8 @@ async function resetInkStories(req, res, next){
         if (!user){
             throw new Error ('User not found');
         }
-        const inkStates = await req.models.ink_state.find({player_id: user.player.id});
-        await async.each(inkStates, async (ink_state) => {
+        const inkScreens = await req.models.ink_state.find({player_id: user.player.id});
+        await async.each(inkScreens, async (ink_state) => {
             return req.models.ink_state.delete(ink_state.id);
         });
         res.json({success:true});

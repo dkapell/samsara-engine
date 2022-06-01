@@ -8,7 +8,7 @@ const cache = require('../lib/cache');
 const models = {
     player: require('./player'),
     run: require('./run'),
-    gamestate: require('./gamestate'),
+    screen: require('./screen'),
     connection: require('./connection')
 };
 
@@ -165,12 +165,12 @@ exports.findOrCreate = async function(data){
             const id = await exports.create(data);
             if (data.type === 'player'){
                 const run = await models.run.getCurrent();
-                const gamestate = await models.gamestate.getStart();
+                const screen = await models.screen.getStart();
                 await models.player.create({
                     user_id:id,
                     run_id: run.id,
-                    gamestate_id: gamestate.id,
-                    prev_gamestate_id: null,
+                    screen_id: screen.id,
+                    prev_screen_id: null,
                     character: null,
                     groups: []
 

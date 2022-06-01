@@ -30,13 +30,13 @@ li.media(
                         strong.mr-1 #{message.sender.full}
                 span.mr-2
                     case message.location
-                        when 'gamestate'
+                        when 'screen'
                             if !message.recipient_type
                                 i.fas.fa-arrow-right.mr-1
                                 .badge.badge-primary.mr-2.chat-message-location(
-                                    data-location='gamestate'
+                                    data-location='screen'
                                     data-locationid=message.location_id
-                                ) State:
+                                ) Screen:
                                     i  #{message.location_name}
                         when 'gm'
                             i.fas.fa-arrow-right.mr-1

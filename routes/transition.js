@@ -15,8 +15,8 @@ async function list(req, res, next){
     try {
         const transitions = await req.models.transition.list();
         res.locals.transitions = await async.map( transitions, async transition => {
-            transition.from_state = (await req.models.gamestate.get(transition.from_state_id)).name;
-            transition.to_state = (await req.models.gamestate.get(transition.to_state_id)).name;
+            transition.from_screen = (await req.models.screen.get(transition.from_screen_id)).name;
+            transition.to_screen = (await req.models.screen.get(transition.to_screen_id)).name;
             if(transition.group_id){
                 transition.group = await req.models.group.get(transition.group_id);
             }
@@ -30,8 +30,8 @@ async function list(req, res, next){
 
 async function showNew(req, res, next){
     res.locals.transition = {
-        from_state_id: null,
-        to_state_id: null,
+        from_screen_id: null,
+        to_screen_id: null,
         group_id: null,
         delay: 0
     };
@@ -44,18 +44,18 @@ async function showNew(req, res, next){
     };
 
     res.locals.csrfToken = req.csrfToken();
-    if (req.query.from_state_id){
-        res.locals.transition.from_state_id = Number(req.query.from_state_id);
+    if (req.query.from_screen_id){
+        res.locals.transition.from_screen_id = Number(req.query.from_screen_id);
     }
-    if (req.query.to_state_id){
-        res.locals.transition.to_state_id = Number(req.query.to_state_id);
+    if (req.query.to_screen_id){
+        res.locals.transition.to_screen_id = Number(req.query.to_screen_id);
     }
     if (_.has(req.session, 'transitionData')){
         res.locals.transition = req.session.transitionData;
         delete req.session.transitionData;
     }
     try{
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.groups = await req.models.group.list();
         res.render('transition/new');
     } catch (err){
@@ -81,7 +81,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit Transition'
         };
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.groups = await req.models.group.list();
         res.render('transition/edit');
     } catch(err){
@@ -100,7 +100,7 @@ async function create(req, res, next){
     try{
         await req.models.transition.create(transition);
         delete req.session.transitionData;
-        req.flash('success', 'Created Gamestate ' + transition.name);
+        req.flash('success', 'Created Screen ' + transition.name);
         res.redirect('/transition');
     } catch (err) {
         req.flash('error', err.toString());
@@ -122,7 +122,7 @@ async function update(req, res, next){
 
         await req.models.transition.update(id, transition);
         delete req.session.transitionData;
-        req.flash('success', 'Updated Gamestate ' + transition.name);
+        req.flash('success', 'Updated Screen ' + transition.name);
         res.redirect('/transition');
     } catch(err) {
         req.flash('error', err.toString());
@@ -135,7 +135,7 @@ async function remove(req, res, next){
     const id = req.params.id;
     try {
         await req.models.transition.delete(id);
-        req.flash('success', 'Removed Gamestate');
+        req.flash('success', 'Removed Screen');
         res.redirect('/transition');
     } catch(err) {
         return next(err);

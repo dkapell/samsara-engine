@@ -26,11 +26,11 @@ fieldset#player_fields
                     option(value=run.id selected=user.player.run_id===run.id)= run.name
     .form-row.my-2
         .col
-            label.control-label(for="user_gamestate_id") Game State
-            select.custom-select.select2(name="user[player][gamestate_id]",id="user_gamestate_id" data-placeholder="Select Gamestate")
+            label.control-label(for="user_screen_id") Game Screen
+            select.custom-select.select2(name="user[player][screen_id]",id="user_screen_id" data-placeholder="Select Screen")
                 option
-                for gamestate in gamestates
-                    option(value=gamestate.id selected=user.player.gamestate_id===gamestate.id)= gamestate.name
+                for screen in screens
+                    option(value=screen.id selected=user.player.screen_id===screen.id)= screen.name
 
     .form-row.my-2
         .col

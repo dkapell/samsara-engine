@@ -68,8 +68,8 @@ function addArea(e){
     $new.find('.area-input').each(function(e) {
         const $input = $(this);
         const fieldtype = $input.data('fieldtype');
-        $input.attr('id', `gamestate_map_area-new-${id}-${fieldtype}`);
-        $input.attr('name', `gamestate[map][new-${id}][${fieldtype}]`);
+        $input.attr('id', `screen_map_area-new-${id}-${fieldtype}`);
+        $input.attr('name', `screen[map][new-${id}][${fieldtype}]`);
         if ($this.data('required')){
             $input.attr('required', true);
         }
@@ -79,7 +79,7 @@ function addArea(e){
     $new.find('.area-input-label').each(function(e) {
         const $label = $(this);
         const fieldtype = $label.data('fieldtype');
-        $label.attr('for', `gamestate_map_area-new-${id}-${fieldtype}`);
+        $label.attr('for', `screen_map_area-new-${id}-${fieldtype}`);
     });
 
     $new.find('.remove-area-btn').confirmation({
@@ -96,7 +96,7 @@ function addArea(e){
         width:'resolve'
     });
     showAreaCriteria($new);
-    $new.appendTo('#gamestate_map');
+    $new.appendTo('#screen_map');
     $new.show();
 
 }

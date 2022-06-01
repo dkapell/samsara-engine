@@ -9,7 +9,7 @@ const cache = require('../lib/cache');
 const models = {
 };
 
-const tableFields = ['name', 'display_name', 'description', 'status', 'is_gamestate', 'is_popup', 'is_inventory'];
+const tableFields = ['name', 'display_name', 'description', 'status', 'is_screen', 'is_popup', 'is_inventory'];
 
 exports.get = async function(id){
     if(!id) { console.trace('no'); return; }

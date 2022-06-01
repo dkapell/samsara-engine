@@ -10,7 +10,7 @@ const models = {
     trigger: require('./trigger')
 };
 
-const tableFields = ['user_id', 'run_id', 'gamestate_id', 'prev_gamestate_id', 'statetime', 'character', 'data', 'character_sheet'];
+const tableFields = ['user_id', 'run_id', 'screen_id', 'prev_screen_id', 'statetime', 'character', 'data', 'character_sheet'];
 
 
 exports.get = async function(id){
@@ -140,11 +140,11 @@ exports.delete = async  function(id, cb){
     await cache.invalidate('player', id);
 };
 
-exports.updateState = async function(id, gamestate_id, cb){
+exports.updateScreen = async function(id, screen_id, cb){
     const player = await exports.get(id);
-    player.prev_gamestate_id = player.gamestate_id;
+    player.prev_screen_id = player.screen_id;
     player.statetime = new Date();
-    player.gamestate_id = gamestate_id;
+    player.screen_id = screen_id;
     await exports.update(id, player);
 };
 

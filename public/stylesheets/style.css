@@ -27,7 +27,7 @@ table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>th:first-child:before
     color: #444;
 }
 
-.badge-gamestate{
+.badge-screen{
     font-size: .9rem;
 }
 
@@ -253,7 +253,7 @@ map, image {
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
-.gamestate-container{
+.screen-container{
     overflow: hidden;
     height:100%;
 }

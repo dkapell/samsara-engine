@@ -1,4 +1,4 @@
-/* global _ gamestatebadgeTemplate triggerbuttonTemplate characternameTemplate */
+/* global _ screenbadgeTemplate triggerbuttonTemplate characternameTemplate */
 let playerRefreshTimer = null;
 let autoRefresh = true;
 $(function(){
@@ -72,24 +72,24 @@ async function refreshPlayerList(){
             $charactercol.html(characterText);
         }
 
-        // Gamestate
-        const $gamestatecol = $row.find('.col-player-gamestate');
-        const gamestateText = gamestatebadgeTemplate({user:user});
-        if($gamestatecol.html() !== gamestateText){
+        // Screen
+        const $screencol = $row.find('.col-player-screen');
+        const screenText = screenbadgeTemplate({user:user});
+        if($screencol.html() !== screenText){
             rowChanged = true;
-            $gamestatecol.html(gamestateText);
+            $screencol.html(screenText);
         }
 
-        // State change time
+        // Screen change time
         const $statetimecol = $row.find('.col-player-statetime');
-        const statetimeText = user.gamestate.transitioning?user.gamestate.transitionTimeDelta:user.gamestate.transitionTime;
+        const statetimeText = user.screen.transitioning?user.screen.transitionTimeDelta:user.screen.transitionTime;
         if($statetimecol.html() !== statetimeText){
             rowChanged = true;
             $statetimecol.html(statetimeText);
             $statetimecol.data('sort', user.player.statetime);
         }
 
-        if (user.gamestate.transitioning){
+        if (user.screen.transitioning){
             hasTransitioning = true;
         }
 

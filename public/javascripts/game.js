@@ -3,7 +3,7 @@
 /* global handleInk */
 
 const engine = new liquidjs.Liquid();
-let currentGameState = null;
+let currentScreen = null;
 let textTimeout = null;
 let ws = null;
 const reconnectInterval = 5000;
@@ -41,7 +41,7 @@ function openWebSocket(){
                         gamedata[key] = data.gamedata[key];
                     }
                 }
-                renderPage(data.gamestate, data.force);
+                renderPage(data.screen, data.force);
             }break;
             case 'load':  window.open(data.url, '_blank'); break;
             case 'display':
@@ -126,10 +126,10 @@ async function renderDefault(data){
         if (data.chatSidebar){
             showChatSidebar(data.chatExpanded);
             if (data.chat){
-                $('#chat-gamestate-tab-nav').show();
+                $('#chat-screen-tab-nav').show();
             } else {
-                $('#chat-gamestate-tab-nav').hide();
-                if (currentLocation === 'gamestate'){
+                $('#chat-screen-tab-nav').hide();
+                if (currentLocation === 'screen'){
                     $('#chat-tabs').find('li:visible:first').find('a').tab('show');
                 }
             }
@@ -149,17 +149,17 @@ async function renderDefault(data){
     }
 }
 
-async function renderPage(gamestate, force){
-    if (currentGameState !== gamestate.id || force){
-        let initialState = false;
-        if (currentGameState === null){
-            initialState = true;
+async function renderPage(screen, force){
+    if (currentScreen !== screen.id || force){
+        let initialScreen = false;
+        if (currentScreen === null){
+            initialScreen = true;
         }
         $('#popupModal').modal('hide');
-        $('#gamestate-image').mapster('tooltip');
-        currentGameState = gamestate.id;
-        gamestate.description = await(liquidify(gamestate.description));
-        const rendered = pageTemplate({gamestate: gamestate});
+        $('#screen-image').mapster('tooltip');
+        currentScreen = screen.id;
+        screen.description = await(liquidify(screen.description));
+        const rendered = pageTemplate({screen: screen});
         $('main').removeClass('container').addClass('container-fluid');
         $('#game-content').html(rendered);
         $('#code-feedback').hide();
@@ -170,23 +170,23 @@ async function renderPage(gamestate, force){
             }
         });
 
-        if (gamestate.map) {
-            currentAreas = gamestate.map.filter(area => {return _.has(area, 'meeting'); });
+        if (screen.map) {
+            currentAreas = screen.map.filter(area => {return _.has(area, 'meeting'); });
         } else {
             currentAreas = {};
         }
 
         prepImageMap();
-        if (gamestate.chatSidebar){
-            showChatSidebar(gamestate.chatExpanded);
-            if (gamestate.chat){
-                $('#chat-gamestate-tab-nav').show();
-                if (!initialState && _.has(gamestate, 'name')){
-                    addChatEvent('gamestate', gamestate.name);
+        if (screen.chatSidebar){
+            showChatSidebar(screen.chatExpanded);
+            if (screen.chat){
+                $('#chat-screen-tab-nav').show();
+                if (!initialScreen && _.has(screen, 'name')){
+                    addChatEvent('screen', screen.name);
                 }
             } else {
-                $('#chat-gamestate-tab-nav').hide();
-                if (currentLocation === 'gamestate'){
+                $('#chat-screen-tab-nav').hide();
+                if (currentLocation === 'screen'){
                     $('#chat-tabs').find('li:visible:first').find('a').tab('show');
                 }
             }
@@ -276,20 +276,20 @@ function prepImageMap(){
             }
         };
         const opts = $.extend({}, allOpts, initialOpts, singleOpts);
-        const $gamestateImage = $('#gamestate-image');
-        $gamestateImage
+        const $screenImage = $('#screen-image');
+        $screenImage
             .mapster('unbind')
             .mapster(opts)
             .bind('click', function () {
                 if (!inArea) {
-                    $gamestateImage.mapster('set_options', allOpts)
+                    $screenImage.mapster('set_options', allOpts)
                         .mapster('set', true, 'all')
                         .mapster('set_options', singleOpts);
                 }
             })
             .bind('mouseout', function () {
                 if (!inArea) {
-                    $gamestateImage.mapster('set', false, 'all');
+                    $screenImage.mapster('set', false, 'all');
                 }
             });
 
@@ -303,8 +303,8 @@ function prepImageMap(){
 }
 
 function updateImageMapTooltips(tooltips){
-    const $gamestateImage = $('#gamestate-image');
-    const opts = $gamestateImage.mapster('get_options');
+    const $screenImage = $('#screen-image');
+    const opts = $screenImage.mapster('get_options');
     opts.areas = [];
     for (const area of tooltips){
         const doc = {
@@ -313,7 +313,7 @@ function updateImageMapTooltips(tooltips){
         };
         if (area.show){
             doc.selected=true;
-            doc.staticState=true;
+            doc.staticScreen=true;
             doc.fillColor='00bc8c';
             doc.fillOpacity= 0.2;
         } else {
@@ -323,32 +323,32 @@ function updateImageMapTooltips(tooltips){
         opts.areas.push(doc);
 
     }
-    $gamestateImage.mapster('rebind', opts);
-    $gamestateImage.mapster('set', false, 'all');
+    $screenImage.mapster('rebind', opts);
+    $screenImage.mapster('set', false, 'all');
 }
 
 function resizeImageMap(noActions){
-    if ($('#gamestate-image-holder')[0] && $('#gamestate-image-holder').is(':visible')){
-        $('#gamestate-image-holder').addClass('hide');
+    if ($('#screen-image-holder')[0] && $('#screen-image-holder').is(':visible')){
+        $('#screen-image-holder').addClass('hide');
 
 
-        const imageHeight = $('#gamestate-image')[0].naturalHeight;
-        const panelHeight = $('#gamestate-container').height();
+        const imageHeight = $('#screen-image')[0].naturalHeight;
+        const panelHeight = $('#screen-container').height();
         let newHeight = Math.min(imageHeight, panelHeight*0.55);
-        if ($('#gamestate-image-holder').data('height')){
-            newHeight = Math.max(newHeight, Number($('#gamestate-image-holder').data('height')));
+        if ($('#screen-image-holder').data('height')){
+            newHeight = Math.max(newHeight, Number($('#screen-image-holder').data('height')));
         }
 
-        const imageWidth = $('#gamestate-image')[0].naturalWidth;
-        const panelWidth = $('#gamestate-container').width();
+        const imageWidth = $('#screen-image')[0].naturalWidth;
+        const panelWidth = $('#screen-container').width();
         const newWidth = Math.min(imageWidth, panelWidth);
 
         if (newWidth < newHeight * (imageWidth/imageHeight)){
-            $('#gamestate-image').mapster('resize', newWidth, null);
+            $('#screen-image').mapster('resize', newWidth, null);
         } else {
-            $('#gamestate-image').mapster('resize', null, newHeight);
+            $('#screen-image').mapster('resize', null, newHeight);
         }
-        $('#gamestate-image-holder').removeClass('hide');
+        $('#screen-image-holder').removeClass('hide');
         if (noActions){
 
         }
@@ -513,7 +513,7 @@ function resizable(resizer) {
     // Attach the handler
     resizer.addEventListener('mousedown', mouseDownHandler);
     resizer.addEventListener('dblclick', function(){
-        if($('#gamestate-container').height() < 5){
+        if($('#screen-container').height() < 5){
             halfContent();
 
         } else {
@@ -587,7 +587,7 @@ function sendCloseInkStory(){
 
 
 function closeContent(){
-    $('#gamestate-container')
+    $('#screen-container')
         .removeClass('d-none')
         .addClass('d-flex')
         .css({height:'100%', overflow:'hidden'});
@@ -601,7 +601,7 @@ function closeContent(){
 }
 
 function fullContent(hideAdjust, hideClose = false){
-    $('#gamestate-container')
+    $('#screen-container')
         .removeClass('d-none')
         .addClass('d-flex')
         .css({height:0, overflow:'scroll'});
@@ -627,7 +627,7 @@ function fullContent(hideAdjust, hideClose = false){
 }
 
 function halfContent(hideAdjust, hideClose = false){
-    $('#gamestate-container')
+    $('#screen-container')
         .removeClass('d-none')
         .addClass('d-flex')
         .css({height:'40%', overflow:'scroll'});

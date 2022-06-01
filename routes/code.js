@@ -26,7 +26,7 @@ async function show(req, res, next){
     try{
         const code = await req.models.code.get(id);
         res.locals.code = code;
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
@@ -78,7 +78,7 @@ async function showNew(req, res, next){
             delete req.session.codeData;
         }
 
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
@@ -111,7 +111,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + code.code
         };
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();

@@ -28,7 +28,7 @@ async function show(req, res, next){
     try{
         const trigger =  await req.models.trigger.get(id);
         res.locals.trigger = trigger;
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.groups = await req.models.group.list();
@@ -92,7 +92,7 @@ async function showNew(req, res, next){
             delete req.session.triggerData;
         }
 
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();
@@ -125,7 +125,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + trigger.name
         };
-        res.locals.gamestates = (await req.models.gamestate.list()).filter(state => {return !state.template;});
+        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
         res.locals.images = await req.models.image.list();
         res.locals.documents = await req.models.document.list();
         res.locals.links = await req.models.link.list();

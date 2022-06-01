@@ -1,19 +1,19 @@
 /* global chatmessageTemplate chatreportTemplate chateventTemplate scrollSmoothToBottom ws _ refreshPlayerList*/
 let lastMessage = {
-    gamestate:null,
+    screen:null,
     group:null,
     direct:null,
     gm:null
 };
 let chatUsers = {
     current: [],
-    gamestate: {},
+    screen: {},
     group: {}
 };
 let myUserId = null;
-let currentLocation = 'gamestate';
+let currentLocation = 'screen';
 let currentLocationId = {
-    gamestate:null,
+    screen:null,
     group:null,
     direct:null,
     gm:null,
@@ -21,7 +21,7 @@ let currentLocationId = {
 let messagesSeen = {};
 let blockedUsers = [];
 
-let hideGamestateLocation = false;
+let hideScreenLocation = false;
 
 $(function(){
     $('.chat-main').hide();
@@ -424,7 +424,7 @@ function clickMessageLocation(e){
     const $chatLocation = $('.chat-location');
     $chatLocation.find('option').attr('selected', false);
     switch(location){
-        case 'gamestate':{
+        case 'screen':{
             const id = $self.data('locationid');
             const $option = $chatLocation.find(`option[value="${id}"]`);
             if($option.length){
@@ -432,7 +432,7 @@ function clickMessageLocation(e){
                 $('.chat-location').change();
                 return;
             }
-            addLocationOption($self.data('locationname'), 'gamestate', id);
+            addLocationOption($self.data('locationname'), 'screen', id);
             break;
         }
         case 'gm':
@@ -464,7 +464,7 @@ function clickMessageLocation(e){
     $('.chat-location').change();
 }
 
-function showChatGamestate(id){
+function showChatScreen(id){
     const $chatLocation = $('.chat-location');
     const $option = $chatLocation.find(`option[value="${id}"]`);
     if($option.length){
@@ -477,11 +477,11 @@ function showChatGamestate(id){
 function addLocations(locations){
     for (const type in locations){
         if (type === 'current'){
-            $('#chat-location-gamestate').hide();
-            hideGamestateLocation = true;
+            $('#chat-location-screen').hide();
+            hideScreenLocation = true;
             if (locations.current){
                 chatUsers.current = locations.current;
-                showUsers('gamestate', null, true);
+                showUsers('screen', null, true);
             }
             continue;
         } else if (type === 'group'){
@@ -501,9 +501,9 @@ function addLocations(locations){
                 chatUsers[type][location.id] = location.users;
                 name += ` (${location.users.length})`;
             }
-            if (location === 'gamestate'){
-                $('#chat-location-gamestate').show();
-                hideGamestateLocation = false;
+            if (location === 'screen'){
+                $('#chat-location-screen').show();
+                hideScreenLocation = false;
             }
             addLocationOption(name, type, location.id, false);
         }
@@ -547,7 +547,7 @@ function showUsers(location, locationId, player){
 
     $userList.empty();
     let users = [];
-    if (location === 'gamestate' && chatUsers.current.length){
+    if (location === 'screen' && chatUsers.current.length){
         users = chatUsers.current;
     } else if(_.has(chatUsers, location) && _.has(chatUsers[location], locationId)){
         users = chatUsers[location][locationId];
@@ -654,7 +654,7 @@ function showChatTab(e){
         $('#chat-actions').show();
     }
     clearNewMessagesOnTab();
-    if (hideGamestateLocation && target === 'gamestate'){
+    if (hideScreenLocation && target === 'screen'){
         return;
     }
     $(`#chat-location-${target}`).show();

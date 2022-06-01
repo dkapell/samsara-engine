@@ -42,7 +42,7 @@ async function fixType(type){
 
     return async.each(items, async (item) => {
         if (item.condition && item.condition.match(/gamestate/)){
-            item.condition = item.condition.replace(/gamestate/, 'screen');
+            item.condition = item.condition.replace(/gamestate/g, 'screen');
         }
         item.actions = JSON.stringify(fixActions(item.actions));
 

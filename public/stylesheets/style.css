@@ -10,7 +10,7 @@ body, .popover {
 }
 
 #main-content {
-    margin-top:75px;
+    margin-top:69px;
 }
 
 table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>td:first-child:before,
@@ -333,3 +333,19 @@ img {
   display: none !important;
 }
 
+.click-disabled{
+    cursor:  not-allowed;
+}
+.click-disabled * {
+    pointer-events: none;
+}
+
+#sidebar-right {
+    border-left:  4px solid #404040;
+}
+#sidebar-left {
+    border-right:  2px solid #404040;
+}
+.no-border {
+    border:  none !important;
+}

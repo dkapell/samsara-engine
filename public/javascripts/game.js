@@ -14,6 +14,7 @@ let activeMeeting = null;
 let currentMeeting = null;
 let currentAreas = {};
 let initialPageLoad = true;
+let mapDisabled = 0;
 
 $(function(){
     $('#game-text').hide();
@@ -238,7 +239,7 @@ function prepImageMap(){
             fillColor: 'ffffff',
             fillOpacity: 0.2,
             stroke:true,
-            strokeWidth:1,
+            strokeWidth:1
         };
         const singleOpts ={
             strokeColor: 'ffffff',
@@ -262,6 +263,7 @@ function prepImageMap(){
 
         const initialOpts = {
             mapKey: 'data-groups',
+            wrapClass: 'mapster-container',
             isSelectable: false,
             toolTipClose: ['area-mouseout', 'area-click'],
             onMouseover: function (data) {
@@ -325,7 +327,7 @@ function updateImageMapTooltips(tooltips){
     $gamestateImage.mapster('set', false, 'all');
 }
 
-function resizeImageMap(){
+function resizeImageMap(noActions){
     if ($('#gamestate-image-holder')[0] && $('#gamestate-image-holder').is(':visible')){
         $('#gamestate-image-holder').addClass('hide');
 
@@ -347,6 +349,9 @@ function resizeImageMap(){
             $('#gamestate-image').mapster('resize', null, newHeight);
         }
         $('#gamestate-image-holder').removeClass('hide');
+        if (noActions){
+
+        }
     }
 }
 
@@ -645,4 +650,65 @@ function halfContent(hideAdjust, hideClose = false){
     $('#content-adjust >> .resizer-restore').hide();
 
     resizeImageMap();
+}
+
+function closeSidebar(side){
+    $('#game-container')
+        .removeClass('d-none')
+        .addClass('d-flex')
+        .css({width:'100%', overflow:'hidden'});
+    $(`#sidebar-${side}`)
+        .addClass('d-none')
+        .removeClass('d-flex')
+        .css({width:0, overflow:'hidden'});
+    resizeImageMap();
+    enableMap(false);
+}
+
+function openSidebar(side, noActions, full){
+    $(`#sidebar-${side}`)
+        .removeClass('d-none')
+        .addClass('d-flex');
+
+    if (full){
+        $('#game-container')
+            .addClass('d-none')
+            .removeClass('d-flex')
+            .css({width:0, overflow:'scroll'});
+        $(`#sidebar-${side}`)
+            .removeClass('d-none')
+            .addClass('d-flex')
+            .addClass('no-border')
+            .css({width:'100%'});
+    } else {
+        $('#game-container')
+            .removeClass('d-none')
+            .addClass('d-flex')
+            .css({width:'60%', overflow:'scroll'});
+
+        $(`#sidebar-${side}`)
+            .removeClass('d-none')
+            .addClass('d-flex')
+            .removeClass('no-border')
+            .css({width:'40%'});
+    }
+    resizeImageMap();
+    disableMap();
+
+}
+
+function disableMap(){
+    mapDisabled++;
+    $('.mapster-container').addClass('click-disabled');
+}
+
+function enableMap(force){
+    if (force){
+        mapDisabled = 0;
+    } else if (mapDisabled > 0){
+        mapDisabled--;
+    }
+    if (!mapDisabled){
+        $('.mapster-container').removeClass('click-disabled');
+    }
 }

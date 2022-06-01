@@ -1,49 +1,56 @@
 extends layout
 
 block content
-    .d-flex.flex-column.h-100
-        .gamestate-container.d-flex.flex-column.container#gamestate-container
-            .row.my-2.h-100
-                .col.px-0#game-content
-            .row.my-2
-                .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
+    .d-flex.flex-row.h-100.p-0
+        #sidebar-left.bg-dark.d-none
+            #sidebar-left-container
 
-        .resizer.content-resizer.d-none.my-2.bg-light#content-adjust(data-direction="vertical")
-            .button-bar.py-1.position-relative(style="top:-13px; left:5px; font-size:90%;z-index:5")
-                .badge.badge-pill.badge-danger.mr-2.resizer-close(
-                    style="cursor:pointer;"
-                    data-toggle="tooltip"
-                    data-delay={ "show": 500, "hide": 100 }
-                    title="Close"
-                )
-                    .fa.fas.fa-fw.fa-times
-                .badge.badge-pill.badge-warning.mr-2.resizer-move(
-                    data-toggle="tooltip"
-                    data-delay={ "show": 500, "hide": 100 }
-                    title="Drag to Resize"
-                )
-                    .fa.fas.fa-fw.fa-arrows-alt-v
+        #game-container.d-flex.flex-column.h-100.px-2
+            .gamestate-container.d-flex.flex-column.container#gamestate-container
+                .row.my-2.h-100
+                    .col.px-0.pt-2#game-content
+                .row.my-2
+                    .col-md-8.offset-md-2.p-3.border.rounded-lg.border-info#game-text
 
-                .badge.badge-pill.badge-success.mr-2.resizer-expand(
-                    style="cursor:pointer;"
-                    data-toggle="tooltip"
-                    data-delay={ "show": 500, "hide": 100 }
-                    title="Expand"
-                )
-                    .fa.fas.fa-fw.fa-expand-alt
+            .resizer.content-resizer.d-none.my-2.bg-light#content-adjust(data-direction="vertical")
+                .button-bar.py-1.position-relative(style="top:-13px; left:5px; font-size:90%;z-index:5")
+                    .badge.badge-pill.badge-danger.mr-2.resizer-close(
+                        style="cursor:pointer;"
+                        data-toggle="tooltip"
+                        data-delay={ "show": 500, "hide": 100 }
+                        title="Close"
+                    )
+                        .fa.fas.fa-fw.fa-times
+                    .badge.badge-pill.badge-warning.mr-2.resizer-move(
+                        data-toggle="tooltip"
+                        data-delay={ "show": 500, "hide": 100 }
+                        title="Drag to Resize"
+                    )
+                        .fa.fas.fa-fw.fa-arrows-alt-v
 
-                .badge.badge-pill.badge-success.mr-2.resizer-restore(
-                    style="cursor:pointer;"
-                    data-toggle="tooltip"
-                    data-delay={ "show": 500, "hide": 100 }
-                    title="Restore"
-                )
-                    .fa.fas.fa-fw.fa-compress-alt
-        #content-container.d-none
-            .video-container.p-2#video-container
+                    .badge.badge-pill.badge-success.mr-2.resizer-expand(
+                        style="cursor:pointer;"
+                        data-toggle="tooltip"
+                        data-delay={ "show": 500, "hide": 100 }
+                        title="Expand"
+                    )
+                        .fa.fas.fa-fw.fa-expand-alt
+
+                    .badge.badge-pill.badge-success.mr-2.resizer-restore(
+                        style="cursor:pointer;"
+                        data-toggle="tooltip"
+                        data-delay={ "show": 500, "hide": 100 }
+                        title="Restore"
+                    )
+                        .fa.fas.fa-fw.fa-compress-alt
+            #content-container.d-none
+                .video-container.p-2#video-container
+
+
+        #sidebar-right.bg-dark.d-none
             .ink-container.p-2#ink-container.overflow-auto.w-100(style='max-height:100%')
                 .row
-                    .col-md-8.offset-md-2#ink-story
+                    .col#ink-story
 
 
 

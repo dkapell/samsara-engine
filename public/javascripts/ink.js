@@ -1,23 +1,12 @@
 /* global _ resizeImageMap prepImageMap gamedata resizable ws  sendCloseInkStory sendInkChoice */
-/* global halfContent fullContent closeContent */
+/* global openSidebar closeSidebar*/
 
 let inkActive = false;
 let inkShowing = false;
 const inkShowQueue = [];
 
 $(function(){
-    $('#content-adjust >> .resizer-expand').on('click', function(e){
-        e.stopPropagation();
-        fullContent();
-    });
-    $('#content-adjust >> .resizer-restore').on('click', function(e){
-        e.stopPropagation();
-        halfContent();
-    });
-    $('#content-adjust >> .resizer-close').on('click', function(e){
-        e.stopPropagation();
-        closeInk();
-    });
+
 });
 
 async function handleInk(data){
@@ -37,10 +26,12 @@ function openInk(fullscreen){
     }
     inkActive = true;
     inkShowing = true;
+    console.log($('#game-content').width());
+    console.log($('#game-content').height());
     if (fullscreen || $('#game-content').height() < 600 || $('#game-content').width() < 768){
-        fullContent(true, true);
+        openSidebar('right', true, true);
     } else {
-        halfContent(false, true);
+        openSidebar('right', true);
     }
     showNextInk();
 }
@@ -140,7 +131,7 @@ function doneInk(){
 }
 
 function closeInk(){
-    closeContent();
+    closeSidebar('right');
     inkActive = false;
     $('#ink-story').empty();
     sendCloseInkStory();

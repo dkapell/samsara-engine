@@ -10,7 +10,7 @@ const models = {
     trigger: require('./trigger')
 };
 
-const tableFields = ['user_id', 'run_id', 'screen_id', 'prev_screen_id', 'statetime', 'character', 'data', 'character_sheet'];
+const tableFields = ['game_id', 'user_id', 'run_id', 'screen_id', 'prev_screen_id', 'statetime', 'character', 'data', 'character_sheet'];
 
 
 exports.get = async function(id){

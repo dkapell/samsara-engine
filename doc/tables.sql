@@ -5,7 +5,7 @@ create type user_type as ENUM(
     'creator',
     'gm',
     'player',
-    'none'
+    'none',
 );
 
 create table users (
@@ -18,58 +18,98 @@ create table users (
     PRIMARY KEY (id)
 );
 
+create table games (
+    id serial,
+    name varchar(80) not null,
+    description text,
+    site varchar(255) unique,
+    theme varchar(80),
+    css text,
+    created_by int,
+    intercode_login boolean default false,
+    created timestamp with time zone DEFAULT now(),
+    updated timestamp with time zone DEFAULT now(),
+    primary key (id),
+    CONSTRAINT games_created_fk FOREIGN KEY (created_by)
+        REFERENCES "users" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL
+)
+
+create index games_site_idx ON games (site);
+
 create table links (
     id          serial,
+    game_id     int not null,
     name        varchar(80) not null,
     description text,
     url         varchar(255) not null,
     gm          varchar(255),
     active      boolean default true,
-    primary key (id)
+    primary key (id),
+    CONSTRAINT links_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table codes (
     id serial,
+    game_id    int not null,
     code varchar(20) unique,
     description text,
     actions jsonb default '[]'::jsonb,
-    primary key(id)
+    primary key(id),
+    CONSTRAINT codes_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table runs (
     id          serial,
+    game_id     int not null,
     name        varchar(80) not null unique,
     current     boolean default false,
     show_stubs  boolean default true,
     data jsonb,
-    primary key(id)
+    primary key(id),
+    CONSTRAINT runs_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 insert into runs (name, current) values ('Initial Run', 'true');
 
 create table groups (
     id          serial,
+    game_id     int not null,
     name        varchar(80) not null unique,
     description text,
     chat        boolean default false,
-    primary key (id)
+    primary key (id),
+    CONSTRAINT groups_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table images (
-    id  serial,
-    name varchar(255) not null,
-    display_name varchar(255),
-    is_screen boolean default true,
-    is_popup boolean default false,
-    is_inventory boolean default false,
-    description text,
-    status varchar(20) default 'new' not null,
-    primary key (id)
+    id              serial,
+    game_id         int not null,
+    name            varchar(255) not null,
+    display_name    varchar(255),
+    is_screen       boolean default true,
+    is_popup        boolean default false,
+    is_inventory    boolean default false,
+    description     text,
+    status          varchar(20) default 'new' not null,
+    primary key (id),
+    CONSTRAINT images_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table screens (
     id serial,
-    name varchar(255) not null,
+    game_id     int not null,
+    name        varchar(255) not null,
     description text,
     special     boolean default false,
     start       boolean default false,
@@ -83,7 +123,10 @@ create table screens (
     primary key (id),
     CONSTRAINT screen_image_fk FOREIGN KEY (image_id)
         REFERENCES "images" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT screens_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 insert into screens (name, start) values ('Initial', true);
@@ -102,6 +145,7 @@ create table screen_codes(
 
 create table transitions(
     id serial,
+    game_id int not null,
     from_screen_id int not null,
     to_screen_id int not null,
     group_id int,
@@ -115,11 +159,15 @@ create table transitions(
         ON UPDATE NO ACTION ON DELETE CASCADE,
     CONSTRAINT transitions_group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT transitions_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table triggers(
     id serial,
+    game_id int not null,
     name varchar(255),
     description text,
     icon varchar(20),
@@ -131,7 +179,10 @@ create table triggers(
     primary key (id),
     CONSTRAINT triggers_group_fk FOREIGN KEY (group_id)
         REFERENCES "groups" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT triggers_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table players (
@@ -156,7 +207,8 @@ create table players (
         ON UPDATE NO ACTION ON DELETE SET NULL,
     CONSTRAINT players_prev_screen_fk FOREIGN KEY (prev_screen_id)
         REFERENCES "screens" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    unique(user_id, run_id)
 );
 
 create table player_groups(
@@ -171,12 +223,16 @@ create table player_groups(
 );
 
 create table characters (
-    id          serial,
-    name   varchar(255),
+    id              serial,
+    game_id         int not null
+    name            varchar(255),
     character_sheet varchar(255),
-    description text,
-    data jsonb,
-    primary key (id)
+    description     text,
+    data            jsonb,
+    primary key (id),
+    CONSTRAINT characters_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table character_groups(
@@ -201,6 +257,7 @@ create type variable_type as ENUM(
 
 create table variables(
     id serial,
+    game_id int not null,
     name varchar(255) not null,
     type variable_type not null,
     player boolean default true,
@@ -208,16 +265,23 @@ create table variables(
     ink_name varchar(255),
     base_value text,
     primary key (id),
-    unique(name, public)
+    unique(name, public),
+    CONSTRAINT variables_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table documents(
     id serial,
+    game_id int not null
     name varchar(255) not null unique,
     code uuid not null default uuid_generate_v4(),
     description text,
     content text,
-    primary key (id)
+    primary key (id),
+    CONSTRAINT documents_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create type message_location as ENUM(
@@ -230,6 +294,7 @@ create type message_location as ENUM(
 
 create table messages(
     id serial,
+    game_id int not null,
     message_id uuid not null unique,
     run_id int,
     user_id int not null,
@@ -244,7 +309,10 @@ create table messages(
         ON UPDATE NO ACTION ON DELETE NO ACTION,
     CONSTRAINT messages_user_fk FOREIGN KEY (user_id)
         REFERENCES "users" (id) match simple
-        ON UPDATE NO ACTION ON DELETE NO ACTION
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+    CONSTRAINT mesagages_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table read_messages(
@@ -274,6 +342,7 @@ create table chat_blocks(
 
 create table chat_reports(
     id serial,
+    game_id int,
     user_id int not null,
     report_id uuid not null unique default uuid_generate_v4(),
     message_id uuid not null,
@@ -290,7 +359,10 @@ create table chat_reports(
         on update no action on delete CASCADE,
     constraint chat_resolver_fk foreign key (resolved_by)
         REFERENCES "users" (id) match simple
-        on update no action on delete CASCADE
+        on update no action on delete CASCADE,
+    CONSTRAINT chat_reports_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table connections(
@@ -318,6 +390,7 @@ create table player_triggers(
 
 create table meetings(
     id serial,
+    game_id int not null,
     meeting_id varchar(20) not null unique,
     name varchar(80) not null,
     description text,
@@ -329,7 +402,10 @@ create table meetings(
     PRIMARY KEY(id),
     CONSTRAINT meeting_screen_fk FOREIGN KEY (screen_id)
         REFERENCES "screens" (id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE SET NULL
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT meetings_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table participants(
@@ -348,11 +424,15 @@ create table participants(
 
 create table inks(
     id serial,
+    game_id int not null,
     name varchar(80) not null,
     description text,
     content text,
     compiled json,
-    primary key (id)
+    primary key (id),
+    CONSTRAINT inks_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
 create table ink_states(

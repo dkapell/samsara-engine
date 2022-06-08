@@ -1,0 +1,131 @@
+
+create table games (
+    id serial,
+    name varchar(80) not null,
+    description text,
+    site varchar(255) unique,
+    theme varchar(80),
+    css text,
+    created_by int,
+    intercode_login boolean default false,
+    created timestamp with time zone DEFAULT now(),
+    updated timestamp with time zone DEFAULT now(),
+    primary key (id),
+    CONSTRAINT games_created_fk FOREIGN KEY (created_by)
+        REFERENCES "users" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL
+)
+
+create index games_site_idx ON games (site);
+
+insert into games (name, created_by) values ('default', 1);
+
+-- links
+alter table links add column game_id int not null default 1;
+
+alter table links add CONSTRAINT links_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+--codes
+alter table codes add column game_id int not null default 1;
+
+alter table codes add CONSTRAINT codes_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- runs
+alter table runs add column game_id int not null default 1;
+
+alter table runs add CONSTRAINT runs_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- groups
+alter table groups add column game_id int not null default 1;
+
+alter table groups add CONSTRAINT groups_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+--images
+alter table images add column game_id int not null default 1;
+
+alter table images add CONSTRAINT images_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+
+-- screens
+alter table screens add column game_id int not null default 1;
+
+alter table screens add CONSTRAINT screens_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- transitions
+alter table transitions add column game_id int not null default 1;
+
+alter table transitions add CONSTRAINT transitions_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- triggers
+alter table triggers add column game_id int not null default 1;
+
+alter table triggers add CONSTRAINT triggers_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- players
+alter table players add unique(user_id, run_id);
+
+-- characters
+alter table characters add column game_id int not null default 1;
+
+alter table characters add CONSTRAINT characters_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- variables
+alter table variables add column game_id int not null default 1;
+
+alter table variables add CONSTRAINT variables_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- documents
+alter table documents add column game_id int not null default 1;
+
+alter table documents add CONSTRAINT documents_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- messages
+alter table messages add column game_id int not null default 1;
+
+alter table messages add CONSTRAINT messages_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- chat_reports
+alter table chat_reports add column game_id int not null default 1;
+
+alter table chat_reports add CONSTRAINT chat_reports_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- meetings
+alter table meetings add column game_id int not null default 1;
+
+alter table meetings add CONSTRAINT meetings_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- inks
+alter table inks add column game_id int not null default 1;
+
+alter table inks add CONSTRAINT inks_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+

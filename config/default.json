@@ -70,5 +70,16 @@
             "username": "user",
             "password": "password"
         }
+    },
+    "themes": {
+        "Darkly": {
+            "dir": "darkly",
+            "description": "Flatly in night mode"
+        },
+        "Flatly": {
+            "dir": "flatly",
+            "description": "Flat and modern"
+        }
+
     }
 }

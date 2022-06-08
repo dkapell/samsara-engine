@@ -9,7 +9,7 @@ const models = {
     user: './user'
 };
 
-const tableFields = ['message_id', 'run_id', 'user_id', 'location', 'location_id', 'content', 'created', 'removed'];
+const tableFields = ['game_id', 'message_id', 'run_id', 'user_id', 'location', 'location_id', 'content', 'created', 'removed'];
 
 
 exports.get = async function(id){

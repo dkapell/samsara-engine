@@ -8,7 +8,7 @@ const cache = require('../lib/cache');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'chat'];
+const tableFields = ['game_id', 'name', 'description', 'chat'];
 
 
 exports.get = async function(id){

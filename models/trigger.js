@@ -8,7 +8,7 @@ const cache = require('../lib/cache');
 const models = {
 };
 
-const tableFields = ['name', 'description', 'icon', 'actions', 'run', 'player', 'group_id', 'condition'];
+const tableFields = ['game_id', 'name', 'description', 'icon', 'actions', 'run', 'player', 'group_id', 'condition'];
 
 exports.get = async function(id){
     let trigger = await cache.check('trigger', id);

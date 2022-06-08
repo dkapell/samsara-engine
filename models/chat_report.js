@@ -7,7 +7,7 @@ const validator = require('validator');
 const models = {
 };
 
-const tableFields = ['user_id', 'report_id', 'message_id', 'reason', 'created', 'resolved', 'resolved_by', 'resolution'];
+const tableFields = ['game_id', 'user_id', 'report_id', 'message_id', 'reason', 'created', 'resolved', 'resolved_by', 'resolution'];
 
 exports.get = async function(id){
     const query = 'select * from chat_reports where id = $1';

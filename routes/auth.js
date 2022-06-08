@@ -11,7 +11,7 @@ router.get('/login', function(req, res, next){
     if (req.user){
         return res.redirect('/');
     }
-    if (!config.get('auth.intercode.clientID')){
+    if (!req.game.intercode_login){
         return res.redirect('/auth/google');
     }
     res.render('auth/login');
@@ -24,24 +24,12 @@ router.get('/login', function(req, res, next){
 //   redirecting the user to google.com.  After authorization, Google
 //   will redirect the user back to this application at /auth/google/callback
 router.get('/google',
-    passport.authenticate('google', { scope: [ 'email', 'profile' ]  }));
-
-if (config.get('auth.intercode.clientID')){
-    router.get('/intercode', passport.authenticate('intercode'));
-
-    router.get('/intercode/callback',
-        passport.authenticate('intercode', { failureRedirect: '/login' }),
-        function(req, res) {
-            // Successful authentication, redirect home.
-            if (_.has(req.session, 'backto')){
-                const backto = req.session.backto;
-                delete req.session.backto;
-                res.redirect(backto);
-            } else {
-                res.redirect('/');
-            }
-        });
-}
+    (req, res, next) => {
+        passport.authenticate('google', {
+            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`,
+            scope: [ 'email', 'profile' ]
+        })(req, res, next);
+    });
 
 // GET /auth/google/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -49,8 +37,14 @@ if (config.get('auth.intercode.clientID')){
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
 router.get('/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
-    function(req, res) {
+    (req, res, next) => {
+        passport.authenticate('google', {
+            failureRedirect: '/',
+            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`,
+        })(req, res, next);
+    },
+    (req, res) => {
+        console.log(req.query);
         if (_.has(req.session, 'backto')){
             const backto = req.session.backto;
             delete req.session.backto;
@@ -63,6 +57,37 @@ router.get('/google/callback',
             res.redirect('/');
         }
     });
+
+if (config.get('auth.intercode.clientID')){
+    router.get('/intercode',
+        function(req, res, next){
+            req.session.site = req.game.site;
+            next();
+        },
+        (req, res, next) => {
+            passport.authenticate('intercode', {
+                callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/intercode/callback`,
+            })(req, res, next);
+        });
+
+    router.get('/intercode/callback',
+        (req, res, next) => {
+            passport.authenticate('intercode', {
+                failureRedirect: '/login',
+                callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/intercode/callback`,
+            })(req, res, next);
+        },
+        (req, res) => {
+            // Successful authentication, redirect home.
+            if (_.has(req.session, 'backto')){
+                const backto = req.session.backto;
+                delete req.session.backto;
+                res.redirect(backto);
+            } else {
+                res.redirect('/');
+            }
+        });
+}
 
 if (config.get('auth.local.key') && config.util.getEnv('NODE_ENV') === 'development'){
     // GET /auth/token

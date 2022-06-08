@@ -1,34 +1,47 @@
 'use strict';
 const async = require('async');
-const config = require('config');
 const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
 const cache = require('../lib/cache');
 
 const models = {
+    group: require('./group'),
+    trigger: require('./trigger')
 };
 
-const tableFields = ['game_id', 'name', 'display_name', 'description', 'status', 'is_screen', 'is_popup', 'is_inventory'];
+const tableFields = ['name', 'description', 'intercode_login', 'site', 'theme', 'css', 'created_by', 'created', 'updated'];
 
 exports.get = async function(id){
-    if(!id) { console.trace('no'); return; }
-    let image = await cache.check('image', id);
-    if (image) { return image; }
-    const query = 'select * from images where id = $1';
+    let record = await cache.check('game', id);
+    if (record) {
+        return record;
+    }
+    const query = 'select * from games where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
-        image = postProcess(result.rows[0]);
-        await cache.store('image', id, image);
-        return image;
+        record = result.rows[0];
+        await cache.store('game', id, record);
+        await cache.store('game-site', record.site, record);
+        return record;
     }
     return;
 };
 
-exports.list = async function(){
-    const query = 'select * from images order by display_name';
-    const result = await database.query(query);
-    return result.rows.map(postProcess);
+exports.getBySite = async function(site){
+    let record = await cache.check('game-site', site);
+    if (record) {
+        return record;
+    }
+    const query = 'select * from games where site = $1';
+    const result = await database.query(query, [site]);
+    if (result.rows.length){
+        record = result.rows[0];
+        await cache.store('game', record.id, record);
+        await cache.store('game-site', record.site, record);
+        return record;
+    }
+    return;
 };
 
 exports.find = async function(conditions){
@@ -40,24 +53,27 @@ exports.find = async function(conditions){
             queryData.push(conditions[field]);
         }
     }
-    let query = 'select * from images';
+    let query = 'select * from games';
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }
-    query += ' order by display_name';
+    query += ' order by name';
     const result = await database.query(query, queryData);
-    return result.rows.map(postProcess);
+    return result.rows
+};
+
+exports.findOne = async function(conditions){
+    const results = await exports.find(conditions, {limit:1});
+    if (results.length){
+        return results[0];
+    }
+    return;
 };
 
 exports.create = async function(data){
+    console.log(JSON.stringify(data, null, 2));
     if (! validate(data)){
         throw new Error('Invalid Data');
-    }
-    if (_.has(data, 'type')){
-        if(!_.isArray(data.type)){
-            data.type = [data.type];
-        }
-        data.type = data.type.sort((a,b)=>{return a.localecompare(b);});
     }
     const queryFields = [];
     const queryData = [];
@@ -70,29 +86,21 @@ exports.create = async function(data){
         }
     }
 
-    let query = 'insert into images (';
+    let query = 'insert into games (';
     query += queryFields.join (', ');
     query += ') values (';
     query += queryValues.join (', ');
     query += ') returning id';
 
     const result = await database.query(query, queryData);
-    return result.rows[0].id;
+    const id = result.rows[0].id;
+    return id;
 };
 
 exports.update = async function(id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
-
-    if (_.has(data, 'type')){
-        if(!_.isArray(data.type)){
-            data.type = [data.type];
-        }
-        data.type = data.type.sort((a,b)=>{return b.localeCompare(a);});
-    }
-
-
     const queryUpdates = [];
     const queryData = [id];
     for (const field of tableFields){
@@ -102,31 +110,29 @@ exports.update = async function(id, data){
         }
     }
 
-    let query = 'update images set ';
+    let query = 'update games set ';
     query += queryUpdates.join(', ');
     query += ' where id = $1';
 
+    const current = await exports.get(id);
+
     await database.query(query, queryData);
-    await cache.invalidate('image', id);
+
+    await cache.invalidate('game', id);
+    await cache.invalidate('game-site', current.site);
 };
 
-exports.delete = async  function(id){
-    const query = 'delete from images where id = $1';
+exports.delete = async  function(id, cb){
+    const current = await exports.get(id);
+    const query = 'delete from games where id = $1';
     await database.query(query, [id]);
-    await cache.invalidate('image', id);
+    await cache.invalidate('game', id);
+    await cache.invalidate('game-site', current.site);
 };
-
-
 
 function validate(data){
-    if (_.has(data, 'name') && ! validator.isLength(data.name, 2, 80)){
+    if (! validator.isLength(data.name, 2, 255)){
         return false;
     }
     return true;
-}
-
-function postProcess(image){
-    const key = ['images', image.id, image.name].join('/');
-    image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
-    return image;
 }

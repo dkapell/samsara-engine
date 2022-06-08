@@ -8,7 +8,7 @@ const cache = require('../lib/cache');
 const models = {
 };
 
-const tableFields = ['from_screen_id', 'to_screen_id', 'group_id', 'manual', 'delay'];
+const tableFields = ['game_id', 'from_screen_id', 'to_screen_id', 'group_id', 'manual', 'delay'];
 
 exports.get = async function(id){
     let transition = await cache.check('transition', id);

@@ -126,26 +126,49 @@ passport.deserializeUser(async function(id, cb) {
     }
 });
 
+// Figure out what game is active, based on URL
+app.use(async function(req, res, next){
+    let game = await models.game.getBySite(req.headers.host);
+    if (!game){
+        game = {
+            id: 0,
+            name: 'Samsara Admin Site',
+            theme: 'Flatly',
+            css: '',
+            site: req.headers.host,
+            intercode_login: false
+        };
+    }
+    req.game = game;
+
+    res.locals.currentGame = game;
+    res.locals.cssTheme = config.get(`themes.${game.theme}.dir`);
+
+    req.session.gameId = game.id;
+    next();
+});
+
 const googleConfig = config.get('auth.google');
+
 passport.use(new GoogleStrategy({
     clientID: config.get('auth.google.clientID'),
     clientSecret: config.get('auth.google.clientSecret'),
     callbackURL: config.get('auth.google.callbackURL')
 },
-async function(accessToken, refreshToken, profile, cb) {
-    try{
-        const user = await models.user.findOrCreate({
-            name: profile.displayName,
-            google_id: profile.id,
-            email: profile.emails[0].value,
-            type: config.get('game.defaultToPlayer')?'player':'none'
-        });
+    async function(accessToken, refreshToken, profile, cb) {
+        try{
+            const user = await models.user.findOrCreate({
+                name: profile.displayName,
+                google_id: profile.id,
+                email: profile.emails[0].value,
+                type: config.get('game.defaultToPlayer')?'player':'none'
+            });
 
-        cb(null, user);
-    } catch (err) {
-        cb(err);
-    }
-})
+            cb(null, user);
+        } catch (err) {
+            cb(err);
+        }
+    })
 );
 
 if (config.get('auth.intercode.clientID')){
@@ -192,11 +215,14 @@ if (config.get('auth.local.key') && app.get('env') === 'development'){
     passport.use('localapi', localStrategy);
 }
 
+
+
 // Set common helpers for the view
 app.use(async function(req, res, next){
     res.locals.config = config;
     res.locals.session = req.session;
-    res.locals.title = config.get('app.name');
+    res.locals.siteName = req.game.name;
+    res.locals.title = req.game.name;
     res.locals._ = _;
     res.locals.moment = moment;
     res.locals.activeUser = req.user;

@@ -10,7 +10,7 @@ const stripAnsi = require('strip-ansi');
 
 
 async function getGamePage(req, res, next){
-    return res.render('game/default', { title: config.get('app.name') });
+    return res.render('game/default', { title: req.game.name});
 }
 
 async function validateGame(req, res, next){
@@ -67,9 +67,15 @@ function showChat(req, res, next){
     res.render('game/chat');
 }
 
+function getGameCss(req, res, next){
+    res.setHeader('content-type', 'text/css');
+    res.send(req.game.css);
+}
+
 const router = express.Router();
 
 router.get('/', getGamePage);
+router.get('/css', getGameCss);
 router.get('/validator', permission('gm'), validateGame);
 router.get('/graph', permission('gm'), showGraph);
 router.get('/graph/data', permission('gm'), getGraphData);

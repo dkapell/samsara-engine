@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Variables'
     };
     try {
-        res.locals.variables = await req.models.variable.list();
+        res.locals.variables = await req.models.variable.find({game_id: req.game.id});
         res.render('variable/list', { pageTitle: 'Variables' });
     } catch (err){
         next(err);
@@ -51,6 +51,10 @@ async function showEdit(req, res, next){
 
     try{
         const variable = await req.models.variable.get(id);
+        if (!variable || variable.game_id !== req.game.id){
+            throw new Error('Invalid Variable');
+        }
+
         res.locals.variable = variable;
         if (_.has(req.session, 'variableData')){
             res.locals.variable = req.session.variableData;
@@ -89,6 +93,7 @@ async function create(req, res, next){
     if (variable.base_value === ''){
         variable.base_value = null;
     }
+    variable.game_id = req.game.id;
 
     try{
         const variableId = await req.models.variable.create(variable);
@@ -126,6 +131,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.variable.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.variable.update(id, variable);
         delete req.session.variableData;
@@ -143,6 +154,13 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.variable.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.variable.delete(id);
         req.flash('success', 'Removed Variable');
         res.redirect('/variable');

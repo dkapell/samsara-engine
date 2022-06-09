@@ -24,7 +24,7 @@ let messageTotal = 0;
 let changed = false;
 
 (async function main() {
-    const players = await models.player.listByRunId(options.run);
+    const players = await models.player.find({run_id: options.run});
     const connections = await async.map(players, async player => {
         const user = await models.user.get(player.user_id);
 

@@ -18,7 +18,7 @@ async function list(req, res, next){
             return user.type === 'player';
         });
         res.locals.users = await async.map(players, async user => {
-            user.screen = await gameEngine.getScreen(user.id);
+            user.screen = await gameEngine.getScreen(user.id, req.game.id);
             user.player = user.screen.player;
             user.connected = _.indexOf(req.app.locals.gameServer.allClients, user.id) !== -1;
 
@@ -31,9 +31,9 @@ async function list(req, res, next){
             return user;
         });
 
-        res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
-        res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
-        res.locals.triggers = await req.models.trigger.list();
+        res.locals.runs = _.indexBy(await req.models.run.find({game_id: req.game.id}), 'id');
+        res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
+        res.locals.triggers = await req.models.trigger.find({game_id: req.game.id});
 
         res.render('player/list', { pageTitle: 'Players' });
     } catch (err){
@@ -52,7 +52,7 @@ async function assumePlayer(req, res, next){
             req.flash('error', 'User is not a player');
             return res.redirect('/player');
         }
-        user.player = await req.models.player.getByUserId(user.id);
+        user.player = await req.models.player.find({game_id: req.game.id, user_id: user.id});
         req.session.assumed_user = user;
         res.redirect('/');
     } catch (err) {
@@ -71,13 +71,13 @@ async function advance(req, res, next){
         if (!user){
             throw new Error ('User not found');
         }
-        const changed = await gameEngine.nextScreen(user.id);
+        const changed = await gameEngine.nextScreen(user.id, req.game.id);
         if (changed){
-            await req.app.locals.gameServer.sendScreen(user.id);
+            await req.app.locals.gameServer.sendScreen(user.id, req.game.id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         }
         res.json({success:true});
-        gameEngine.updateTriggers(user.id);
+        gameEngine.updateTriggers(user.id, req.game.id);
     } catch(err){
         res.json({success:false, error: err.message});
     }
@@ -93,7 +93,7 @@ async function sendToast(req, res, next){
             duration: req.body.duration,
             userId: user.id,
             from: req.body.from && req.body.from !== ''?req.body.from:null
-        });
+        }, req.game.id);
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});
@@ -114,8 +114,8 @@ async function runTrigger(req, res, next){
             throw new Error('Trigger not enabled for individual players');
         }
 
-        await req.app.locals.gameServer.runTrigger(trigger, user);
-        await req.app.locals.gameServer.sendPlayerUpdate();
+        await req.app.locals.gameServer.runTrigger(trigger, user, req.game.id);
+        await req.app.locals.gameServer.sendPlayerUpdate(res.game.id);
 
         res.json({success:true});
     } catch(err){

@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Games'
     };
     try {
-        res.locals.games = await req.models.game.list();
+        res.locals.games = await req.models.game.find();
         res.render('game/list', { pageTitle: 'Games' });
     } catch (err){
         next(err);

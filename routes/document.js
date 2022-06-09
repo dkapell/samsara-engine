@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Documents'
     };
     try {
-        res.locals.documents = await req.models.document.list();
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
         res.render('document/list', { pageTitle: 'Documents' });
     } catch (err){
         next(err);
@@ -25,6 +25,9 @@ async function show(req, res, next){
     const id = req.params.id;
     try{
         const document = await req.models.document.get(id);
+        if (!document || document.game_id !== req.game.id){
+            throw new Error('Invalid Document');
+        }
 
         res.locals.document = document;
 
@@ -50,11 +53,11 @@ async function showByCode(req, res, next){
     }
     try{
         const user = req.session.assumed_user ? req.session.assumed_user: req.user;
-        const doc = await req.models.document.getByCode(code);
+        const doc = await req.models.document.find({game_id: req.game.id, code:code});
         if(!doc){
             return res.render('document/invalid');
         }
-        doc.content = await liquid.render(user.id, doc.content);
+        doc.content = await liquid.render(user.id, doc.content, req.game.id);
         res.locals.document = doc;
 
         res.render('document/page');
@@ -90,6 +93,9 @@ async function showEdit(req, res, next){
 
     try{
         const document = await req.models.document.get(id);
+        if (!document || document.game_id !== req.game.id){
+            throw new Error('Invalid Document');
+        }
         res.locals.document = document;
         if (_.has(req.session, 'documentData')){
             res.locals.document = req.session.documentData;
@@ -113,6 +119,7 @@ async function create(req, res, next){
     const document = req.body.document;
 
     req.session.documentData = document;
+    document.game_id = req.game.id;
 
     try{
         const id = await req.models.document.create(document);
@@ -135,6 +142,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.document.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.document.update(id, document);
         delete req.session.documentData;
@@ -143,13 +156,19 @@ async function update(req, res, next){
     } catch(err) {
         req.flash('error', err.toString());
         return (res.redirect(`/document/${id}/edit`));
-
     }
 }
 
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.document.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.document.delete(id);
         req.flash('success', 'Removed Document');
         res.redirect('/document');

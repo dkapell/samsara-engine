@@ -79,6 +79,11 @@ alter table triggers add CONSTRAINT triggers_game_fk FOREIGN KEY (game_id)
 
 -- players
 alter table players add unique(user_id, run_id);
+alter table players add column game_id int not null default 1;
+
+alter table players add CONSTRAINT players_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
 
 -- characters
 alter table characters add column game_id int not null default 1;
@@ -108,10 +113,24 @@ alter table messages add CONSTRAINT messages_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
+-- read_messages
+alter table read_messages add column game_id int not null default 1;
+
+alter table read_messages add CONSTRAINT read_messages_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
 -- chat_reports
 alter table chat_reports add column game_id int not null default 1;
 
 alter table chat_reports add CONSTRAINT chat_reports_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- chat_blocks
+alter table chat_blocks add column game_id int not null default 1;
+
+alter table chat_blocks add CONSTRAINT chat_blocks_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
@@ -129,3 +148,9 @@ alter table inks add CONSTRAINT inks_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
+-- connections
+alter table connections add column game_id int not null default 1;
+
+alter table connections add CONSTRAINT connections_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;

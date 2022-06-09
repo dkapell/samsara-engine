@@ -26,8 +26,6 @@ function openInk(fullscreen){
     }
     inkActive = true;
     inkShowing = true;
-    console.log($('#game-content').width());
-    console.log($('#game-content').height());
     if (fullscreen || $('#game-content').height() < 600 || $('#game-content').width() < 768){
         openSidebar('right', true, true);
     } else {

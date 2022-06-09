@@ -9,7 +9,11 @@ async function getLink(req, res, next){
         return res.status(404);
     }
     try{
-        res.locals.link = await req.models.link.get(id);
+        const link = await req.models.link.get(id);
+        if (!link || link.game_id !== req.game.id){
+            return res.status(404);
+        }
+        res.locals.link = link;
         res.render('link/stub');
     } catch (err) {
         next(err);

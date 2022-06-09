@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Links'
     };
     try {
-        res.locals.links = await req.models.link.list();
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
         res.render('link/list', { pageTitle: 'Links' });
     } catch (err){
         next(err);
@@ -50,6 +50,9 @@ async function showEdit(req, res, next){
 
     try{
         const link = await req.models.link.get(id);
+        if (!link || link.game_id !== req.game.id){
+            throw new Error('Invalid Link');
+        }
         res.locals.link = link;
         if (_.has(req.session, 'linkData')){
             res.locals.link = req.session.linkData;
@@ -101,6 +104,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.link.get(id);
+        if (!current){
+            throw new Error('Invalid Link');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.link.update(id, link);
         delete req.session.linkData;
@@ -116,6 +125,14 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.link.get(id);
+        if (!current){
+            throw new Error('Invalid Link');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
+
         await req.models.link.delete(id);
         req.flash('success', 'Removed Link');
         res.redirect('/link');

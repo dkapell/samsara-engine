@@ -16,7 +16,7 @@ async function list(req, res, next){
         current: 'Ink Stories'
     };
     try {
-        res.locals.inks = await req.models.ink.list();
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
         res.render('ink/list', { pageTitle: 'Ink Stories' });
     } catch (err){
         next(err);
@@ -40,7 +40,7 @@ async function showNew(req, res, next){
     res.locals.csrfToken = req.csrfToken();
 
     try{
-        const variables = await req.models.variable.listInk();
+        const variables = await req.models.variable.listInk(req.game.id);
         for (const variable of variables){
             if (variable.type === 'integer'){
                 res.locals.ink.content += `VAR ${variable.ink_name} = ${variable.base_value}\n`;
@@ -66,6 +66,9 @@ async function showEdit(req, res, next){
 
     try{
         const ink = await req.models.ink.get(id);
+        if (!ink || ink.game_id !== req.game.id){
+            throw new Error('Invalid Ink');
+        }
         res.locals.ink = ink;
         if (_.has(req.session, 'inkData')){
             res.locals.ink = req.session.inkData;
@@ -98,6 +101,8 @@ async function create(req, res, next){
 
     ink.compiled = compiled.story.ToJson();
 
+    ink.game_id = req.game.id;
+
     try{
         const inkId = await req.models.ink.create(ink);
         delete req.session.inkData;
@@ -127,7 +132,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.ink.get(id);
-
+        if (!current){
+            throw new Error('Invalid Ink');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
         await req.models.ink.update(id, ink);
         delete req.session.inkData;
         await gameData.addNewVariable(ink, current);
@@ -144,6 +154,14 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.ink.get(id);
+        if (!current){
+            throw new Error('Invalid Ink');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
+
         await req.models.ink.delete(id);
         req.flash('success', 'Removed Ink Story');
         res.redirect('/ink');

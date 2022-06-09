@@ -15,9 +15,9 @@ async function list(req, res, next){
     };
     try {
         res.locals.users = await req.models.user.list();
-        res.locals.screens = await req.models.screen.list();
-        res.locals.runs = _.indexBy(await req.models.run.list(), 'id');
-        res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
+        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
+        res.locals.runs = _.indexBy(await req.models.run.find({game_id: req.game.id}), 'id');
+        res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
         res.render('user/list', { pageTitle: 'Users' });
     } catch (err){
         next(err);
@@ -26,25 +26,25 @@ async function list(req, res, next){
 
 async function showNew(req, res, next){
     try{
-        const startScreen = await req.models.screen.getStart();
+        const startScreen = await req.models.screen.getStart(req.game.id);
         res.locals.user = {
             name: null,
             email: null,
             type: 'none',
             player: {
-                run_id: (await req.models.run.getCurrent()).id,
+                run_id: (await req.models.run.getCurrent(req.game.id)).id,
                 screen_id: startScreen.id,
                 groups: [],
                 character: null,
-                data: await gameData.getStartData('player'),
+                data: await gameData.getStartData('player', req.game.id),
                 character_sheet: null,
                 character_id: -1
             }
         };
-        res.locals.runs = await req.models.run.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.screens = await req.models.screen.list();
-        res.locals.characters = await req.models.character.list();
+        res.locals.runs = await req.models.run.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
+        res.locals.characters = await req.models.character.find({game_id: req.game.id});
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -71,24 +71,24 @@ async function showEdit(req, res, next){
 
     try{
         const user = await req.models.user.get(id);
-        const startScreen = await req.models.screen.getStart();
+        const startScreen = await req.models.screen.getStart(req.game.id);
         if (user.type === 'player'){
-            user.player = await req.models.player.getByUserId(id);
+            user.player = await req.models.player.find({game_id: req.game.id, user_id: id});
         }
         if (!user.player){
             user.player = {
-                run_id: (await req.models.run.getCurrent()).id,
+                run_id: (await req.models.run.getCurrent(req.game.id)).id,
                 screen_id: startScreen.id,
                 character: null,
-                data: await gameData.getStartData('player'),
+                data: await gameData.getStartData('player', req.game.id),
                 character_sheet: null,
                 character_id: -1,
             };
         }
-        res.locals.runs = await req.models.run.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.screens = await req.models.screen.list();
-        res.locals.characters = await req.models.character.list();
+        res.locals.runs = await req.models.run.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
+        res.locals.characters = await req.models.character.find({game_id: req.game.id});
         res.locals.user = user;
         if (_.has(req.session, 'userData')){
             res.locals.user = req.session.userData;
@@ -131,7 +131,7 @@ async function create(req, res, next){
                 data: JSON.parse(user.player.data),
                 character_sheet: user.player.character_sheet
             });
-            await gameEngine.updateTriggers(id);
+            await gameEngine.updateTriggers(id, req.game.id);
         }
         delete req.session.userData;
         req.flash('success', 'Created User ' + user.name);
@@ -152,7 +152,7 @@ async function update(req, res, next){
         await req.models.user.update(id, user);
         delete req.session.userData;
         if (user.type === 'player'){
-            const player = await req.models.player.getByUserId(id);
+            const player = await req.models.player.find({game_id: req.game.id, user_id: id});
             if (!user.player.groups){
                 user.player.groups = [];
             } else if(!_.isArray(user.player.groups)){
@@ -178,11 +178,11 @@ async function update(req, res, next){
                     character_sheet: user.player.character_sheet
                 });
             }
-            await gameEngine.updateTriggers(id);
-            await req.app.locals.gameServer.sendScreen(id);
+            await gameEngine.updateTriggers(id, req.game.id);
+            await req.app.locals.gameServer.sendScreen(id, req.game.id);
             await req.app.locals.gameServer.sendLocationUpdate(user.player.run_id, null, null);
         } else {
-            const player = await req.models.player.getByUserId(id);
+            const player = await req.models.player.find({game_id: req.game.id, user_id: id});
             if (player){
                 await req.models.player.delete(player.id);
             }

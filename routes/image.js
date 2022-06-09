@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Images'
     };
     try {
-        res.locals.images = await req.models.image.list();
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
         res.render('image/list', { pageTitle: 'Images' });
     } catch (err){
         next(err);
@@ -50,6 +50,9 @@ async function showEdit(req, res, next){
 
     try{
         const image = await req.models.image.get(id);
+        if (!image || image.game_id !== req.game.id){
+            throw new Error('Invalid Image');
+        }
         res.locals.image = image;
         if (_.has(req.session, 'imageData')){
             res.locals.image = req.session.imageData;
@@ -85,6 +88,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.image.get(id);
+        if (!current){
+            throw new Error('Invalid Image');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.image.update(id, image);
         delete req.session.imageData;
@@ -99,7 +108,16 @@ async function update(req, res, next){
 
 async function remove(req, res, next){
     const id = req.params.id;
+
     try {
+        const current = await req.models.image.get(id);
+        if (!current){
+            throw new Error('Invalid Image');
+        }
+
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.image.delete(id);
         req.flash('success', 'Removed Image');
         res.redirect('/image');
@@ -118,7 +136,8 @@ async function signS3(req, res, next){
     }
 
     const imageId = await req.models.image.create({
-        name: fileName
+        name: fileName,
+        game_id: req.game.id
     });
     const key = ['images', imageId, fileName].join('/');
 

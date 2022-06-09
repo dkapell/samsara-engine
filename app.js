@@ -155,20 +155,20 @@ passport.use(new GoogleStrategy({
     clientSecret: config.get('auth.google.clientSecret'),
     callbackURL: config.get('auth.google.callbackURL')
 },
-    async function(accessToken, refreshToken, profile, cb) {
-        try{
-            const user = await models.user.findOrCreate({
-                name: profile.displayName,
-                google_id: profile.id,
-                email: profile.emails[0].value,
-                type: config.get('game.defaultToPlayer')?'player':'none'
-            });
+async function(accessToken, refreshToken, profile, cb) {
+    try{
+        const user = await models.user.findOrCreate({
+            name: profile.displayName,
+            google_id: profile.id,
+            email: profile.emails[0].value,
+            type: config.get('game.defaultToPlayer')?'player':'none'
+        });
 
-            cb(null, user);
-        } catch (err) {
-            cb(err);
-        }
-    })
+        cb(null, user);
+    } catch (err) {
+        cb(err);
+    }
+})
 );
 
 if (config.get('auth.intercode.clientID')){

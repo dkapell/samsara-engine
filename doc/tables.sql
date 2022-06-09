@@ -188,6 +188,7 @@ create table triggers(
 create table players (
     id          serial,
     user_id     int,
+    game_id     int not null,
     run_id      int,
     character   varchar(255),
     screen_id int,
@@ -316,12 +317,13 @@ create table messages(
 );
 
 create table read_messages(
+    game_id int not null,
     user_id int not null,
     location message_location not null,
     message_id uuid not null,
     seen timestamp with time zone DEFAULT now(),
     emailed boolean default false,
-    primary key (user_id, location),
+    primary key (game_id, user_id, location),
     constraint read_user_fk foreign key (user_id)
         REFERENCES "users" (id) match simple
         on update no action on delete CASCADE
@@ -329,6 +331,7 @@ create table read_messages(
 
 create table chat_blocks(
     id serial,
+    game_id int not null,
     user_id int not null,
     blocked_user_id int not null,
     created timestamp with time zone default now(),
@@ -367,6 +370,7 @@ create table chat_reports(
 
 create table connections(
     id serial,
+    game_id int not null,
     user_id int not null,
     client_id uuid not null,
     server_id varchar(255),

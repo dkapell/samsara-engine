@@ -15,7 +15,7 @@ const models = {
 const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
 
 
-exports.get = async function(id){
+exports.get = async function(id, gameId=1){
     if (!id){ throw new Error('no id specified'); }
     let user = await cache.check('user', id);
     if (user) { return user; }
@@ -24,9 +24,9 @@ exports.get = async function(id){
     if (result.rows.length){
         user = result.rows[0];
         if (user.type === 'player'){
-            user.player = await models.player.getByUserId(user.id);
+            user.player = await models.player.getByUser(id, gameId);
         }
-        user.connections = await (models.connection.find({user_id: id}));
+        user.connections = await (models.connection.find({user_id: id, game_id:gameId}));
         await cache.store('user', id, user);
         return user;
     }
@@ -60,14 +60,14 @@ exports.findOne = async function(conditions){
     return;
 };
 
-exports.list = async function(){
+exports.list = async function(gameId=1){
     const query = 'select * from users order by name';
     const result = await database.query(query);
     return async.map(result.rows, async user => {
         if (user.type === 'player'){
-            user.player = await models.player.getByUserId(user.id);
+            user.player = await models.player.getByUser(user.id, gameId);
         }
-        user.connections = await (models.connection.find({user_id: user.id}));
+        user.connections = await (models.connection.find({user_id: user.id, game_id: gameId}));
         await cache.store('user', user.id, user);
         return user;
     });
@@ -164,8 +164,8 @@ exports.findOrCreate = async function(data){
         } else {
             const id = await exports.create(data);
             if (data.type === 'player'){
-                const run = await models.run.getCurrent();
-                const screen = await models.screen.getStart();
+                const run = await models.run.getCurrent();  //TODO FIX
+                const screen = await models.screen.getStart(); // toto fix
                 await models.player.create({
                     user_id:id,
                     run_id: run.id,

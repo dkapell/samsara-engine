@@ -14,8 +14,8 @@ async function list(req, res, next){
         current: 'Characters'
     };
     try {
-        res.locals.characters = await req.models.character.list();
-        res.locals.groups = _.indexBy(await req.models.group.list(), 'id');
+        res.locals.characters = await req.models.character.find({game_id: req.game.id});
+        res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
         res.render('character/list', { pageTitle: 'Characters' });
     } catch (err){
         next(err);
@@ -27,12 +27,12 @@ async function showNew(req, res, next){
         res.locals.character = {
             groups: [],
             name: null,
-            data: await gameData.getStartData('player'),
+            data: await gameData.getStartData('player', req.game.id),
             character_sheet: null,
             description: null
 
         };
-        res.locals.groups = await req.models.group.list();
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -59,7 +59,10 @@ async function showEdit(req, res, next){
 
     try{
         const character = await req.models.character.get(id);
-        res.locals.groups = await req.models.group.list();
+        if (!character || character.game_id !== req.game.id){
+            throw new Error('Invalid Character');
+        }
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.locals.character = character;
         if (_.has(req.session, 'characterData')){
             res.locals.character = req.session.characterData;
@@ -91,6 +94,8 @@ async function create(req, res, next){
 
     req.session.characterData = character;
 
+    character.game_id = req.game.id;
+
     try{
         const id = await req.models.character.create(character);
         delete req.session.characterData;
@@ -116,6 +121,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.character.get(id);
+        if (!current){
+            throw new Error('Invalid Character');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.character.update(id, character);
         delete req.session.characterData;
@@ -132,8 +143,15 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.character.get(id);
+        if (!current){
+            throw new Error('Invalid Character');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.character.delete(id);
-        req.flash('success', 'Removed Character');
+        req.flash('success', `Removed Character ${current.name}`);
         res.redirect('/character');
     } catch(err) {
         return next(err);

@@ -1,5 +1,6 @@
 const express = require('express');
 const csrf = require('csurf');
+const async = require('async');
 const _ = require('underscore');
 const permission = require('../lib/permission');
 const gameData = require('../lib/gameData');
@@ -14,11 +15,29 @@ async function list(req, res, next){
         current: 'Users'
     };
     try {
-        res.locals.users = await req.models.user.list();
-        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
-        res.locals.runs = _.indexBy(await req.models.run.find({game_id: req.game.id}), 'id');
-        res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
-        res.render('user/list', { pageTitle: 'Users' });
+        if (req.game.id){
+            res.locals.users = await req.models.user.find({game_id: req.game_id});
+            res.locals.screens = await req.models.screen.find({game_id: req.game.id});
+            res.locals.runs = _.indexBy(await req.models.run.find({game_id: req.game.id}), 'id');
+            res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
+            res.render('user/list', { pageTitle: 'Users' });
+        } else {
+            const games = await req.models.game.find();
+            const users = await req.models.user.find();
+            res.locals.users = await async.map(users, async(user) => {
+                user.games = (await req.models.game_user.find({user_id: user.id})).map(user_game => {
+                    const game = _.findWhere(games, {id: user_game.game_id});
+                    return {
+                        name: game.name,
+                        type: user_game.type,
+                        game_id: game.id
+                    };
+                });
+                return user;
+            });
+            res.locals.games = await req.models.game.find();
+            res.render('admin/user/list', { pageTitle: 'All Users' });
+        }
     } catch (err){
         next(err);
     }
@@ -70,7 +89,7 @@ async function showEdit(req, res, next){
     res.locals.csrfToken = req.csrfToken();
 
     try{
-        const user = await req.models.user.get(id);
+        const user = await req.models.user.get(req.game.id, id);
         const startScreen = await req.models.screen.getStart(req.game.id);
         if (user.type === 'player'){
             user.player = await req.models.player.find({game_id: req.game.id, user_id: id});
@@ -114,7 +133,7 @@ async function create(req, res, next){
     req.session.userData = user;
 
     try{
-        const id = await req.models.user.create(user);
+        const id = await req.models.user.create(req.game.id, user);
         if (user.type === 'player'){
             if (!user.player.groups){
                 user.player.groups = [];
@@ -123,6 +142,7 @@ async function create(req, res, next){
             }
             await req.models.player.create({
                 user_id:id,
+                game_id: req.game_id,
                 run_id:Number(user.player.run_id),
                 screen_id:Number(user.player.screen_id),
                 prev_screen_id:null,
@@ -147,9 +167,9 @@ async function update(req, res, next){
     const user = req.body.user;
     req.session.userData = user;
     try {
-        const current = await req.models.user.get(id);
+        const current = await req.models.user.get(req.game.id, id);
 
-        await req.models.user.update(id, user);
+        await req.models.user.update(req.game_id, user);
         delete req.session.userData;
         if (user.type === 'player'){
             const player = await req.models.player.find({game_id: req.game.id, user_id: id});
@@ -169,6 +189,7 @@ async function update(req, res, next){
             } else {
                 await req.models.player.create({
                     user_id:id,
+                    game_id: req.game.id,
                     run_id:Number(user.player.run_id),
                     screen_id:  Number(user.player.screen_id),
                     prev_screen_id:null,
@@ -200,7 +221,7 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
-        await req.models.user.delete(id);
+        await req.models.user.delete(req.game.id, id);
         req.flash('success', 'Removed User');
         res.redirect('/user');
     } catch(err) {

@@ -1,0 +1,40 @@
+.form-group
+    label.control-label(for="game_name") Name
+    input.form-control(type="text",placeholder="Character",name="game[name]",value=game.name,id='game_name')
+
+.form-group
+    label.control-label(for="game_site") Game Site URL
+    input.form-control#game_site(type="url",placeholder="URL",name="game[site]",value=game.site)
+    div.invalid-feedback Must be a valid URL
+
+.form-group
+    label.control-label(for="game_description") Description
+    textarea.form-control#game_description(name="game[description]",rows=3)
+        = game.description
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input#game_intercode_login(type="checkbox", name="game[intercode_login]", checked=game.intercode_login)
+        label.custom-control-label(for="game_intercode_login") Use Intercode Login
+
+.form-group
+    .custom-control.custom-switch
+        input.custom-control-input#game_default_to_player(type="checkbox", name="game[default_to_player]", checked=game.default_to_player)
+        label.custom-control-label(for="game_default_to_player") Default new users to Players
+
+.form-group
+    label.control-label(for="game_theme") Theme
+    select.custom-select.select2#game_theme(name="game[theme]" data-placeholder="Theme", required)
+        option
+        for theme in themes
+            option(value=theme, selected=game.theme===theme)= theme
+
+.form-group
+    label.control-label(for="game_css") Custom CSS
+    textarea.form-control#game_css(name="game[css]",rows=5)
+        = game.css
+
+
+.form-group
+    button.btn.btn-primary(type="submit")= game.id?'Update':'Create'
+    a.btn.btn-link(href="/admin/game") Cancel

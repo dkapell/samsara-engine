@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Players'
     };
     try {
-        const players = (await req.models.user.list()).filter(user => {
+        const players = (await req.models.user.find(req.game.id)).filter(user => {
             return user.type === 'player';
         });
         res.locals.users = await async.map(players, async user => {
@@ -43,7 +43,7 @@ async function list(req, res, next){
 
 async function assumePlayer(req, res, next){
     try{
-        const user = await req.models.user.get(req.params.id);
+        const user = await req.models.user.get(req.game.id, req.params.id);
         if (!user){
             req.flash('error', 'No User Found');
             return res.redirect('/player');
@@ -67,7 +67,7 @@ function revertPlayer(req, res, next){
 
 async function advance(req, res, next){
     try{
-        const user = await req.models.user.get(req.params.id);
+        const user = await req.models.user.get(req.game.id, req.params.id);
         if (!user){
             throw new Error ('User not found');
         }
@@ -85,7 +85,7 @@ async function advance(req, res, next){
 
 async function sendToast(req, res, next){
     try{
-        const user = await req.models.user.get(req.params.id);
+        const user = await req.models.user.get(req.game.id, req.params.id);
         if (!user){
             throw new Error ('User not found');
         }
@@ -102,7 +102,7 @@ async function sendToast(req, res, next){
 
 async function runTrigger(req, res, next){
     try{
-        const user = await req.models.user.get(req.params.id);
+        const user = await req.models.user.get(req.game.id, req.params.id);
         if (!user){
             throw new Error ('User not found');
         }
@@ -125,7 +125,7 @@ async function runTrigger(req, res, next){
 
 async function resetInkStories(req, res, next){
     try{
-        const user = await req.models.user.get(req.params.id);
+        const user = await req.models.user.get(req.game.id, req.params.id);
         if (!user){
             throw new Error ('User not found');
         }

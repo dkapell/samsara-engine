@@ -15,9 +15,11 @@ const tableFields = ['game_id', 'message_id', 'run_id', 'user_id', 'location', '
 exports.get = async function(id){
     let message = await cache.check('message', id);
     if (message) { return message; }
-    const query = `select m.*, u.name, u.type as user_type, p.character
+    const query = `select m.*, u.name, gu.type as user_type, p.character
          from "messages" m left join users u on m.user_id = u.id
-         left join players p on u.id = p.user_id
+         left join users u on m.user_id = u.id
+         left join game_users gu on gu.game_id = m.game_id and u.id = gu.game_id
+         left join players p on u.id = p.user_id and p.game_id = m.game_id
          where m.id = $1`;
     const result = await database.query(query, [id]);
     if (result.rows.length){
@@ -32,9 +34,10 @@ exports.get = async function(id){
 exports.getByMessageId = async function(message_id){
     let message = await cache.check('message_id', message_id);
     if (message) { return message; }
-    const query = `select m.*, u.name, u.type as user_type, p.character
+    const query = `select m.*, u.name, gu.type as user_type, p.character
         from "messages" m left join users u on m.user_id = u.id
-        left join players p on u.id = p.user_id
+        left join game_users gu on gu.game_id = m.game_id and u.id = gu.game_id
+        left join players p on u.id = p.user_id and p.game_id = m.game_id
         where message_id = $1`;
     const result = await database.query(query, [message_id]);
     if (result.rows.length){
@@ -58,9 +61,10 @@ exports.find = async function(conditions, options){
             queryData.push(conditions[field]);
         }
     }
-    let query = `select m.*, u.name, u.type as user_type, p.character
+    let query = `select m.*, u.name, gu.type as user_type, p.character
          from "messages" m left join users u on m.user_id = u.id
-         left join players p on u.id = p.user_id`;
+         left join game_users gu on gu.game_id = m.game_id and u.id = gu.game_id
+         left join players p on u.id = p.user_id and p.game_id = m.game_id`;
     if (queryParts.length){
         query += ' where ' + queryParts.join(' and ');
     }

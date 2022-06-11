@@ -27,18 +27,23 @@ async function show(req, res, next){
     const id = req.params.id;
     try{
         const trigger =  await req.models.trigger.get(id);
+        console.log('t- here1');
         if (!trigger || trigger.game_id !== req.game.id){
             throw new Error('Invalid Trigger');
         }
 
         res.locals.trigger = trigger;
         res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        console.log('t- here2');
         res.locals.images = await req.models.image.find({game_id: req.game.id});
+        console.log('t- here3');
         res.locals.documents = await req.models.document.find({game_id: req.game.id});
         res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.locals.links = await req.models.link.find({game_id: req.game.id});
+        console.log('t- here4');
         res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
         res.locals.inks = await req.models.ink.find({game_id: req.game.id});
+        console.log('t- here2');
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -171,7 +176,7 @@ async function create(req, res, next){
         delete req.session.triggerData;
         req.flash('success', 'Created Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
-        gameEngine.updateAllTriggers();
+        gameEngine.updateAllTriggers(req.game.id);
     } catch (err) {
         req.flash('error', err.toString());
         return res.redirect('/trigger/new');
@@ -209,7 +214,7 @@ async function update(req, res, next){
         delete req.session.triggerData;
         req.flash('success', 'Updated Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
-        gameEngine.updateAllTriggers();
+        gameEngine.updateAllTriggers(req.game.id);
     } catch(err) {
         req.flash('error', err.toString());
         return (res.redirect(`/trigger/${id}/edit`));

@@ -44,6 +44,9 @@ const meetingRouter = require('./routes/meeting');
 const characterRouter = require('./routes/character');
 const inkRouter = require('./routes/ink');
 
+
+const adminGameRouter = require('./routes/admin/game');
+
 // if running in SSL Only mode, redirect to SSL version
 if (config.get('app.secureOnly')){
     app.all('*', function(req, res, next){
@@ -110,22 +113,6 @@ app.use(function(req, res, next){
 
 app.use(permission());
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser(function(user, cb) {
-    cb(null, user.id);
-});
-
-passport.deserializeUser(async function(id, cb) {
-    try{
-        const user = await models.user.get(id);
-        cb(null, user);
-    } catch (err){
-        cb(err);
-    }
-});
-
 // Figure out what game is active, based on URL
 app.use(async function(req, res, next){
     let game = await models.game.getBySite(req.headers.host);
@@ -136,7 +123,8 @@ app.use(async function(req, res, next){
             theme: 'Flatly',
             css: '',
             site: req.headers.host,
-            intercode_login: false
+            intercode_login: false,
+            default_to_player: false
         };
     }
     req.game = game;
@@ -148,22 +136,38 @@ app.use(async function(req, res, next){
     next();
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user.id);
+});
+
+passport.deserializeUser(async function(req, id, cb) {
+    try{
+        const user = await models.user.get(req.game.id, id);
+        cb(null, user);
+    } catch (err){
+        cb(err);
+    }
+});
+
 const googleConfig = config.get('auth.google');
 
 passport.use(new GoogleStrategy({
     clientID: config.get('auth.google.clientID'),
     clientSecret: config.get('auth.google.clientSecret'),
-    callbackURL: config.get('auth.google.callbackURL')
+    callbackURL: config.get('auth.google.callbackURL'),
+    passReqToCallback: true
 },
-async function(accessToken, refreshToken, profile, cb) {
+async function(req, accessToken, refreshToken, profile, cb) {
     try{
-        const user = await models.user.findOrCreate({
+        const user = await models.user.findOrCreate(req.game.id, {
             name: profile.displayName,
             google_id: profile.id,
             email: profile.emails[0].value,
-            type: config.get('game.defaultToPlayer')?'player':'none'
+            type: req.game.default_to_player?'player':'none'
         });
-
         cb(null, user);
     } catch (err) {
         cb(err);
@@ -175,11 +179,12 @@ if (config.get('auth.intercode.clientID')){
     const intercodeStrategy =  new OAuth2Strategy( config.get('auth.intercode'),
         async function(req, accessToken, refreshToken, profile, cb) {
             try{
-                const user = await models.user.findOrCreate({
+                const user = await models.user.findOrCreate(req.game.id, {
                     name: profile.name,
                     intercode_id: profile.id,
                     email: profile.email,
-                    type: config.get('game.defaultToPlayer')?'player':'none'
+                    type: req.game.default_to_player?'player':'none'
+
                 });
                 req.session.accessToken = accessToken;
                 cb(null, user);
@@ -254,6 +259,8 @@ app.use('/trigger', triggerRouter);
 app.use('/meeting', meetingRouter);
 app.use('/character', characterRouter);
 app.use('/ink', inkRouter);
+
+app.use('/admin/game', adminGameRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

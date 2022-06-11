@@ -1,9 +1,10 @@
 const express = require('express');
 const csrf = require('csurf');
+const async = require('async');
 const pluralize = require('pluralize');
 const config = require('config');
 const _ = require('underscore');
-const permission = require('../lib/permission');
+const permission = require('../../lib/permission');
 
 /* GET games listing. */
 async function list(req, res, next){
@@ -14,8 +15,12 @@ async function list(req, res, next){
         current: 'Games'
     };
     try {
-        res.locals.games = await req.models.game.find();
-        res.render('game/list', { pageTitle: 'Games' });
+        const games = await req.models.game.find();
+        res.locals.games = await async.map(games, async (game) => {
+            game.user = await req.models.user.get(null, game.created_by);
+            return game;
+        });
+        res.render('admin/game/list', { pageTitle: 'Games' });
     } catch (err){
         next(err);
     }
@@ -25,23 +30,26 @@ function showNew(req, res, next){
     res.locals.game = {
         name: null,
         description: null,
-        url: null,
-        active: true,
+        site: null,
+        theme: null,
+        css: null,
+        intercode_login: false,
+        default_to_player: false,
     };
     res.locals.breadcrumbs = {
         path: [
             { url: '/', name: 'Home'},
-            { url: '/game', name: 'Games'},
+            { url: '/admin/game', name: 'Games'},
         ],
         current: 'New'
     };
-
+    res.locals.themes = _.keys(config.get('themes'));
     res.locals.csrfToken = req.csrfToken();
     if (_.has(req.session, 'gameData')){
         res.locals.game = req.session.gameData;
         delete req.session.gameData;
     }
-    res.render('game/new');
+    res.render('admin/game/new');
 }
 
 async function showEdit(req, res, next){
@@ -62,8 +70,8 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + game.name
         };
-
-        res.render('game/edit');
+        res.locals.themes = _.keys(config.get('themes'));
+        res.render('admin/game/edit');
     } catch(err){
         next(err);
     }
@@ -81,10 +89,10 @@ async function create(req, res, next){
         await req.models.game.create(game);
         delete req.session.gameData;
         req.flash('success', `Created Game ${game.name}`);
-        res.redirect('/game');
+        res.redirect('/admin/game');
     } catch (err) {
         req.flash('error', err.toString());
-        return res.redirect('/game/new');
+        return res.redirect('/admin/game/new');
     }
 }
 
@@ -105,10 +113,10 @@ async function update(req, res, next){
         await req.models.game.update(id, game);
         delete req.session.gameData;
         req.flash('success', `Updated Game ${game.name}`);
-        res.redirect('/game');
+        res.redirect('/admin/game');
     } catch(err) {
         req.flash('error', err.toString());
-        return (res.redirect('/game/'+id));
+        return (res.redirect('/admin/game/'+id));
 
     }
 }
@@ -118,7 +126,7 @@ async function remove(req, res, next){
     try {
         await req.models.game.delete(id);
         req.flash('success', 'Removed Game');
-        res.redirect('/game');
+        res.redirect('/admin/game');
     } catch(err) {
         return next(err);
     }

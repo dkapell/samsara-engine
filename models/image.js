@@ -23,7 +23,7 @@ function validate(data){
     return true;
 }
 
-function postProcess(image){
+async function postProcess(image){
     const key = ['images', image.id, image.name].join('/');
     image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
     return image;

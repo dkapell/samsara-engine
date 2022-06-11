@@ -50,7 +50,7 @@ async function show(req, res, next){
         let last = (new Date()).getTime();
 
         const users = await async.mapLimit(players, 5, async function(player){
-            const user = await req.models.user.get(player.user_id);
+            const user = await req.models.user.get(player.game_id, player.user_id);
 
             user.screen = await gameEngine.getScreen(user.id, req.game.id);
 
@@ -264,7 +264,7 @@ async function resetRun(req, res, next){
             return req.app.locals.gameServer.sendScreen(player.user_id, req.game.id);
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialScreen.id);
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         res.json({success:true});
 
     } catch(err){
@@ -289,7 +289,7 @@ async function updateAllPlayers(req, res, next){
             }
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, screen.id);
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         res.json({success:true});
 
     } catch(err){
@@ -311,7 +311,7 @@ async function advanceAll(req, res, next){
             }
             return;
         });
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
         res.json({success:true});
     } catch(err){
@@ -355,7 +355,7 @@ async function runTriggerAll(req, res, next){
         }
         const players = await req.models.player.find({run_id: req.params.id});
         await async.each(players, async player => {
-            const user = await req.models.user.get(player.user_id);
+            const user = await req.models.user.get(player.game_id, player.user_id);
             return req.app.locals.gameServer.runTrigger(trigger, user);
         });
         await req.app.locals.gameServer.sendPlayerUpdate(res.run.id);

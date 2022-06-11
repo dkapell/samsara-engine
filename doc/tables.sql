@@ -27,6 +27,7 @@ create table games (
     css text,
     created_by int,
     intercode_login boolean default false,
+    default_to_player boolean default false,
     created timestamp with time zone DEFAULT now(),
     updated timestamp with time zone DEFAULT now(),
     primary key (id),
@@ -36,6 +37,20 @@ create table games (
 )
 
 create index games_site_idx ON games (site);
+
+create table game_users(
+    user_id             int not null,
+    game_id             int not null,
+    type                user_type not null default 'none',
+    created             timestamp with time zone DEFAULT now(),
+    primary key(user_id, game_id),
+    CONSTRAINT games_users_user_fk FOREIGN KEY (user_id)
+        REFERENCES "users" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT games_users_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+)
 
 create table links (
     id          serial,
@@ -414,6 +429,7 @@ create table meetings(
 
 create table participants(
     id serial,
+    game_id int not null,
     meeting_id int not null,
     user_id int not null,
     joined timestamp with time zone default now(),

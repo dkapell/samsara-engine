@@ -15,6 +15,7 @@ let currentMeeting = null;
 let currentAreas = {};
 let initialPageLoad = true;
 let mapDisabled = 0;
+let noServer = false;
 
 $(function(){
     $('#game-text').hide();
@@ -34,6 +35,10 @@ function openWebSocket(){
     ws.onmessage = async function (event) {
         const data = JSON.parse(event.data);
         switch(data.action){
+            case 'noserver':
+                noServer = true;
+                ws.close();
+                break;
             case 'show default': await renderDefault(data); break;
             case 'show page': {
                 if (_.has(data, 'gamedata')){
@@ -91,7 +96,9 @@ function openWebSocket(){
 
     ws.onclose = function(){
         ws = null;
-        reconnectTimeout = setTimeout(openWebSocket, 5000);
+        if (!noServer){
+            reconnectTimeout = setTimeout(openWebSocket, 5000);
+        }
     };
     ws.onopen = function () {
         const doc = {
@@ -101,6 +108,10 @@ function openWebSocket(){
         if ($('#chat-history-limit').val()){
             doc.options.limit = Number($('#chat-history-limit').val());
         }
+        if (noServer){
+            return;
+        }
+
         ws.send(JSON.stringify(doc));
         setTimeout( () => {
             if (initialPageLoad){
@@ -553,7 +564,7 @@ function showMeetings(meetings){
 }
 
 function sendJoinMeeting(){
-    if (!activeMeeting){
+    if (!activeMeeting || noServer){
         return;
     }
     ws.send(JSON.stringify({
@@ -563,14 +574,22 @@ function sendJoinMeeting(){
     }));
 }
 function sendLeaveMeeting(){
+    if (noServer){
+        return;
+    }
     ws.send(JSON.stringify({
         action:'meeting',
         meetingId: currentMeeting,
         type: 'leave'
     }));
+
 }
 
 function sendInkChoice(idx){
+    if (noServer){
+        return;
+    }
+
     ws.send(JSON.stringify({
         action:'ink',
         type: 'choice',
@@ -579,12 +598,15 @@ function sendInkChoice(idx){
 }
 
 function sendCloseInkStory(){
+    if (noServer){
+        return;
+    }
+
     ws.send(JSON.stringify({
         action:'ink',
         type: 'close'
     }));
 }
-
 
 function closeContent(){
     $('#screen-container')

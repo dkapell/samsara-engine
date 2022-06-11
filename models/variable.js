@@ -4,9 +4,6 @@ const _ = require('underscore');
 const database = require('../lib/database');
 const validator = require('validator');
 
-const models = {
-};
-
 const Model = require('../lib/Model');
 
 const tableFields = ['id', 'game_id', 'name', 'type', 'public', 'player', 'base_value', 'ink_name'];

@@ -33,7 +33,7 @@ async function list(req, res, next){
             } else {
                 meeting.users = 0;
             }
-            const participants = await req.models.participant.find({meeting_id: meeting.id});
+            const participants = await req.models.participant.find({meeting_id: meeting.id, game_id: req.game.id});
 
             meeting.participants = participants.map(participant => {
                 const doc = {

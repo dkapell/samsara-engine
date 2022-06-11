@@ -20,7 +20,8 @@
         "google": {
             "clientID": "clientID",
             "clientSecret": "clientSecret",
-            "callbackURL": "http://localhost:3000/auth/google/callback"
+            "callbackURL": "http://localhost:3000/auth/google/callback",
+            "passReqToCallback": true
         },
         "intercode":{
             "authorizationURL": "authorizationURL",

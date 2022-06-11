@@ -9,31 +9,32 @@ const models = {
     player: require('./player'),
     run: require('./run'),
     screen: require('./screen'),
-    connection: require('./connection')
+    connection: require('./connection'),
+    game_user: require('./game_user')
 };
 
-const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'type'];
+const tableFields = ['name', 'email', 'google_id', 'intercode_id', 'site_admin'];
 
-
-exports.get = async function(id, gameId=1){
+exports.get = async function(gameId, id){
     if (!id){ throw new Error('no id specified'); }
     let user = await cache.check('user', id);
-    if (user) { return user; }
+
+    if (user) {
+        return postSelect(user, gameId);
+    }
+
     const query = 'select * from users where id = $1';
     const result = await database.query(query, [id]);
     if (result.rows.length){
         user = result.rows[0];
-        if (user.type === 'player'){
-            user.player = await models.player.getByUser(id, gameId);
-        }
-        user.connections = await (models.connection.find({user_id: id, game_id:gameId}));
         await cache.store('user', id, user);
-        return user;
+
+        return postSelect(user, gameId);
     }
     return;
 };
 
-exports.find = async function(conditions){
+exports.find = async function(gameId, conditions = {}, options = {}){
     const queryParts = [];
     const queryData = [];
     for (const field of tableFields){
@@ -47,40 +48,38 @@ exports.find = async function(conditions){
         query += ' where ' + queryParts.join(' and ');
     }
     query += ' order by name';
-    const result = await database.query(query, queryData);
-    return result.rows;
 
+    if (_.has(options, 'offset')){
+        query += ` offset ${Number(options.offset)}`;
+    }
+
+    if (_.has(options, 'limit')){
+        query += ` limit ${Number(options.limit)}`;
+    }
+    const result = await database.query(query, queryData);
+    return async.map(result.rows, async(row) => {
+        return postSelect(row, gameId);
+    });
 };
 
-exports.findOne = async function(conditions){
-    const results = await exports.find(conditions);
+exports.findOne = async function(gameId, conditions, options = {}){
+    options.limit = 1;
+    const results = await exports.find(gameId, conditions, options);
     if (results.length){
         return results[0];
     }
     return;
 };
 
-exports.list = async function(gameId=1){
-    const query = 'select * from users order by name';
-    const result = await database.query(query);
-    return async.map(result.rows, async user => {
-        if (user.type === 'player'){
-            user.player = await models.player.getByUser(user.id, gameId);
-        }
-        user.connections = await (models.connection.find({user_id: user.id, game_id: gameId}));
-        await cache.store('user', user.id, user);
-        return user;
-    });
-
-};
-
-exports.listGms = async function(){
-    const query = 'select * from users where type not in (\'none\', \'player\') order by name';
-    const result = await database.query(query);
+exports.listGms = async function(gameId){
+    let query = 'select users.* from users left join games_users on games_users.user_id = user.id ';
+    query += 'where games_users.type not in (\'none\', \'player\') ';
+    query += 'and games_users.game_id = $1 order by name';
+    const result = await database.query(query, [gameId]);
     return result.rows;
 };
 
-exports.create = async function(data){
+exports.create = async function(gameId, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -102,10 +101,11 @@ exports.create = async function(data){
     query += ') returning id';
 
     const result = await database.query(query, queryData);
+    await postSave(result.rows[0].id, data, gameId);
     return result.rows[0].id;
 };
 
-exports.update = async function(id, data){
+exports.update = async function(gameId, id, data){
     if (! validate(data)){
         throw new Error('Invalid Data');
     }
@@ -124,64 +124,70 @@ exports.update = async function(id, data){
 
     await database.query(query, queryData);
     await cache.invalidate('user', id);
+    await postSave(id, data, gameId);
 };
 
-exports.delete = async  function(id){
-    const query = 'delete from users where id = $1';
-    await database.query(query, [id]);
-};
-
-exports.findOrCreate = async function(data){
+exports.findOrCreate = async function(gameId, data){
     let user = null;
     if (data.google_id){
-        user = await exports.findOne({google_id: data.google_id});
+        user = await exports.findOne(gameId, {google_id: data.google_id});
     } else if (data.intercode_id){
-        user = await exports.findOne({intercode_id: data.intercode_id});
+        user = await exports.findOne(gameId, {intercode_id: data.intercode_id});
     }
     if (user) {
-        delete data.type;
-        for (const field in data){
+        for (const field in tableFields){
             if (_.has(user, field)){
                 user[field] = data[field];
             }
         }
-        await exports.update(user.id, user);
-        return await exports.get(user.id);
+        await exports.update(gameId, user.id, user);
+        return exports.get(gameId, user.id);
 
     } else {
-        user = await exports.findOne({email: data.email});
+        user = await exports.findOne(gameId, {email: data.email});
 
         if (user) {
-            delete data.type;
-            for (const field in data){
+            for (const field in tableFields){
                 if (_.has(user, field)){
                     user[field] = data[field];
                 }
             }
-            await exports.update(user.id, user);
-            return await exports.get(user.id);
+            await exports.update(gameId,user.id, user);
+            return exports.get(gameId, user.id);
 
         } else {
-            const id = await exports.create(data);
+            const id = await exports.create(gameId, data);
             if (data.type === 'player'){
-                const run = await models.run.getCurrent();  //TODO FIX
-                const screen = await models.screen.getStart(); // toto fix
+                const run = await models.run.getCurrent(gameId);
+                const screen = await models.screen.getStart(gameId);
                 await models.player.create({
                     user_id:id,
+                    game_id: gameId,
                     run_id: run.id,
                     screen_id: screen.id,
                     prev_screen_id: null,
                     character: null,
                     groups: []
-
                 });
             }
 
-            return await exports.get(id);
+            return exports.get(gameId, id);
         }
     }
 };
 
+exports.delete = async  function(gameId, id){
+    if (gameId){
+        let game_user = await models.game_user.find({user_id: id, game_id: gameId});
+        if (game_user){
+            await models.game_user.delete(game_user.id);
+        }
+    } else {
+        const query = 'delete from users where id = $1';
+        await database.query(query, [id]);
+        await cache.invalidate('user', id);
+    }
+};
 
 function validate(data){
     if (! validator.isLength(data.name, 2, 255)){
@@ -191,4 +197,49 @@ function validate(data){
         return false;
     }
     return true;
+}
+
+async function postSelect(user, gameId){
+    // Get the game_user record for the specific site/game.
+    if (!gameId){
+        user.type = 'none';
+        return user;
+    }
+
+    const game_user = await models.game_user.findOne({user_id: user.id, game_id: gameId});
+    if (game_user){
+        user.type = game_user.type;
+    } else {
+        user.type = 'none';
+    }
+
+    if (user.type === 'player'){
+        user.player = await models.player.getByUser(user.id, gameId);
+    }
+    user.connections = await (models.connection.find({user_id: user.id, game_id:gameId}));
+
+    return user;
+}
+
+async function postSave(id, data, gameId){
+    if (!gameId){
+        return;
+    }
+    let game_user = await models.game_user.findOne({user_id: data.id, game_id: gameId});
+    if (game_user){
+        if (_.has(data, 'type') && game_user.type !== data.type){
+            game_user.type = data.type;
+            await models.game_user.update(game_user.id, game_user);
+        }
+    } else {
+        game_user = {
+            user_id: data.id,
+            game_id: gameId,
+            type: 'none'
+        };
+        if (_.has(data, 'type')){
+            game_user.type = data.type;
+        }
+        await models.game_user.create(game_user);
+    }
 }

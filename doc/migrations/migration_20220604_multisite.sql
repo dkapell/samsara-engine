@@ -8,13 +8,33 @@ create table games (
     css text,
     created_by int,
     intercode_login boolean default false,
+    default_to_player boolean default false,
     created timestamp with time zone DEFAULT now(),
     updated timestamp with time zone DEFAULT now(),
     primary key (id),
     CONSTRAINT games_created_fk FOREIGN KEY (created_by)
         REFERENCES "users" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE SET NULL
-)
+);
+
+create table game_users(
+    user_id             int not null,
+    game_id             int not null,
+    type                user_type not null default 'none',
+    created             timestamp with time zone DEFAULT now(),
+    primary key(user_id, game_id),
+    CONSTRAINT games_users_user_fk FOREIGN KEY (user_id)
+        REFERENCES "users" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT games_users_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+insert into game_users (user_id, game_id, type) select id, 1, type from users;
+
+alter table users drop column type;
+alter table users add column site_admin boolean default false;
 
 create index games_site_idx ON games (site);
 
@@ -154,3 +174,11 @@ alter table connections add column game_id int not null default 1;
 alter table connections add CONSTRAINT connections_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
+
+-- connections
+alter table participants add column game_id int not null default 1;
+
+alter table participants add CONSTRAINT participants_game_fk FOREIGN KEY (game_id)
+    REFERENCES "games" (id) MATCH SIMPLE
+    ON UPDATE NO ACTION ON DELETE CASCADE;
+

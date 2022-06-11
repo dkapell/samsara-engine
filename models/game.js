@@ -7,7 +7,7 @@ const cache = require('../lib/cache');
 
 const Model = require('../lib/Model');
 
-const tableFields = ['id', 'name', 'description', 'intercode_login', 'site', 'theme', 'css', 'created_by', 'created', 'updated'];
+const tableFields = ['id', 'name', 'description', 'intercode_login', 'site', 'theme', 'css', 'created_by', 'created', 'updated', 'default_to_player'];
 
 const Game = new Model('games', tableFields, {
     order: ['name'],

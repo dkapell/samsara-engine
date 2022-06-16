@@ -115,6 +115,9 @@
                             aria-haspopup="true"
                             aria-expanded="false") Game Admin
                         .dropdown-menu(aria-labelledby="creatorDropdown")
+                            a.dropdown-item(href=`/admin/game/${currentGame.id}`)
+                                i.fas.fa-dice-d20.fa-fw.mr-1
+                                |  Game Settings
                             a.dropdown-item(href='/user')
                                 i.fas.fa-users-cog.fa-fw.mr-1
                                 |  Users
@@ -124,6 +127,7 @@
                             a.dropdown-item(href='/group')
                                 i.fas.fa-users.fa-fw.mr-1
                                 |  Player Groups
+
             else
                 if checkPermission('admin')
                     li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
@@ -164,11 +168,6 @@
                             a.dropdown-item(href="/player/revert")
                                 i.fas.fa-user-secret.fa-fw.mr-1
                                 | Revert to #{activeUser.name}
-                        if checkPermission('admin')
-                            a.dropdown-item(href="/admin")
-                                i.fas.fa-gear.fa-fw.mr-1
-                                | Site Admin
-
 
                         a.dropdown-item(href="/auth/logout")
                             i.fas.fa-sign-out-alt.fa-fw.mr-1

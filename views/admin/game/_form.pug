@@ -8,9 +8,8 @@
     div.invalid-feedback Must be a valid URL
 
 .form-group
-    label.control-label(for="game_description") Description
-    textarea.form-control#game_description(name="game[description]",rows=3)
-        = game.description
+    label.control-label(for="game_description") Description (Front page)
+    +htmlEditor('game_description', 'game[description]', 4, 200, game.description, true)
 
 .form-group
     .custom-control.custom-switch
@@ -31,9 +30,7 @@
 
 .form-group
     label.control-label(for="game_css") Custom CSS
-    textarea.form-control#game_css(name="game[css]",rows=5)
-        = game.css
-
+    +cssEditor('game_css', 'game[css]', 5, 200, game.css)
 
 .form-group
     button.btn.btn-primary(type="submit")= game.id?'Update':'Create'

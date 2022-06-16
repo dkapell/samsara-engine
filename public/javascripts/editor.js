@@ -20,6 +20,8 @@ function renderEditor(id, type, size){
         editorConfig.mode = { name: 'javascript', json: false };
     } else if (type === 'json'){
         editorConfig.mode = { name: 'javascript', json: true };
+    } else if (type === 'css'){
+        editorConfig.mode = 'css';
     }
 
     let editor = null;

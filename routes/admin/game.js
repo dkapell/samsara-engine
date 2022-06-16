@@ -54,6 +54,7 @@ function showNew(req, res, next){
 
 async function showEdit(req, res, next){
     const id = req.params.id;
+    console.log(id);
     res.locals.csrfToken = req.csrfToken();
 
     try{
@@ -113,7 +114,11 @@ async function update(req, res, next){
         await req.models.game.update(id, game);
         delete req.session.gameData;
         req.flash('success', `Updated Game ${game.name}`);
-        res.redirect('/admin/game');
+        if (req.game.id){
+            res.redirect('/');
+        } else {
+            res.redirect('/admin/game');
+        }
     } catch(err) {
         req.flash('error', err.toString());
         return (res.redirect('/admin/game/'+id));
@@ -126,10 +131,28 @@ async function remove(req, res, next){
     try {
         await req.models.game.delete(id);
         req.flash('success', 'Removed Game');
-        res.redirect('/admin/game');
+        if (req.game.id){
+            res.redirect('/');
+        } else {
+            res.redirect('/admin/game');
+        }
     } catch(err) {
         return next(err);
     }
+}
+
+async function checkPermission(req, res, next){
+    const id = req.params.id;
+    const user = req.session.assumed_user ? req.session.assumed_user: req.user;
+    if (!req.session.assumed_user && user.site_admin){
+        return next();
+    }
+    const siteUser = await req.models.user.get(id, user.id);
+    if (siteUser.type === 'admin'){
+        return next();
+    }
+    req.flash('error', 'You are not allowed to access that resource');
+    res.redirect('/');
 }
 
 const router = express.Router();
@@ -141,10 +164,10 @@ router.use(function(req, res, next){
 });
 
 router.get('/', list);
-router.get('/new', csrf(), showNew);
-router.get('/:id', csrf(), showEdit);
-router.post('/', csrf(), create);
-router.put('/:id', csrf(), update);
-router.delete('/:id', remove);
+router.get('/new', csrf(), permission('site_admin'), showNew);
+router.get('/:id', csrf(), checkPermission, showEdit);
+router.post('/', csrf(), permission('site_admin'), create);
+router.put('/:id', csrf(), checkPermission, update);
+router.delete('/:id', checkPermission, remove);
 
 module.exports = router;

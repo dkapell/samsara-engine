@@ -48,7 +48,7 @@ async function showNew(req, res, next){
                 res.locals.ink.content += `VAR ${variable.ink_name} = "${variable.base_value}"\n`;
             }
         }
-
+        res.locals.variables= variables;
         if (_.has(req.session, 'inkData')){
             res.locals.ink = req.session.inkData;
             delete req.session.inkData;
@@ -74,6 +74,7 @@ async function showEdit(req, res, next){
             res.locals.ink = req.session.inkData;
             delete req.session.inkData;
         }
+        res.locals.variables= await req.models.variable.listInk(req.game.id);
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},

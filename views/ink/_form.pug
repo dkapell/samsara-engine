@@ -10,8 +10,7 @@
 
 .form-group
     label.control-label(for="ink_content") Content
-    textarea.form-control.text-monospace#ink_content(name="ink[content]",rows=10, style='font-size:0.75rem' spellcheck=false)
-        = ink.content
+    +inkEditor('ink_content', 'ink[content]', 10, 600, ink.content)
 
 .form-group
     button.btn.btn-primary(type="submit")= ink.id?'Update':'Create'

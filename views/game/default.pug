@@ -1,5 +1,8 @@
 h1= title
-.lead This is the website for #{title}.
+if (currentGame.description)
+    != currentGame.description
+else
+    .lead This is the website for #{title}.
 
 if checkPermission('gm')
     p This is where the players would see content

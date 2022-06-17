@@ -5,6 +5,7 @@ const pluralize = require('pluralize');
 const config = require('config');
 const _ = require('underscore');
 const permission = require('../../lib/permission');
+const gameCloner = require('../../lib/gameCloner');
 
 /* GET games listing. */
 async function list(req, res, next){
@@ -54,7 +55,6 @@ function showNew(req, res, next){
 
 async function showEdit(req, res, next){
     const id = req.params.id;
-    console.log(id);
     res.locals.csrfToken = req.csrfToken();
 
     try{
@@ -67,7 +67,7 @@ async function showEdit(req, res, next){
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
-                { url: '/game', name: 'Games'},
+                { url: '/admin/game', name: 'Games'},
             ],
             current: 'Edit: ' + game.name
         };
@@ -78,12 +78,71 @@ async function showEdit(req, res, next){
     }
 }
 
+async function showClone(req, res, next){
+    const id = req.params.id;
+    res.locals.csrfToken = req.csrfToken();
+
+    try{
+        const game = await req.models.game.get(id);
+        res.locals.source = game;
+
+        res.locals.game = {
+            oldGameId: id,
+            name: game.name,
+            description: game.description,
+            site: game.site,
+            theme: game.theme,
+            css: game.css,
+            intercode_login: game.intercode_login,
+            default_to_player: game.default_to_player,
+        };
+
+        res.locals.clone = {
+            fakeUsers: false,
+            tables:{
+                run: false,
+                player: false,
+                message: false,
+                chat_report: false,
+            }
+        };
+
+        if (_.has(req.session, 'gameData')){
+            res.locals.game = req.session.gameData.game;
+            if (_.has(req.session.gameData.clone, 'tables')){
+                for (const table in req.session.gameData.clone.tables ){
+                    res.locals.clone.tables[table] = req.session.gameData.clone.tables[table];
+                }
+            }
+            if (req.session.gameData.clone && req.session.gameData.clone.fakeUsers){
+                res.locals.clone.fakeUsers = req.session.gameData.clone.fakeUsers;
+            }
+            delete req.session.gameData;
+        }
+        res.locals.breadcrumbs = {
+            path: [
+                { url: '/', name: 'Home'},
+                { url: '/admin/game', name: 'Games'},
+            ],
+            current: 'Clone: ' + game.name
+        };
+        res.locals.themes = _.keys(config.get('themes'));
+        res.render('admin/game/clone');
+    } catch(err){
+        next(err);
+    }
+}
+
 async function create(req, res, next){
     const game = req.body.game;
 
     req.session.gameData = game;
-    if (game.code === ''){
-        game.code = null;
+
+    if (!_.has(game, 'intercode_login')){
+        game.intercode_login = false;
+    }
+    if (!_.has(game, 'default_to_player')){
+        game.default_to_player = false;
     }
 
     try{
@@ -101,11 +160,12 @@ async function update(req, res, next){
     const id = req.params.id;
     const game = req.body.game;
     req.session.gameData = game;
-    if (!_.has(game, 'active')){
-        game.active = false;
+
+    if (!_.has(game, 'intercode_login')){
+        game.intercode_login = false;
     }
-    if (game.code === ''){
-        game.code = null;
+    if (!_.has(game, 'default_to_player')){
+        game.default_to_player = false;
     }
 
     try {
@@ -123,6 +183,50 @@ async function update(req, res, next){
         req.flash('error', err.toString());
         return (res.redirect('/admin/game/'+id));
 
+    }
+}
+
+async function clone(req, res, next){
+    const game = req.body.game;
+    const id = req.params.id;
+    const cloneOptions = req.body.clone;
+
+    req.session.gameData = {
+        game: game,
+        clone: cloneOptions
+    };
+
+    if (!_.has(game, 'intercode_login')){
+        game.intercode_login = false;
+    }
+    if (!_.has(game, 'default_to_player')){
+        game.default_to_player = false;
+    }
+
+    try{
+
+        const cloneConfig = {
+            game: game,
+            tables: {}
+        };
+        if (cloneOptions){
+            if ( cloneOptions.fakeUsers){
+                cloneConfig.fakeUsers = true;
+            }
+            for (const table in cloneOptions.tables){
+                if (cloneOptions.tables[table]){
+                    cloneConfig.tables[table] = true;
+                }
+            }
+        }
+
+        await gameCloner(id, cloneConfig);
+        delete req.session.gameData;
+        req.flash('success', `Cloned Game ${game.name}`);
+        res.redirect('/admin/game');
+    } catch (err) {
+        req.flash('error', err.toString());
+        return res.redirect(`/admin/game/${id}/clone`);
     }
 }
 
@@ -166,7 +270,9 @@ router.use(function(req, res, next){
 router.get('/', list);
 router.get('/new', csrf(), permission('site_admin'), showNew);
 router.get('/:id', csrf(), checkPermission, showEdit);
+router.get('/:id/clone', csrf(), checkPermission, showClone);
 router.post('/', csrf(), permission('site_admin'), create);
+router.post('/:id/clone', csrf(), permission('site_admin'), clone);
 router.put('/:id', csrf(), checkPermission, update);
 router.delete('/:id', checkPermission, remove);
 

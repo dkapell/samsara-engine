@@ -24,8 +24,14 @@ block content
                     tr(class='clickable-row', data-click-object='user' data-click-id=user.id)
                         td
                             a(href='/user/' + user.id)= user.name
+                            if user.site_admin
+                                i.fas.fa-crown.ml-1(style='color:goldenrod')
                         td= user.email
-                        td= capitalize(user.type)
+                        td
+                            if user.gameType === 'unset'
+                                i Unset
+                            else
+                                = capitalize(user.type)
                         td= user.type === 'player'?runs[user.player.run_id].name:''
                         td
                             if user.type === 'player'

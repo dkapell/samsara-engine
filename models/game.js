@@ -34,7 +34,9 @@ async function postSelect(data){
 }
 
 async function postSave(id, data){
-    return cache.invalidate('game-site', data.site);
+    if (data.site){
+        return cache.invalidate('game-site', data.site);
+    }
 }
 
 function validate(data){

@@ -27,7 +27,7 @@ async function fillGroups(character){
     const result = await database.query(query, [character.id]);
     character.groups = await Promise.all(
         result.rows.map( async characterGroup => {
-            return models.group.get(character.game_id, characterGroup.group_id);
+            return models.group.get(characterGroup.group_id);
         })
     );
     character.groups = _.sortBy(character.groups, 'name');

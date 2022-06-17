@@ -72,9 +72,11 @@ exports.findOne = async function(gameId, conditions, options = {}){
 };
 
 exports.listGms = async function(gameId){
-    let query = 'select users.* from users left join games_users on games_users.user_id = user.id ';
-    query += 'where games_users.type not in (\'none\', \'player\') ';
-    query += 'and games_users.game_id = $1 order by name';
+    let query = 'select users.* from users left join game_users on game_users.user_id = users.id ';
+    query += 'where game_users.type not in (\'none\', \'player\') ';
+    query += 'and game_users.game_id = $1 ';
+    query += 'or users.site_admin = true ';
+    query += 'order by name';
     const result = await database.query(query, [gameId]);
     return result.rows;
 };
@@ -101,6 +103,7 @@ exports.create = async function(gameId, data){
     query += ') returning id';
 
     const result = await database.query(query, queryData);
+    console.log(result.rows);
     await postSave(result.rows[0].id, data, gameId);
     return result.rows[0].id;
 };
@@ -178,9 +181,13 @@ exports.findOrCreate = async function(gameId, data){
 
 exports.delete = async  function(gameId, id){
     if (gameId){
-        let game_user = await models.game_user.find({user_id: id, game_id: gameId});
+        const game_user = await models.game_user.findOne({user_id: id, game_id: gameId});
         if (game_user){
             await models.game_user.delete(game_user.id);
+        }
+        const game_users = await models.game_user.find({user_id: id});
+        if (!game_users.length){
+            return exports.delete(null, id);
         }
     } else {
         const query = 'delete from users where id = $1';
@@ -209,8 +216,14 @@ async function postSelect(user, gameId){
     const game_user = await models.game_user.findOne({user_id: user.id, game_id: gameId});
     if (game_user){
         user.type = game_user.type;
+        user.gameType = game_user.type;
     } else {
-        user.type = 'none';
+        if (user.site_admin){
+            user.type = 'admin';
+        } else {
+            user.type = 'none';
+        }
+        user.gameType = 'unset';
     }
 
     if (user.type === 'player'){
@@ -225,7 +238,7 @@ async function postSave(id, data, gameId){
     if (!gameId){
         return;
     }
-    let game_user = await models.game_user.findOne({user_id: data.id, game_id: gameId});
+    let game_user = await models.game_user.findOne({user_id: id, game_id: gameId});
     if (game_user){
         if (_.has(data, 'type') && game_user.type !== data.type){
             game_user.type = data.type;
@@ -233,7 +246,7 @@ async function postSave(id, data, gameId){
         }
     } else {
         game_user = {
-            user_id: data.id,
+            user_id: id,
             game_id: gameId,
             type: 'none'
         };

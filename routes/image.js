@@ -2,8 +2,8 @@ const express = require('express');
 const csrf = require('csurf');
 const _ = require('underscore');
 const config = require('config');
-const aws = require('aws-sdk');
 const permission = require('../lib/permission');
+const imageManager = require('../lib/imageManager');
 
 /* GET images listing. */
 async function list(req, res, next){
@@ -119,6 +119,7 @@ async function remove(req, res, next){
             throw new Error('Can not delete record from different game');
         }
         await req.models.image.delete(id);
+        await imageManager.remove(imageManager.getKey(current));
         req.flash('success', 'Removed Image');
         res.redirect('/image');
     } catch(err) {
@@ -135,37 +136,29 @@ async function signS3(req, res, next){
         return res.json({success:false, error: 'invalid file type'});
     }
 
-    const imageId = await req.models.image.create({
+    const image = {
         name: fileName,
         game_id: req.game.id
-    });
-    const key = ['images', imageId, fileName].join('/');
-
-    const s3 = new aws.S3({
-        accessKeyId: config.get('aws.accessKeyId'),
-        secretAccessKey: config.get('aws.secretKey'),
-        signatureVersion: 'v4',
-    });
-
-    const s3Params = {
-        Bucket: config.get('aws.imageBucket'),
-        Key: key,
-        Expires: 60,
-        ContentType: fileType,
-        ACL: 'public-read'
     };
 
-    s3.getSignedUrl('putObject', s3Params, function(err, data){
-        if(err){ return next(err); }
+    image.id = await req.models.image.create(image);
+
+    const key = imageManager.getKey(image);
+
+    try{
+        const signedRequest = await imageManager.signS3(key, fileType);
         res.json({
             success:true,
             data: {
-                signedRequest: data,
-                url: `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`,
-                imageId: imageId
+                signedRequest: signedRequest,
+                url: imageManager.getUrl(image),
+                imageId: image.id
             }
         });
-    });
+    }
+    catch (err) {
+        return next(err);
+    }
 }
 
 const router = express.Router();

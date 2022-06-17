@@ -69,10 +69,11 @@ create table links (
 create table codes (
     id serial,
     game_id    int not null,
-    code varchar(20) unique,
+    code varchar(20),
     description text,
     actions jsonb default '[]'::jsonb,
     primary key(id),
+    unique(code, game_id),
     CONSTRAINT codes_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
@@ -81,11 +82,12 @@ create table codes (
 create table runs (
     id          serial,
     game_id     int not null,
-    name        varchar(80) not null unique,
+    name        varchar(80) not null,
     current     boolean default false,
     show_stubs  boolean default true,
     data jsonb,
     primary key(id),
+    unique(game_id, name),
     CONSTRAINT runs_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
@@ -96,9 +98,10 @@ insert into runs (name, current) values ('Initial Run', 'true');
 create table groups (
     id          serial,
     game_id     int not null,
-    name        varchar(80) not null unique,
+    name        varchar(80) not null,
     description text,
     chat        boolean default false,
+    unique      (game_id, name),
     primary key (id),
     CONSTRAINT groups_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
@@ -281,7 +284,7 @@ create table variables(
     ink_name varchar(255),
     base_value text,
     primary key (id),
-    unique(name, public),
+    unique(name, public, game_id),
     CONSTRAINT variables_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
@@ -290,11 +293,12 @@ create table variables(
 create table documents(
     id serial,
     game_id int not null
-    name varchar(255) not null unique,
+    name varchar(255) not null,
     code uuid not null default uuid_generate_v4(),
     description text,
     content text,
     primary key (id),
+    unique(name, game_id)
     CONSTRAINT documents_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE

@@ -54,12 +54,18 @@ alter table codes add CONSTRAINT codes_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
+alter table codes drop constraint codes_code_key;
+alter table codes ADD UNIQUE (code, game_id);
+
 -- runs
 alter table runs add column game_id int not null default 1;
 
 alter table runs add CONSTRAINT runs_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
+
+alter table runs drop constraint runs_name_key;
+alter table runs ADD UNIQUE (name, game_id);
 
 -- groups
 alter table groups add column game_id int not null default 1;
@@ -68,13 +74,15 @@ alter table groups add CONSTRAINT groups_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
+ALTER TABLE IF EXISTS groups DROP CONSTRAINT IF EXISTS player_groups_name_key;
+alter table groups ADD UNIQUE (code, game_id);
+
 --images
 alter table images add column game_id int not null default 1;
 
 alter table images add CONSTRAINT images_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
-
 
 -- screens
 alter table screens add column game_id int not null default 1;
@@ -119,12 +127,21 @@ alter table variables add CONSTRAINT variables_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
+ALTER TABLE IF EXISTS variables DROP CONSTRAINT IF EXISTS variables_name_public_key;
+
+ALTER TABLE IF EXISTS variables ADD UNIQUE (name, public, game_id);
+
+
 -- documents
 alter table documents add column game_id int not null default 1;
 
 alter table documents add CONSTRAINT documents_game_fk FOREIGN KEY (game_id)
     REFERENCES "games" (id) MATCH SIMPLE
     ON UPDATE NO ACTION ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS documents DROP CONSTRAINT IF EXISTS documents_name_key;
+
+ALTER TABLE IF EXISTS documents ADD UNIQUE (name, game_id);
 
 -- messages
 alter table messages add column game_id int not null default 1;

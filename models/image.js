@@ -5,6 +5,7 @@ const _ = require('underscore');
 const validator = require('validator');
 
 const Model = require('../lib/Model');
+const imageManager = require('../lib/imageManager');
 
 const tableFields = ['id', 'game_id', 'name', 'display_name', 'description', 'status', 'is_screen', 'is_popup', 'is_inventory'];
 
@@ -24,7 +25,6 @@ function validate(data){
 }
 
 async function postProcess(image){
-    const key = ['images', image.id, image.name].join('/');
-    image.url = `https://${config.get('aws.imageBucket')}.s3.amazonaws.com/${key}`;
+    image.url = imageManager.getUrl(image);
     return image;
 }

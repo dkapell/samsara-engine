@@ -16,7 +16,7 @@ async function list(req, res, next){
     };
     try {
         if (req.game.id){
-            res.locals.users = await req.models.user.find({game_id: req.game_id});
+            res.locals.users = await req.models.user.find(req.game.id, {});
             res.locals.screens = await req.models.screen.find({game_id: req.game.id});
             res.locals.runs = _.indexBy(await req.models.run.find({game_id: req.game.id}), 'id');
             res.locals.groups = _.indexBy(await req.models.group.find({game_id: req.game.id}), 'id');
@@ -133,7 +133,9 @@ async function create(req, res, next){
     req.session.userData = user;
 
     try{
+
         const id = await req.models.user.create(req.game.id, user);
+
         if (user.type === 'player'){
             if (!user.player.groups){
                 user.player.groups = [];

@@ -5,7 +5,7 @@
 .form-group
     label.control-label(for="game_site") Game Site URL
     input.form-control#game_site(type="url",placeholder="URL",name="game[site]",value=game.site)
-    div.invalid-feedback Must be a valid URL
+    div.invalid-feedback Must be a valid, unique URL
 
 .form-group
     label.control-label(for="game_description") Description (Front page)
@@ -31,6 +31,23 @@
 .form-group
     label.control-label(for="game_css") Custom CSS
     +cssEditor('game_css', 'game[css]', 5, 200, game.css)
+
+if source
+    fieldset.mb-2.border.p-2.rounded
+        label Clone Options
+        .form-group
+            .custom-control.custom-switch
+                input.custom-control-input#clone_fakeUsers(type="checkbox", name="clone[fakeUsers]", checked=clone.fakeUsers)
+                label.custom-control-label(for="clone_fakeUsers") Fake Users
+
+        fieldset
+            label Optional Tables
+
+            each val, name in clone.tables
+                .form-group
+                    .custom-control.custom-switch
+                        input.custom-control-input(id=`clone_tables_${name}` type="checkbox", name=`clone[tables][${name}]`, checked=clone.tables[name])
+                        label.custom-control-label(for=`clone_tables_${name}`)= name
 
 .form-group
     button.btn.btn-primary(type="submit")= game.id?'Update':'Create'

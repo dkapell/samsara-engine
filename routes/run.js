@@ -258,16 +258,18 @@ async function resetRun(req, res, next){
             throw new Error ('Run not found');
         }
         const players = await req.models.player.find({run_id: req.params.id});
-        const initialScreen = await req.models.screen.getStart();
+        const initialScreen = await req.models.screen.getStart(req.game.id);
         await async.each(players, async player => {
             await gameEngine.changeScreen(player.user_id, req.game.id, initialScreen.id, 0);
             return req.app.locals.gameServer.sendScreen(player.user_id, req.game.id);
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialScreen.id);
         await gameEngine.updateAllTriggers(req.game.id);
+        await req.app.locals.gameServer.sendPlayerUpdate(req.game.id);
         res.json({success:true});
 
     } catch(err){
+        console.trace(err);
         res.json({success:false, error: err.message});
     }
 }
@@ -290,6 +292,7 @@ async function updateAllPlayers(req, res, next){
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, screen.id);
         await gameEngine.updateAllTriggers(req.game.id);
+        await req.app.locals.gameServer.sendPlayerUpdate(req.game.id);
         res.json({success:true});
 
     } catch(err){
@@ -313,6 +316,7 @@ async function advanceAll(req, res, next){
         });
         await gameEngine.updateAllTriggers(req.game.id);
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
+        await req.app.locals.gameServer.sendPlayerUpdate(req.game.id);
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});

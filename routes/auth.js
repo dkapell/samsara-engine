@@ -44,7 +44,6 @@ router.get('/google/callback',
         })(req, res, next);
     },
     (req, res) => {
-        console.log(req.query);
         if (_.has(req.session, 'backto')){
             const backto = req.session.backto;
             delete req.session.backto;

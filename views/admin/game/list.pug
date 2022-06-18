@@ -14,7 +14,6 @@ block content
                     th(data-order='asc') Name
                     th(data-nofilter="true") Site
                     th Theme
-                    th(data-nofilter="true") Description
                     th(data-partialmatch="true") Login
                     th Default
                     th Created By
@@ -30,11 +29,6 @@ block content
                                 = game.site
                                 i.fas.fa-external-link-alt.ml-1
                         td=game.theme
-                        td.text-truncate(
-                            style="max-width:300px"
-                            data-toggle='tooltip'
-                            title=game.description
-                        )= game.description
                         td
                             - const logins = ['Google']
                             if (game.intercode_login)

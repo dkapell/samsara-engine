@@ -224,7 +224,6 @@ async function sendToast(e){
 
     if (type === 'user'){
         const userId = $this.attr('data-user');
-        console.log(userId);
         url = `/player/${userId}/toast`;
     } else {
         const runId = $this.data('run');

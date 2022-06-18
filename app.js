@@ -133,6 +133,17 @@ app.use(async function(req, res, next){
     res.locals.cssTheme = config.get(`themes.${game.theme}.dir`);
 
     req.session.gameId = game.id;
+    if (req.game.google_client_id && req.game.google_client_secret){
+        if (!passport._strategies[`google-game-${game.id}`]){
+            passport.use(`google-game-${game.id}`, new GoogleStrategy({
+                clientID: config.get('auth.google.clientID'),
+                clientSecret: req.game.google_client_id,
+                callbackURL: req.game.google_client_secret,
+                passReqToCallback: true
+            }, passportVerifyGoogle));
+
+        }
+    }
     next();
 });
 
@@ -159,8 +170,10 @@ passport.use(new GoogleStrategy({
     clientSecret: config.get('auth.google.clientSecret'),
     callbackURL: config.get('auth.google.callbackURL'),
     passReqToCallback: true
-},
-async function(req, accessToken, refreshToken, profile, cb) {
+}, passportVerifyGoogle));
+
+
+async function passportVerifyGoogle(req, accessToken, refreshToken, profile, cb) {
     try{
         const user = await models.user.findOrCreate(req.game.id, {
             name: profile.displayName,
@@ -172,7 +185,7 @@ async function(req, accessToken, refreshToken, profile, cb) {
     } catch (err) {
         cb(err);
     }
-}));
+}
 
 if (config.get('auth.intercode.clientID')){
     const intercodeStrategy =  new OAuth2Strategy( config.get('auth.intercode'),

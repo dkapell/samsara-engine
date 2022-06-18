@@ -31,14 +31,10 @@ router.get('/google',
         };
 
         if (req.game.google_client_id && req.game.google_client_secret){
-            authConfig.clientID = req.game.google_client_id;
-            authConfig.clientSecret = req.game.google_client_secret;
+            passport.authenticate(`google-game-${req.game.id}`, authConfig)(req, res, next);
+        } else {
+            passport.authenticate('google', authConfig)(req, res, next);
         }
-        console.log(req.game)
-
-        console.log(authConfig);
-
-        passport.authenticate('google', authConfig)(req, res, next);
     });
 
 // GET /auth/google/callback
@@ -53,10 +49,10 @@ router.get('/google/callback',
             callbackURL: getCallbackUrl(req, 'google'),
         };
         if (req.game.google_client_id && req.game.google_client_secret){
-            authConfig.clientID = req.game.google_client_id;
-            authConfig.clientSecret = req.game.google_client_secret;
+            passport.authenticate(`google-game-${req.game.id}`, authConfig)(req, res, next);
+        } else {
+            passport.authenticate('google', authConfig)(req, res, next);
         }
-        passport.authenticate('google', authConfig)(req, res, next);
     },
     (req, res) => {
         if (_.has(req.session, 'backto')){

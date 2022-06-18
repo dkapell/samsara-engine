@@ -19,6 +19,8 @@ create table games (
         ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
+insert into games (name, created_by) values ('default', 1);
+
 create table game_users(
     user_id             int not null,
     game_id             int not null,
@@ -39,8 +41,6 @@ alter table users drop column type;
 alter table users add column site_admin boolean default false;
 
 create index games_site_idx ON games (site);
-
-insert into games (name, created_by) values ('default', 1);
 
 -- links
 alter table links add column game_id int not null default 1;
@@ -77,7 +77,7 @@ alter table groups add CONSTRAINT groups_game_fk FOREIGN KEY (game_id)
     ON UPDATE NO ACTION ON DELETE CASCADE;
 
 ALTER TABLE IF EXISTS groups DROP CONSTRAINT IF EXISTS player_groups_name_key;
-alter table groups ADD UNIQUE (code, game_id);
+alter table groups ADD UNIQUE (name, game_id);
 
 --images
 alter table images add column game_id int not null default 1;
@@ -143,7 +143,7 @@ alter table documents add CONSTRAINT documents_game_fk FOREIGN KEY (game_id)
 
 ALTER TABLE IF EXISTS documents DROP CONSTRAINT IF EXISTS documents_name_key;
 
-ALTER TABLE IF EXISTS documents ADD UNIQUE (name, game_id);
+ALTER TABLE IF EXISTS documents ADD UNIQUE (code, game_id);
 
 -- messages
 alter table messages add column game_id int not null default 1;

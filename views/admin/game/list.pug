@@ -25,9 +25,12 @@ block content
                         td.dtr-expand
                             a(href='/admin/game/' + game.id)= game.name
                         td
-                            a.action-btn(target='_blank' href=`${game.site.match(/:/)?'http://':'https://'}${game.site}`)
-                                = game.site
-                                i.fas.fa-external-link-alt.ml-1
+                            if game.site
+                                a.action-btn(target='_blank' href=`${game.site.match(/:/)?'http://':'https://'}${game.site}`)
+                                    = game.site
+                                    i.fas.fa-external-link-alt.ml-1
+                            else
+                                i Not Set
                         td=game.theme
                         td
                             - const logins = ['Google']

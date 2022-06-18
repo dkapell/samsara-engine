@@ -5,7 +5,7 @@ create type user_type as ENUM(
     'creator',
     'gm',
     'player',
-    'none',
+    'none'
 );
 
 create table users (
@@ -30,6 +30,8 @@ create table games (
     default_to_player boolean default false,
     created timestamp with time zone DEFAULT now(),
     updated timestamp with time zone DEFAULT now(),
+    google_client_id varchar(20),
+    google_client_secret varchar(30),
     primary key (id),
     CONSTRAINT games_created_fk FOREIGN KEY (created_by)
         REFERENCES "users" (id) MATCH SIMPLE

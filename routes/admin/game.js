@@ -106,7 +106,7 @@ async function showClone(req, res, next){
                 chat_report: false,
             }
         };
-        res.locals.tables = _.indexBy(gameCloner.tables, 'name')
+        res.locals.tables = _.indexBy(gameCloner.tables, 'name');
 
         if (_.has(req.session, 'gameData')){
             res.locals.game = req.session.gameData.game;

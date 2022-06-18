@@ -6,7 +6,7 @@ const models = require('../../lib/models');
 
 (async function main() {
 
-    const screens = await models.screen.list();
+    const screens = await models.screen.find();
     await async.each(screens, async(screen) => {
         if (!screen.map){
             return;
@@ -38,7 +38,7 @@ const models = require('../../lib/models');
 });
 
 async function fixType(type){
-    const items = await models[type].list();
+    const items = await models[type].find();
 
     return async.each(items, async (item) => {
         if (item.condition && item.condition.match(/gamestate/)){

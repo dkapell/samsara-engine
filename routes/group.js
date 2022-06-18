@@ -12,7 +12,7 @@ async function list(req, res, next){
         current: 'Player Groups'
     };
     try {
-        res.locals.groups = await req.models.group.list();
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.render('group/list', { pageTitle: 'Player Groups' });
     } catch (err){
         next(err);
@@ -47,6 +47,9 @@ async function showEdit(req, res, next){
 
     try{
         const group = await req.models.group.get(id);
+        if (!group || group.game_id !== req.game.id){
+            throw new Error('Invalid Group');
+        }
         res.locals.group = group;
         if (_.has(req.session, 'groupData')){
             res.locals.group = req.session.groupData;
@@ -74,6 +77,7 @@ async function create(req, res, next){
     if (!_.has(group, 'chat')){
         group.chat = false;
     }
+    group.game_id = req.game.id;
 
     try{
         await req.models.group.create(group);
@@ -94,9 +98,14 @@ async function update(req, res, next){
         group.chat = false;
     }
 
-
     try {
         const current = await req.models.group.get(id);
+        if (!current){
+            throw new Error('Invalid Group');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.group.update(id, group);
         delete req.session.groupData;
@@ -112,6 +121,13 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.group.get(id);
+        if (!current){
+            throw new Error('Invalid Group');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.group.delete(id);
         req.flash('success', 'Removed Player Group');
         res.redirect('/group');
@@ -122,7 +138,7 @@ async function remove(req, res, next){
 
 const router = express.Router();
 
-router.use(permission('admin'));
+router.use(permission('creator'));
 router.use(function(req, res, next){
     res.locals.siteSection='admin';
     next();

@@ -9,7 +9,11 @@ const gameValidator = require('../lib/gameValidator');
 /* GET home page. */
 function showIndex(req, res, next){
     res.locals.siteSection='home';
-    res.render('index');
+    if (req.game.id){
+        res.render('index');
+    } else {
+        res.render('admin/index');
+    }
 }
 
 const router = express.Router();

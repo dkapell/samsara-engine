@@ -3,19 +3,19 @@ mixin login()
         .modal-dialog.modal-dialog-centered(role="document")
             .modal-content
                 .modal-header
-                    h5.modal-title#loginModalLabel Log in to #{config.get('app.name')}
+                    h5.modal-title#loginModalLabel Log in to #{siteName}
                     button.close#dismissLoginModal(type="button", data-dismiss="modal" area-label="Close")
                         span(aria-hidden="true") &times;
                 .modal-body
                     p This site uses your email address to identify you.
                     if config.get('auth.intercode.clientID')
                         p You can use any offered authentication method regardless of what you have used previously. as long as your email remains the same.
-                    p If your email changes, please contact the GMs of #{config.get('app.name')}
+                    p If your email changes, please contact the GMs of #{siteName}
                 .modal-footer
                     a.btn.btn-block.btn-lg.btn-primary(href="/auth/google")
                         i.fab.fa-google.float-left.my-2
                         | Log in with your Google Account
-                        if config.get('auth.intercode.clientID')
+                        if currentGame.intercode_login
                             a.btn.btn-block.btn-lg.btn-primary.mt-3(href="/auth/intercode")
                                 img.img-fluid.float-left.my-2(src='/images/neilSquareWhite.png' width=18)
                                 | Log in with your NEIL Account

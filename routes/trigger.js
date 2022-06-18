@@ -15,8 +15,8 @@ async function list(req, res, next){
         current: 'Triggers'
     };
     try {
-        res.locals.triggers = await req.models.trigger.list();
-        res.locals.groups = await req.models.group.list();
+        res.locals.triggers = await req.models.trigger.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.render('trigger/list', { pageTitle: 'Triggers' });
     } catch (err){
         next(err);
@@ -27,14 +27,18 @@ async function show(req, res, next){
     const id = req.params.id;
     try{
         const trigger =  await req.models.trigger.get(id);
+        if (!trigger || trigger.game_id !== req.game.id){
+            throw new Error('Invalid Trigger');
+        }
+
         res.locals.trigger = trigger;
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -73,7 +77,7 @@ async function showNew(req, res, next){
 
         if (req.query.clone){
             const old = await req.models.trigger.get(Number(req.query.clone));
-            if (old){
+            if (old && old.game_id === req.game.id){
                 res.locals.trigger = {
                     name: `Copy of ${old.name}`,
                     description: old.description?old.description:null,
@@ -92,14 +96,14 @@ async function showNew(req, res, next){
             delete req.session.triggerData;
         }
 
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.variables = await req.models.variable.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.variables = await req.models.variable.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
         res.render('trigger/new');
     } catch (err){
         next(err);
@@ -113,6 +117,9 @@ async function showEdit(req, res, next){
 
     try{
         const trigger = await req.models.trigger.get(id);
+        if (!trigger || trigger.game_id !== req.game.id){
+            throw new Error('Invalid Trigger');
+        }
         res.locals.trigger = trigger;
         if (_.has(req.session, 'triggerData')){
             res.locals.trigger = req.session.triggerData;
@@ -125,14 +132,14 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + trigger.name
         };
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.variables = await req.models.variable.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.variables = await req.models.variable.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
 
         res.render('trigger/edit');
     } catch(err){
@@ -145,7 +152,7 @@ async function create(req, res, next){
 
     req.session.triggerData = trigger;
 
-    trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions));
+    trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions, req.game.id));
 
     if (!_.has(trigger, 'run')){
         trigger.run = false;
@@ -157,12 +164,14 @@ async function create(req, res, next){
         trigger.group_id = null;
     }
 
+    trigger.game_id = req.game.id;
+
     try{
         const id = await req.models.trigger.create(trigger);
         delete req.session.triggerData;
         req.flash('success', 'Created Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
-        gameEngine.updateAllTriggers();
+        gameEngine.updateAllTriggers(req.game.id);
     } catch (err) {
         req.flash('error', err.toString());
         return res.redirect('/trigger/new');
@@ -174,7 +183,7 @@ async function update(req, res, next){
     const trigger = req.body.trigger;
     req.session.triggerData = trigger;
 
-    trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions));
+    trigger.actions = JSON.stringify(await mapParser.parseActions(trigger.actions, req.game.id));
 
     if (!_.has(trigger, 'run')){
         trigger.run = false;
@@ -188,12 +197,19 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.trigger.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
+
 
         await req.models.trigger.update(id, trigger);
         delete req.session.triggerData;
         req.flash('success', 'Updated Trigger ' + trigger.name);
         res.redirect(`/trigger/${id}`);
-        gameEngine.updateAllTriggers();
+        gameEngine.updateAllTriggers(req.game.id);
     } catch(err) {
         req.flash('error', err.toString());
         return (res.redirect(`/trigger/${id}/edit`));
@@ -204,6 +220,13 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.trigger.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.trigger.delete(id);
         req.flash('success', 'Removed Trigger');
         res.redirect('/trigger');

@@ -20,7 +20,8 @@
         "google": {
             "clientID": "clientID",
             "clientSecret": "clientSecret",
-            "callbackURL": "http://localhost:3000/auth/google/callback"
+            "callbackURL": "http://localhost:3000/auth/google/callback",
+            "passReqToCallback": true
         },
         "intercode":{
             "authorizationURL": "authorizationURL",
@@ -70,5 +71,16 @@
             "username": "user",
             "password": "password"
         }
+    },
+    "themes": {
+        "Darkly": {
+            "dir": "darkly",
+            "description": "Flatly in night mode"
+        },
+        "Flatly": {
+            "dir": "flatly",
+            "description": "Flat and modern"
+        }
+
     }
 }

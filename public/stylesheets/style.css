@@ -1,16 +1,9 @@
-body {
-/*padding-top: 6rem;*/
-}
 body, .popover {
     font-family: 'Lato', sans-serif;
 }
 
 .lead, h1, h2, h3, h4, h5, .blockquote, .navbar{
     font-family:  'Montserrat', sans-serif;
-}
-
-#main-content {
-    margin-top:69px;
 }
 
 table.dataTable.dtr-inline.collapsed.table-sm>tbody>tr>td:first-child:before,

@@ -87,7 +87,6 @@ async function showClone(req, res, next){
         res.locals.source = game;
 
         res.locals.game = {
-            oldGameId: id,
             name: game.name,
             description: game.description,
             site: game.site,
@@ -95,6 +94,8 @@ async function showClone(req, res, next){
             css: game.css,
             intercode_login: game.intercode_login,
             default_to_player: game.default_to_player,
+            google_client_id: game.google_client_id,
+            google_client_secret: game.google_client_secret
         };
 
         res.locals.clone = {

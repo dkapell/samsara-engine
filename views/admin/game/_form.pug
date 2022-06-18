@@ -34,7 +34,7 @@
 
 if source
     fieldset.mb-2.border.p-2.rounded
-        label Clone Options
+        label.h5 Clone Options
         .form-group
             .custom-control.custom-switch
                 input.custom-control-input#clone_fakeUsers(type="checkbox", name="clone[fakeUsers]", checked=clone.fakeUsers)
@@ -46,8 +46,10 @@ if source
             each val, name in clone.tables
                 .form-group
                     .custom-control.custom-switch
-                        input.custom-control-input(id=`clone_tables_${name}` type="checkbox", name=`clone[tables][${name}]`, checked=clone.tables[name])
+                        input.custom-control-input(id=`clone_tables_${name}` type="checkbox", name=`clone[tables][${name}]`, checked=clone.tables[name] class=tables[name].playerTable?'clonetable-player':'')
                         label.custom-control-label(for=`clone_tables_${name}`)= name
+                            if tables[name].requires
+                                span.ml-2 (Requires #{tables[name].requires.join(', ')})
 
 .form-group
     button.btn.btn-primary(type="submit")= game.id?'Update':'Create'

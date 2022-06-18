@@ -103,7 +103,6 @@ exports.create = async function(gameId, data){
     query += ') returning id';
 
     const result = await database.query(query, queryData);
-    console.log(result.rows);
     await postSave(result.rows[0].id, data, gameId);
     return result.rows[0].id;
 };

@@ -10,148 +10,88 @@ const models = {
     trigger: require('./trigger')
 };
 
-const tableFields = ['user_id', 'run_id', 'screen_id', 'prev_screen_id', 'statetime', 'character', 'data', 'character_sheet'];
+const Model = require('../lib/Model');
 
+const tableFields = ['id', 'game_id', 'user_id', 'run_id', 'screen_id', 'prev_screen_id', 'statetime', 'character', 'data', 'character_sheet'];
 
-exports.get = async function(id){
-    let record = await cache.check('player', id);
-    if (record) {
+const Player = new Model('players', tableFields, {
+    order: ['run_id', 'character'],
+    validator: validate,
+    postSelect: fillGroups,
+    postSave: postSave,
+    postDelete: postSave
+});
+
+Player.getByUser = async function(userId, gameId){
+    const self = this;
+    let record = await cache.check('players', `game-${gameId}-user-${userId}`);
+    if (record){
         return record;
     }
-    const query = 'select * from players where id = $1';
-    const result = await database.query(query, [id]);
-    if (result.rows.length){
-        record = await fillGroups(result.rows[0]);
-        await cache.store('player', id, record);
-        return record;
-    }
-    return;
+    return self.findOne({user_id:userId, game_id:gameId});
+};
+Player.updateScreen = async function updateScreen(id, screen_id){
+    const self = this;
+    const player = await self.get(id);
+    player.prev_screen_id = player.screen_id;
+    player.statetime = new Date();
+    player.screen_id = screen_id;
+    await self.update(id, player);
 };
 
-exports.getByUserId = async function(user_id){
-    const query = 'select * from players where user_id = $1';
-    const result = await database.query(query, [user_id]);
-    if (result.rows.length){
-        return fillGroups(result.rows[0]);
-    }
-    return;
-};
-
-exports.find = async function(conditions){
-    const queryParts = [];
-    const queryData = [];
-    for (const field of tableFields){
-        if (_.has(conditions, field)){
-            queryParts.push(field + ' = $' + (queryParts.length+1));
-            queryData.push(conditions[field]);
-        }
-    }
-    let query = 'select * from players';
-    if (queryParts.length){
-        query += ' where ' + queryParts.join(' and ');
-    }
-    const result = await database.query(query, queryData);
-    return async.map(result.rows, fillGroups);
-};
-
-exports.findOne = async function(conditions){
-    const result = await exports.find(conditions);
-    if (!result.length){ return null; }
-    return result[0];
-};
-
-exports.list = async function(){
-    const query = 'select * from players';
-    const result = await database.query(query);
-    return async.map(result.rows, fillGroups);
-};
-
-exports.listByGroupAndRun = async function(group_id, run_id){
+Player.listByGroupAndRun = async function listByGroupAndRun(group_id, run_id){
+    const self = this;
     const query = `select players.* from players left join player_groups on player_groups.player_id = players.id
         where player_groups.group_id = $1 and players.run_id = $2`;
     const result = await database.query(query, [group_id, run_id]);
     return async.map(result.rows, fillGroups);
 };
 
-exports.listByRunId = async function(run_id){
-    const query = 'select * from players where run_id = $1';
-    const result = await database.query(query, [run_id]);
-    return async.map(result.rows, fillGroups);
+Player.getTriggers = async function getTriggers(id){
+    const self = this;
+    const query = 'select * from player_triggers where player_id = $1';
+    const result = await database.query(query, [id]);
+    const triggers = await async.map(result.rows, async (playerTrigger) => {
+        return models.trigger.get(playerTrigger.trigger_id);
+    });
+    return _.sortBy(triggers, 'name');
 };
 
-exports.create = async function(data){
-    if (! validate(data)){
-        throw new Error('Invalid Data');
-    }
-    const queryFields = [];
-    const queryData = [];
-    const queryValues = [];
-    for (const field of tableFields){
-        if (_.has(data, field)){
-            queryFields.push(field);
-            queryValues.push('$' + queryFields.length);
-            queryData.push(data[field]);
+Player.saveTriggers = async function saveTriggers(id, triggers){
+    const currentQuery  = 'select * from player_triggers where player_id = $1';
+    const insertQuery = 'insert into player_triggers (player_id, trigger_id) values ($1, $2)';
+    const deleteQuery = 'delete from player_triggers where player_id = $1 and trigger_id = $2';
+    const current = await database.query(currentQuery, [id]);
+
+    const newTriggers = [];
+    for (const trigger of triggers){
+        if (_.isObject(trigger)){
+            newTriggers.push(Number(trigger.id));
+        } else {
+            newTriggers.push(Number(trigger));
         }
     }
 
-    let query = 'insert into players (';
-    query += queryFields.join (', ');
-    query += ') values (';
-    query += queryValues.join (', ');
-    query += ') returning id';
-
-    const result = await database.query(query, queryData);
-    const id = result.rows[0].id;
-    if (_.has(data, 'groups')){
-        await saveGroups(id, data.groups);
-    }
-    return id;
-};
-
-exports.update = async function(id, data){
-    if (! validate(data)){
-        throw new Error('Invalid Data');
-    }
-    const queryUpdates = [];
-    const queryData = [id];
-    for (const field of tableFields){
-        if (_.has(data, field)){
-            queryUpdates.push(field + ' = $' + (queryUpdates.length+2));
-            queryData.push(data[field]);
+    for (const triggerId of newTriggers){
+        if(!_.findWhere(current.rows, {trigger_id: triggerId})){
+            await database.query(insertQuery, [id, triggerId]);
         }
     }
 
-    let query = 'update players set ';
-    query += queryUpdates.join(', ');
-    query += ' where id = $1';
-
-    await database.query(query, queryData);
-
-    if (_.has(data, 'groups')){
-        await saveGroups(id, data.groups);
+    for (const row of current.rows){
+        if(_.indexOf(newTriggers, row.trigger_id) === -1){
+            await database.query(deleteQuery, [id, row.trigger_id]);
+        }
     }
-    await cache.invalidate('player', id);
-    await cache.invalidate('user', data.user_id);
 };
 
-exports.delete = async  function(id, cb){
-    const query = 'delete from players where id = $1';
-    await database.query(query, [id]);
-    await cache.invalidate('player', id);
-};
-
-exports.updateScreen = async function(id, screen_id, cb){
-    const player = await exports.get(id);
-    player.prev_screen_id = player.screen_id;
-    player.statetime = new Date();
-    player.screen_id = screen_id;
-    await exports.update(id, player);
-};
+module.exports = Player;
 
 async function fillGroups(player){
+    await cache.store('player', `game-${player.game_id}-user-${player.user_id}`, player);
     const query = 'select * from player_groups where player_id = $1';
     const result = await database.query(query, [player.id]);
-    player.groups = await async.map(result.rows, async playerGroup => {
+    player.groups = await async.map(result.rows, async (playerGroup) => {
         return models.group.get(playerGroup.group_id);
     });
 
@@ -159,7 +99,15 @@ async function fillGroups(player){
     return player;
 }
 
-async function saveGroups(player_id, groups){
+async function postSave(player_id, data){
+    await cache.invalidate('user', data.user_id);
+    await cache.invalidate('player', `game-${data.game_id}-user-${data.user_id}`);
+
+    if (!_.has(data, 'groups')){
+        return;
+    }
+    const groups = data.groups;
+
     const currentQuery  = 'select * from player_groups where player_id = $1';
     const insertQuery = 'insert into player_groups (player_id, group_id) values ($1, $2)';
     const deleteQuery = 'delete from player_groups where player_id = $1 and group_id = $2';
@@ -186,47 +134,6 @@ async function saveGroups(player_id, groups){
         }
     }
 }
-
-exports.getTriggers = async function getTriggers(id){
-    const query = 'select * from player_triggers where player_id = $1';
-    const result = await database.query(query, [id]);
-    const triggers = await Promise.all(
-        result.rows.map( async playerTrigger => {
-            return models.trigger.get(playerTrigger.trigger_id);
-        })
-    );
-    return _.sortBy(triggers, 'name');
-};
-
-exports.saveTriggers = async function saveTriggers(player_id, triggers){
-    const currentQuery  = 'select * from player_triggers where player_id = $1';
-    const insertQuery = 'insert into player_triggers (player_id, trigger_id) values ($1, $2)';
-    const deleteQuery = 'delete from player_triggers where player_id = $1 and trigger_id = $2';
-    const current = await database.query(currentQuery, [player_id]);
-
-    const newTriggers = [];
-    for (const trigger of triggers){
-        if (_.isObject(trigger)){
-            newTriggers.push(Number(trigger.id));
-        } else {
-            newTriggers.push(Number(trigger));
-        }
-    }
-
-    for (const triggerId of newTriggers){
-        if(!_.findWhere(current.rows, {trigger_id: triggerId})){
-            await database.query(insertQuery, [player_id, triggerId]);
-        }
-    }
-
-    for (const row of current.rows){
-        if(_.indexOf(newTriggers, row.trigger_id) === -1){
-            await database.query(deleteQuery, [player_id, row.trigger_id]);
-        }
-    }
-};
-
-
 
 function validate(data){
     if (!_.isNull(data.character_sheet) && data.character_sheet !== '' && ! validator.isURL(data.character_sheet)){

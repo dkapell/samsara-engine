@@ -10,7 +10,7 @@
 
 .form-group
     label.control-label(for="document_content") Content
-    +htmlEditor('document_content', 'document[content]', 10, 500, document.content)
+    +htmlEditor('document_content', 'document[content]', 10, 500, document.content, true)
 
 .form-group
     button.btn.btn-primary(type="submit")= document.id?'Update':'Create'

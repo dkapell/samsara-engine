@@ -14,7 +14,7 @@ async function list(req, res, next){
         current: 'Codes'
     };
     try {
-        res.locals.codes = await req.models.code.list();
+        res.locals.codes = await req.models.code.find({game_id: req.game.id});
         res.render('code/list', { pageTitle: 'Codes' });
     } catch (err){
         next(err);
@@ -25,13 +25,16 @@ async function show(req, res, next){
     const id = req.params.id;
     try{
         const code = await req.models.code.get(id);
+        if (!code || code.game_id !== req.game.id){
+            throw new Error('Invalid Code');
+        }
         res.locals.code = code;
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},
@@ -64,7 +67,8 @@ async function showNew(req, res, next){
 
         if (req.query.clone){
             const old = await req.models.code.get(Number(req.query.clone));
-            if (old){
+
+            if (old && old.game_id === req.game.id){
                 res.locals.code = {
                     code: null,
                     description: old.description?old.description:null,
@@ -78,14 +82,14 @@ async function showNew(req, res, next){
             delete req.session.codeData;
         }
 
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.variables = await req.models.variable.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.variables = await req.models.variable.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
         res.render('code/new');
     } catch (err){
         next(err);
@@ -99,6 +103,10 @@ async function showEdit(req, res, next){
 
     try{
         const code = await req.models.code.get(id);
+        if (!code || code.game_id !== req.game.id){
+            throw new Error('Invalid Code');
+        }
+
         res.locals.code = code;
         if (_.has(req.session, 'codeData')){
             res.locals.code = req.session.codeData;
@@ -111,14 +119,14 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + code.code
         };
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.images = await req.models.image.list();
-        res.locals.documents = await req.models.document.list();
-        res.locals.links = await req.models.link.list();
-        res.locals.groups = await req.models.group.list();
-        res.locals.variables = await req.models.variable.list();
-        res.locals.meetings = await req.models.meeting.list();
-        res.locals.inks = await req.models.ink.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.images = await req.models.image.find({game_id: req.game.id});
+        res.locals.documents = await req.models.document.find({game_id: req.game.id});
+        res.locals.links = await req.models.link.find({game_id: req.game.id});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
+        res.locals.variables = await req.models.variable.find({game_id: req.game.id});
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
+        res.locals.inks = await req.models.ink.find({game_id: req.game.id});
 
         res.render('code/edit');
     } catch(err){
@@ -131,9 +139,10 @@ async function create(req, res, next){
 
     req.session.codeData = code;
 
-    code.actions = JSON.stringify(await mapParser.parseActions(code.actions));
+    code.actions = JSON.stringify(await mapParser.parseActions(code.actions, req.game.id));
 
     try{
+        code.game_id = req.game.id;
         const id = await req.models.code.create(code);
         delete req.session.codeData;
         req.flash('success', 'Created Code ' + code.code);
@@ -149,10 +158,16 @@ async function update(req, res, next){
     const code = req.body.code;
     req.session.codeData = code;
 
-    code.actions = JSON.stringify(await mapParser.parseActions(code.actions));
+    code.actions = JSON.stringify(await mapParser.parseActions(code.actions, req.game.id));
 
     try {
         const current = await req.models.code.get(id);
+        if (!current){
+            throw new Error('Invalid Code');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.code.update(id, code);
         delete req.session.codeData;
@@ -168,6 +183,14 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.code.get(id);
+        if (!current){
+            throw new Error('Invalid Code');
+        }
+
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.code.delete(id);
         req.flash('success', 'Removed Code');
         res.redirect('/code');

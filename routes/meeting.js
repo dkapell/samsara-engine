@@ -17,7 +17,7 @@ async function list(req, res, next){
         current: 'Meetings'
     };
     try {
-        res.locals.meetings = await req.models.meeting.list();
+        res.locals.meetings = await req.models.meeting.find({game_id: req.game.id});
 
         let rooms = {};
         if (await jitsi.active()){
@@ -26,14 +26,14 @@ async function list(req, res, next){
 
         await async.each(res.locals.meetings, async(meeting) => {
             if (meeting.screen_id){
-                meeting.screen = await req.models.screen.get(meeting.screen_id);
+                meeting.screen = await req.models.screen.find({game_id: req.game.id, id:meeting.screen_id});
             }
             if (_.has(rooms, meeting.meeting_id.toLowerCase())){
                 meeting.users = rooms[meeting.meeting_id.toLowerCase()];
             } else {
                 meeting.users = 0;
             }
-            const participants = await req.models.participant.find({meeting_id: meeting.id});
+            const participants = await req.models.participant.find({meeting_id: meeting.id, game_id: req.game.id});
 
             meeting.participants = participants.map(participant => {
                 const doc = {
@@ -56,7 +56,7 @@ async function list(req, res, next){
         };
         res.locals.csrfToken = req.csrfToken();
 
-        //res.locals.screens = await req.models.screen.list();
+        //res.locals.screens = await req.models.screen.find({game_id: req.game.id});
         res.render('meeting/list', { pageTitle: 'Meetings' });
     } catch (err){
         next(err);
@@ -69,8 +69,12 @@ async function show(req, res, next){
     }
     try {
         const meeting = await req.models.meeting.get(req.params.id);
+        if (!meeting || meeting.game_id !== req.game.id){
+            throw new Error('Invalid Meeting');
+        }
+
         if (meeting.screen_id){
-            meeting.screen = await req.models.screen.get(meeting.screen_id);
+            meeting.screen = await req.models.screen.find({game_id: req.game.id, id:meeting.screen_id});
         }
         meeting.domain = config.get('jitsi.server');
         meeting.jwt = jitsi.token(meeting.meeting_id);
@@ -107,7 +111,7 @@ async function showNew(req, res, next){
             ],
             current: 'New'
         };
-        res.locals.screens = await req.models.screen.list();
+        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
         res.locals.csrfToken = req.csrfToken();
         if (_.has(req.session, 'meetingData')){
             res.locals.meeting = req.session.meetingData;
@@ -125,6 +129,9 @@ async function showEdit(req, res, next){
 
     try{
         const meeting = await req.models.meeting.get(id);
+        if (!meeting || meeting.game_id !== req.game.id){
+            throw new Error('Invalid Meeting');
+        }
         res.locals.meeting = meeting;
         if (_.has(req.session, 'meetingData')){
             res.locals.meeting = req.session.meetingData;
@@ -137,7 +144,7 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit: ' + meeting.name
         };
-        res.locals.screens = await req.models.screen.list();
+        res.locals.screens = await req.models.screen.find({game_id: req.game.id});
         res.render('meeting/edit');
     } catch(err){
         next(err);
@@ -157,6 +164,8 @@ async function create(req, res, next){
     if (!_.has(meeting, 'show_users')){
         meeting.show_users = false;
     }
+
+    meeting.game_id = req.game.id;
 
     try{
         if (meeting.screen_id === ''){
@@ -193,6 +202,12 @@ async function update(req, res, next){
     try {
         const current = await req.models.meeting.get(id);
 
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
         await req.models.meeting.update(id, meeting);
         delete req.session.meetingData;
         req.flash('success', `Updated Meeting ${meeting.name}`);
@@ -207,6 +222,14 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.meeting.get(id);
+
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
         await req.models.meeting.delete(id);
         req.flash('success', 'Removed Meeting');
         res.redirect('/meeting');

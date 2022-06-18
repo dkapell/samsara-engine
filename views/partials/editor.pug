@@ -1,4 +1,4 @@
-mixin htmlEditor(id, name, rows, size, contents)
+mixin htmlEditor(id, name, rows, size, contents, showLiquid)
     ul.nav.nav-tabs.editor-tabs(id=`${id}-edit-tabs` role="tablist")
         li.nav-item(role="presentation")
             a.nav-link.active(
@@ -18,15 +18,16 @@ mixin htmlEditor(id, name, rows, size, contents)
                 aria-controls=`${id}-preview`
                 aria-selected="false"
             ) Preview
-        li.nav-item(role="presentation")
-            a.nav-link(
-                id=`${id}-liquid-tab`
-                data-toggle="tab"
-                href=`#${id}-liquid`
-                role="tab"
-                aria-controls=`${id}-liquid`
-                aria-selected="false"
-            ) Liquid
+        if showLiquid
+            li.nav-item(role="presentation")
+                a.nav-link(
+                    id=`${id}-liquid-tab`
+                    data-toggle="tab"
+                    href=`#${id}-liquid`
+                    role="tab"
+                    aria-controls=`${id}-liquid`
+                    aria-selected="false"
+                ) Liquid
     .tab-content.pb-2(id=`${id}-editor`)
         .tab-pane.fade.show.active(
             id=`${id}-code`
@@ -51,50 +52,51 @@ mixin htmlEditor(id, name, rows, size, contents)
                 .card-body.overflow-auto.editor-preview(
                     id=`${id}-preview-frame`
                     style=`height: ${size-2}px`)
-        .tab-pane.fade.variables-help(
-            id=`${id}-liquid`
-            role="tabpanel"
-            aria-labelledby=`${id}-liquid-tab`
-        )
-            .row
-                .col.px-4.py-2
-                    p
-                        | You can use HTML and
-                        a.mx-1(href="https://shopify.github.io/liquid/" target="_blank") Liquid
-                        | to enter text in this document.
-            .row
-                .col.px-4.py-2
-                    table.table.table-sm
-                        thead
-                            tr
-                                th Liquid Variable
-                                th Usage
-                        tbody
-                            tr
-                                td player
-                                td Object which contains the player-visible player variables/data.
-                                    br
-                                    | e.g. {{ player.inventory[0].name }}
-                            tr
-                                td run
-                                td Object which contains the player-visible run variables/data.
-                                    br
-                                    | e.g. {{ run.tokens }}
-                            tr
-                                td character
-                                td String which contains the character's name.
-                                    br
-                                    | e.g. {{ character }}
-                            tr
-                                td user
-                                td Object which contains the user data, currently just name.
-                                    br
-                                    | e.g. {{ user.name }}
-                            tr
-                                td screen
-                                td Object which contains screen IDs as keys with the number of playes in that screen as values.  Only includes screens where user count is public.
-                                    br
-                                    |e.g.  {{screen.37|default: 0}} to display the number of players in screen 37, or '0', if not found.
+        if showLiquid
+            .tab-pane.fade.variables-help(
+                id=`${id}-liquid`
+                role="tabpanel"
+                aria-labelledby=`${id}-liquid-tab`
+            )
+                .row
+                    .col.px-4.py-2
+                        p
+                            | You can use HTML and
+                            a.mx-1(href="https://shopify.github.io/liquid/" target="_blank") Liquid
+                            | to enter text in this document.
+                .row
+                    .col.px-4.py-2
+                        table.table.table-sm
+                            thead
+                                tr
+                                    th Liquid Variable
+                                    th Usage
+                            tbody
+                                tr
+                                    td player
+                                    td Object which contains the player-visible player variables/data.
+                                        br
+                                        | e.g. {{ player.inventory[0].name }}
+                                tr
+                                    td run
+                                    td Object which contains the player-visible run variables/data.
+                                        br
+                                        | e.g. {{ run.tokens }}
+                                tr
+                                    td character
+                                    td String which contains the character's name.
+                                        br
+                                        | e.g. {{ character }}
+                                tr
+                                    td user
+                                    td Object which contains the user data, currently just name.
+                                        br
+                                        | e.g. {{ user.name }}
+                                tr
+                                    td screen
+                                    td Object which contains screen IDs as keys with the number of playes in that screen as values.  Only includes screens where user count is public.
+                                        br
+                                        |e.g.  {{screen.37|default: 0}} to display the number of players in screen 37, or '0', if not found.
 
 
 mixin jsonEditor(id, name, rows, size, contents)
@@ -110,6 +112,113 @@ mixin jsonEditor(id, name, rows, size, contents)
     .invalid-feedback(id=`editor-feedback-${id}`) Not Valid JSON
 
 
+mixin cssEditor(id, name, rows, size, contents)
+    textarea.form-control.editor(
+        id= id
+        rows= rows
+        name= name
+        data-size= size
+        data-type= 'css',
+        aria-describedby=`editor-feedback-${id}`
+    )
+        = contents
+    .invalid-feedback(id=`editor-feedback-${id}`) Not Valid CSS
+
+mixin inkEditor(id, name, rows, size, contents)
+    ul.nav.nav-tabs(id=`${id}-edit-tabs` role="tablist")
+        li.nav-item(role="presentation")
+            a.nav-link.active(
+                id=`${id}-code-tab`
+                data-toggle="tab"
+                href=`#${id}-code`
+                role="tab"
+                aria-controls=`${id}-code`
+                aria-selected="true"
+            ) Ink
+
+        if variables.length
+            li.nav-item(role="presentation")
+                a.nav-link(
+                    id=`${id}-variables-tab`
+                    data-toggle="tab"
+                    href=`#${id}-variables`
+                    role="tab"
+                    aria-controls=`${id}-variables`
+                    aria-selected="false"
+                ) Game Variables
+
+        li.nav-item(role="presentation")
+            a.nav-link(
+                id=`${id}-ink-functions-tab`
+                data-toggle="tab"
+                href=`#${id}-ink-functions`
+                role="tab"
+                aria-controls=`${id}-ink-functions`
+                aria-selected="false"
+            ) External Functions
+
+    .tab-content.pb-2(id=`${id}-editor`)
+        .tab-pane.fade.show.active(
+            id=`${id}-code`
+            role="tabpanel"
+            aria-labelledby=`${id}-code-tab`
+        )
+            .row
+                .col
+                    textarea.form-control.editor(
+                        id= id
+                        rows= rows
+                        name= name
+                        data-size= size
+                        data-type= 'ink'
+                    )
+                        = contents
+            .row.mt-2
+                .col
+                    pre.text-danger.p-2.m-0.overflow-auto#editor-errors
+
+        .tab-pane.fade.variables-help(
+            id=`${id}-variables`
+            role="tabpanel"
+            aria-labelledby=`${id}-variables-tab`
+        )
+            .row
+                .col.p-4
+                    table.table.table-sm
+                        thead
+                            tr
+                                th Ink Variable
+                                th JS Variable
+                                th Type
+                                th Scope
+                                th Public
+                        tbody
+                            for variable in variables
+                                tr
+                                    td=variable.ink_name
+                                    td #{variable.player?'':'run.'}#{variable.public?'public':'private'}.#{variable.name}
+                                    td #{variable.type}
+                                    td #{variable.player?'Player':'Run'}
+                                    td #{variable.public?'Yes':'No'}
+
+        .tab-pane.fade.variables-help(
+            id=`${id}-ink-functions`
+            role='tabpanel'
+            area-labelledby=`${id}-ink-tab-functions`
+        )
+            .row
+                .col.p-4
+                    table.table.table-sm
+                        thead
+                            tr
+                                th.col-sm-2 Function
+                                th Usage
+                        tbody
+                            tr
+                                td
+                                    i Function Name
+                                td
+                                    i Function Description
 
 
 mixin jsEditor(id, name, rows, size, contents)

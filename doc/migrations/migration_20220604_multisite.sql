@@ -11,8 +11,8 @@ create table games (
     default_to_player boolean default false,
     created timestamp with time zone DEFAULT now(),
     updated timestamp with time zone DEFAULT now(),
-    google_client_id varchar(20),
-    google_client_secret varchar(30),
+    google_client_id varchar(80),
+    google_client_secret varchar(80),
     primary key (id),
     CONSTRAINT games_created_fk FOREIGN KEY (created_by)
         REFERENCES "users" (id) MATCH SIMPLE

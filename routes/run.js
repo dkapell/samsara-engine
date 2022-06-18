@@ -356,11 +356,12 @@ async function runTriggerAll(req, res, next){
         const players = await req.models.player.find({run_id: req.params.id});
         await async.each(players, async player => {
             const user = await req.models.user.get(player.game_id, player.user_id);
-            return req.app.locals.gameServer.runTrigger(trigger, user);
+            return req.app.locals.gameServer.runTrigger(trigger, user, req.game.id);
         });
-        await req.app.locals.gameServer.sendPlayerUpdate(res.run.id);
+        await req.app.locals.gameServer.sendPlayerUpdate(req.game.id);
         res.json({success:true});
     } catch(err){
+        console.trace(err);
         res.json({success:false, error: err.message});
     }
 }

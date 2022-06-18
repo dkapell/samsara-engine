@@ -34,6 +34,9 @@ router.get('/google',
             authConfig.clientID = req.game.google_client_id;
             authConfig.clientSecret = req.game.google_client_secret;
         }
+        console.log(req.game)
+
+        console.log(authConfig);
 
         passport.authenticate('google', authConfig)(req, res, next);
     });
@@ -71,10 +74,6 @@ router.get('/google/callback',
 
 if (config.get('auth.intercode.clientID')){
     router.get('/intercode',
-        function(req, res, next){
-            req.session.site = req.game.site;
-            next();
-        },
         (req, res, next) => {
             passport.authenticate('intercode', {
                 callbackURL: getCallbackUrl(req, 'intercode')

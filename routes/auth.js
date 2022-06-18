@@ -38,10 +38,15 @@ router.get('/google',
 //   which, in this example, will redirect the user to the home page.
 router.get('/google/callback',
     (req, res, next) => {
-        passport.authenticate('google', {
+        const authConfig = {
             failureRedirect: '/',
-            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`,
-        })(req, res, next);
+            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`
+        };
+        if (req.game.google_client_id && req.game.google_client_secret){
+            authConfig.clientID = req.game.google_client_id;
+            authConfig.clientSecret = req.game.google_client_secret;
+        }
+        passport.authenticate('google', authConfig)(req, res, next);
     },
     (req, res) => {
         if (_.has(req.session, 'backto')){

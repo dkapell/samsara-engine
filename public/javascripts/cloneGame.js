@@ -8,7 +8,7 @@ function updateCloneTables(e){
     const $this = $(this);
     if ($this.is(':checked')){
         $('.clonetable-player').prop('checked', false);
-    };
+    }
 }
 
 function updateFakeUsers(e){

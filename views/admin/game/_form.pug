@@ -1,0 +1,93 @@
+.form-row.my-2
+    .col-md-3
+        label.control-label(for="game_name") Name
+    .col
+        input.form-control(type="text",placeholder="Character",name="game[name]",value=game.name,id='game_name')
+
+.form-row.my-2
+    .col-md-3
+        label.control-label(for="game_site") Game Site URL
+    .col
+        input.form-control#game_site(type="url",placeholder="URL",name="game[site]",value=game.site)
+        div.invalid-feedback Must be a valid, unique URL
+
+.form-row.my-2
+    .col
+        label.control-label(for="game_description") Description (Front page)
+        +htmlEditor('game_description', 'game[description]', 4, 200, game.description, true)
+
+.form-row.my-2
+    .col
+        .custom-control.custom-switch
+            input.custom-control-input#game_default_to_player(type="checkbox", name="game[default_to_player]", checked=game.default_to_player)
+            label.custom-control-label(for="game_default_to_player") Default new users to Players
+
+fieldset.mb-2.border.p-2.rounded
+    label.h5 Display Options
+
+    .form-row.my-2
+        .col-md-2
+            label.control-label(for="game_theme") Theme
+        .col
+            select.custom-select.select2#game_theme(name="game[theme]" data-placeholder="Theme", required)
+                option
+                for theme in themes
+                    option(value=theme, selected=game.theme===theme)= theme
+
+    .form-row.my-2
+        .col
+            label.control-label.w-100#css-heading(for="game_css", data-toggle="collapse" data-target="#css-container" aria-expanded="false") Custom CSS
+                i.expand-text-shown.ml-4 (click to hide editor)
+                i.expand-text.ml-4 (click to show editor)
+                span.float-right.pl-2
+                    i.fa.fa-chevron-up
+                    i.fa.fa-chevron-down
+
+            #css-container.collapse(aria-labeledby="css-heading")
+                +cssEditor('game_css', 'game[css]', 5, 200, game.css)
+
+fieldset.mb-2.border.p-2.rounded
+    label.h5 Authentication Options
+    .form-row.my-2
+        .col.offset-sm-5
+            .custom-control.custom-switch
+                input.custom-control-input#game_intercode_login(type="checkbox", name="game[intercode_login]", checked=game.intercode_login)
+                label.custom-control-label(for="game_intercode_login") Use Intercode Login
+
+    .form-row.my-2
+
+        .col-md-5
+            label.control-label(for="game_google_client_id") Google OAuth Client ID (Optional)
+        .col
+            input.form-control#game_google_client_id(placeholder="OAuth Client ID",name="game[google_client_id]",value=game.google_client_id)
+    .form-row.my-2
+        .col-md-5
+            label.control-label(for="game_google_client_secret") Google OAuth Client Secret (Optional)
+        .col
+            input.form-control#game_google_client_secret(placeholder="OAuth Client Secret",name="game[google_client_secret]",value=game.google_client_secret)
+
+.form-group
+if source
+    fieldset.mb-2.border.p-2.rounded
+        label.h5 Clone Options
+        .form-row.my-2
+            .col
+                .custom-control.custom-switch
+                    input.custom-control-input#clone_fakeUsers(type="checkbox", name="clone[fakeUsers]", checked=clone.fakeUsers)
+                    label.custom-control-label(for="clone_fakeUsers") Fake Users
+
+        fieldset
+            label Optional Tables
+
+            each val, name in clone.tables
+                .form-row.my-1
+                    .col
+                        .custom-control.custom-switch
+                            input.custom-control-input(id=`clone_tables_${name}` type="checkbox", name=`clone[tables][${name}]`, checked=clone.tables[name] class=tables[name].playerTable?'clonetable-player':'')
+                            label.custom-control-label(for=`clone_tables_${name}`)= name
+                                if tables[name].requires
+                                    span.ml-2 (Requires #{tables[name].requires.join(', ')})
+
+.form-group
+    button.btn.btn-primary(type="submit")= game.id?'Update':'Create'
+    a.btn.btn-link(href="/admin/game") Cancel

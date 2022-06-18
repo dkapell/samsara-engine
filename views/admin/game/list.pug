@@ -1,0 +1,62 @@
+extends ../../layout
+
+block content
+    a.btn.btn-outline-success(href='/admin/game/new')
+        span(class="fa fa-plus")
+        |  New Game
+    .table-responsive.my-2
+        .col-sm-6.offset-sm-3.text-center#tableLoading
+            .spinner-border.m-5(role="status" style="width: 3rem; height: 3rem;")
+                .sr-only Table is Loading
+        table.table.table-striped.table-filtered.table-hover.my-3.dt-responsive.nowrap.table-sm.w-100( style="display: none")
+            thead
+                tr
+                    th(data-order='asc') Name
+                    th(data-nofilter="true") Site
+                    th Theme
+                    th(data-partialmatch="true") Login
+                    th Default
+                    th Created By
+                    th
+
+            tbody
+                for game in games
+                    tr(class='clickable-row', data-click-object='admin/game' data-click-id=game.id)
+                        td.dtr-expand
+                            a(href='/admin/game/' + game.id)= game.name
+                        td
+                            a.action-btn(target='_blank' href=`${game.site.match(/:/)?'http://':'https://'}${game.site}`)
+                                = game.site
+                                i.fas.fa-external-link-alt.ml-1
+                        td=game.theme
+                        td
+                            - const logins = ['Google']
+                            if (game.intercode_login)
+                                -logins.push('Intercode')
+                            =logins.join (', ')
+                        td= game.default_to_player?'Player':'None'
+                        td=game.user?game.user.name:'System'
+
+
+                        td.text-right
+                            a.btn.btn-outline-success.btn-xs.action-btn.mr-1(
+                                role="button",
+                                href=`/admin/game/${game.id}/clone`
+                                title='Clone Game'
+                                data-toggle='tooltip'
+                            )
+                                i.fas.fa-copy.fa-fw
+
+                            a.btn.btn-outline-danger.btn-xs.delete-btn(
+                                role="button",
+                                url=`/admin/game/${game.id}`,
+                                title='Delete Game'
+                                data-toggle='tooltip'
+                                data-back='/admin/game'
+                            )
+                                i.fas.fa-trash.fa-fw
+
+
+
+append scripts
+    script(src='/javascripts/data-table.js')

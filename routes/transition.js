@@ -13,12 +13,18 @@ async function list(req, res, next){
         current: 'Transitions'
     };
     try {
-        const transitions = await req.models.transition.list();
+        const transitions = await req.models.transition.find({game_id: req.game.id});
         res.locals.transitions = await async.map( transitions, async transition => {
             transition.from_screen = (await req.models.screen.get(transition.from_screen_id)).name;
+            if (transition.from_screen.game_id !== req.game.id){
+                throw new Error('Invalid Transition');
+            }
             transition.to_screen = (await req.models.screen.get(transition.to_screen_id)).name;
+            if (transition.to_screen.game_id !== req.game.id){
+                throw new Error('Invalid Transition');
+            }
             if(transition.group_id){
-                transition.group = await req.models.group.get(transition.group_id);
+                transition.group = await req.models.group.get(transition.game_id, transition.group_id);
             }
             return transition;
         });
@@ -55,8 +61,8 @@ async function showNew(req, res, next){
         delete req.session.transitionData;
     }
     try{
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.groups = await req.models.group.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.render('transition/new');
     } catch (err){
         next(err);
@@ -69,6 +75,9 @@ async function showEdit(req, res, next){
 
     try{
         const transition = await req.models.transition.get(id);
+        if (!transition || transition.game_id !== req.game.id){
+            throw new Error('Invalid Transition');
+        }
         res.locals.transition = transition;
         if (_.has(req.session, 'transitionData')){
             res.locals.transition = req.session.transitionData;
@@ -81,8 +90,8 @@ async function showEdit(req, res, next){
             ],
             current: 'Edit Transition'
         };
-        res.locals.screens = (await req.models.screen.list()).filter(screen => {return !screen.template;});
-        res.locals.groups = await req.models.group.list();
+        res.locals.screens = (await req.models.screen.find({game_id: req.game.id})).filter(screen => {return !screen.template;});
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.render('transition/edit');
     } catch(err){
         next(err);
@@ -96,7 +105,7 @@ async function create(req, res, next){
     if(Number(transition.group_id) === -1){
         transition.group_id = null;
     }
-
+    transition.game_id = req.game.id;
     try{
         await req.models.transition.create(transition);
         delete req.session.transitionData;
@@ -119,6 +128,12 @@ async function update(req, res, next){
 
     try {
         const current = await req.models.transition.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
 
         await req.models.transition.update(id, transition);
         delete req.session.transitionData;
@@ -134,6 +149,13 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.transition.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
         await req.models.transition.delete(id);
         req.flash('success', 'Removed Screen');
         res.redirect('/transition');

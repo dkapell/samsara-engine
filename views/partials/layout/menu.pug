@@ -1,5 +1,5 @@
 .container
-    a.navbar-brand(href='/')=config.get('app.name')
+    a.navbar-brand(href='/')=siteName
     button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation")
         span.navbar-toggler-icon
 
@@ -8,119 +8,142 @@
             li.nav-item(class= siteSection==='home'?"active":null)
                 a.nav-link(href="/") Home
                     span.sr-only (current)
-            if (checkPermission('gm'))
-                li.nav-item.dropdown(class= siteSection==='gm'?"active":null)
-                    a.nav-link.dropdown-toggle#gmDropdown(
-                        href='#'
-                        role='button'
-                        data-toggle='dropdown'
-                        aria-haspopup="true"
-                        aria-expanded="false") GM Stuff
-                    .dropdown-menu(aria-labelledby="gmDropdown")
-                        a.dropdown-item(href='/run/current')
-                            i.fas.fa-theater-masks.fa-fw.mr-1
-                            | Current Run
-                        a.dropdown-item(href='/meeting')
-                            i.fas.fa-video.fa-fw.mr-1
-                            | Meeting List
-                        a.dropdown-item(href='/link')
-                            i.fas.fa-building.fa-fw.mr-1
-                            | Link List
-                        a.dropdown-item(href='/player')
-                            i.fas.fa-users.fa-fw.mr-1
-                            | Players List
-                        a.dropdown-item(href='/game/chat')
-                            i.fas.fa-comments.fa-fw.mr-1
-                            | Chat
+            if currentGame.id
+                if checkPermission('gm')
+                    li.nav-item.dropdown(class= siteSection==='gm'?"active":null)
+                        a.nav-link.dropdown-toggle#gmDropdown(
+                            href='#'
+                            role='button'
+                            data-toggle='dropdown'
+                            aria-haspopup="true"
+                            aria-expanded="false") GM Stuff
+                        .dropdown-menu(aria-labelledby="gmDropdown")
+                            a.dropdown-item(href='/run/current')
+                                i.fas.fa-theater-masks.fa-fw.mr-1
+                                | Current Run
+                            a.dropdown-item(href='/meeting')
+                                i.fas.fa-video.fa-fw.mr-1
+                                | Meeting List
+                            a.dropdown-item(href='/link')
+                                i.fas.fa-building.fa-fw.mr-1
+                                | Link List
+                            a.dropdown-item(href='/player')
+                                i.fas.fa-users.fa-fw.mr-1
+                                | Players List
+                            a.dropdown-item(href='/game/chat')
+                                i.fas.fa-comments.fa-fw.mr-1
+                                | Chat
 
-            if session.assumed_user && session.assumed_user.type === 'player'
-                if session.assumed_user.player.character_sheet
-                    li.nav-item
-                        a.nav-link(href=session.assumed_user.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
-                            if session.assumed_user.player.character
-                                span= session.assumed_user.player.character
-                            else
-                                | Character Sheet
-                            i.fas.fa-external-link-alt.ml-1
+                if session.assumed_user && session.assumed_user.type === 'player'
+                    if session.assumed_user.player.character_sheet
+                        li.nav-item
+                            a.nav-link(href=session.assumed_user.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
+                                if session.assumed_user.player.character
+                                    span= session.assumed_user.player.character
+                                else
+                                    | Character Sheet
+                                i.fas.fa-external-link-alt.ml-1
 
-                else if session.assumed_user.player.character
-                    span.navbar-text= session.assumed_user.player.character
+                    else if session.assumed_user.player.character
+                        span.navbar-text= session.assumed_user.player.character
 
 
-            else if activeUser && activeUser.type === 'player'
-                if activeUser.player.character_sheet
-                    li.nav-item
-                        a.nav-link(href=activeUser.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
-                            if activeUser.player.character
-                                span= activeUser.player.character
-                            else
-                                | Character Sheet
-                            i.fas.fa-external-link-alt.ml-1
-                else if activeUser.player.character
-                    span.navbar-text= activeUser.player.character
+                else if activeUser && activeUser.type === 'player'
+                    if activeUser.player.character_sheet
+                        li.nav-item
+                            a.nav-link(href=activeUser.player.character_sheet target="_blank" data-toggle="tooltip" title="Show Character Sheet")
+                                if activeUser.player.character
+                                    span= activeUser.player.character
+                                else
+                                    | Character Sheet
+                                i.fas.fa-external-link-alt.ml-1
+                    else if activeUser.player.character
+                        span.navbar-text= activeUser.player.character
 
-            if checkPermission('gm')
-                li.nav-item.dropdown(class= siteSection==='config'?"active":null)
-                    a.nav-link.dropdown-toggle#configDropdown(
-                        href='#'
-                        role='button'
-                        data-toggle='dropdown'
-                        aria-haspopup="true"
-                        aria-expanded="false") Game Config
-                    .dropdown-menu(aria-labelledby="configDropdown")
-                        a.dropdown-item(href='/screen')
-                            i.fas.fa-map-marked.fa-fw.mr-1
-                            | Screens
-                        a.dropdown-item(href='/transition')
-                            i.fas.fa-exchange-alt.fa-fw.mr-1
-                            | Transitions
-                        a.dropdown-item(href='/code')
-                            i.fas.fa-keyboard.fa-fw.mr-1
-                            | Codes
-                        a.dropdown-item(href='/trigger')
-                            i.fas.fa-bolt.fa-fw.mr-1
-                            | Triggers
-                        a.dropdown-item(href='/image')
-                            i.fas.fa-images.fa-fw.mr-1
-                            | Images
-                        a.dropdown-item(href='/document')
-                            i.fas.fa-file-alt.fa-fw.mr-1
-                            | Documents
-                        a.dropdown-item(href='/character')
-                            i.fas.fa-user-alt.fa-fw.mr-1
-                            | Characters
-                        a.dropdown-item(href='/variable')
-                            i.fas.fa-cubes.fa-fw.mr-1
-                            | Variables
-                        a.dropdown-item(href='/ink')
-                            i.fas.fa-book.fa-fw.mr-1
-                            | Ink Stories
+                if checkPermission('gm')
+                    li.nav-item.dropdown(class= siteSection==='config'?"active":null)
+                        a.nav-link.dropdown-toggle#configDropdown(
+                            href='#'
+                            role='button'
+                            data-toggle='dropdown'
+                            aria-haspopup="true"
+                            aria-expanded="false") Game Config
+                        .dropdown-menu(aria-labelledby="configDropdown")
+                            a.dropdown-item(href='/screen')
+                                i.fas.fa-map-marked.fa-fw.mr-1
+                                | Screens
+                            a.dropdown-item(href='/transition')
+                                i.fas.fa-exchange-alt.fa-fw.mr-1
+                                | Transitions
+                            a.dropdown-item(href='/code')
+                                i.fas.fa-keyboard.fa-fw.mr-1
+                                | Codes
+                            a.dropdown-item(href='/trigger')
+                                i.fas.fa-bolt.fa-fw.mr-1
+                                | Triggers
+                            a.dropdown-item(href='/image')
+                                i.fas.fa-images.fa-fw.mr-1
+                                | Images
+                            a.dropdown-item(href='/document')
+                                i.fas.fa-file-alt.fa-fw.mr-1
+                                | Documents
+                            a.dropdown-item(href='/character')
+                                i.fas.fa-user-alt.fa-fw.mr-1
+                                | Characters
+                            a.dropdown-item(href='/variable')
+                                i.fas.fa-cubes.fa-fw.mr-1
+                                | Variables
+                            a.dropdown-item(href='/ink')
+                                i.fas.fa-book.fa-fw.mr-1
+                                | Ink Stories
 
-                        a.dropdown-item(href='/game/graph')
-                            i.fas.fa-project-diagram.fa-fw.mr-1
-                            | Graph
-                        a.dropdown-item(href='/game/validator')
-                            i.far.fa-check-square.fa-fw.mr-1
-                            | Validator
+                            .dropdown-divider
 
-            if (checkPermission('admin'))
-                li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
-                    a.nav-link.dropdown-toggle#adminDropdown(
-                        href='#'
-                        role='button'
-                        data-toggle='dropdown'
-                        aria-haspopup="true"
-                        aria-expanded="false") Admin
-                    .dropdown-menu(aria-labelledby="adminDropdown")
-                        a.dropdown-item(href='/user')
-                            i.fas.fa-users-cog.fa-fw.mr-1
-                            |  Users
-                        a.dropdown-item(href='/run')
-                            i.fas.fa-layer-group.fa-fw.mr-1
-                            |  Runs
-                        a.dropdown-item(href='/group')
-                            i.fas.fa-users.fa-fw.mr-1
-                            |  Player Groups
+                            a.dropdown-item(href='/game/graph')
+                                i.fas.fa-project-diagram.fa-fw.mr-1
+                                | Graph
+                            a.dropdown-item(href='/game/validator')
+                                i.far.fa-check-square.fa-fw.mr-1
+                                | Validator
+
+                if checkPermission('creator')
+                    li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
+                        a.nav-link.dropdown-toggle#creatorDropdown(
+                            href='#'
+                            role='button'
+                            data-toggle='dropdown'
+                            aria-haspopup="true"
+                            aria-expanded="false") Game Admin
+                        .dropdown-menu(aria-labelledby="creatorDropdown")
+                            a.dropdown-item(href=`/admin/game/${currentGame.id}`)
+                                i.fas.fa-dice-d20.fa-fw.mr-1
+                                |  Game Settings
+                            a.dropdown-item(href='/user')
+                                i.fas.fa-users-cog.fa-fw.mr-1
+                                |  Users
+                            a.dropdown-item(href='/run')
+                                i.fas.fa-layer-group.fa-fw.mr-1
+                                |  Runs
+                            a.dropdown-item(href='/group')
+                                i.fas.fa-users.fa-fw.mr-1
+                                |  Player Groups
+
+            else
+                if checkPermission('admin')
+                    li.nav-item.dropdown(class= siteSection==='admin'?"active":null)
+                        a.nav-link.dropdown-toggle#adminDropdown(
+                            href='#'
+                            role='button'
+                            data-toggle='dropdown'
+                            aria-haspopup="true"
+                            aria-expanded="false") Site Admin
+                        .dropdown-menu(aria-labelledby="adminDropdown")
+                            a.dropdown-item(href='/user')
+                                i.fas.fa-users-cog.fa-fw.mr-1
+                                |  Users
+                            a.dropdown-item(href='/admin/game')
+                                i.fas.fa-dice-d20.fa-fw.mr-1
+                                |  Games
 
 
         ul.navbar-nav.float-right

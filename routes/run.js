@@ -17,8 +17,8 @@ async function list(req, res, next){
         current: 'Runs'
     };
     try {
-        res.locals.runs = await async.map(await req.models.run.list(), async (run) => {
-            run.players = await req.models.player.listByRunId(run.id);
+        res.locals.runs = await async.map(await req.models.run.find({game_id: req.game.id}), async (run) => {
+            run.players = await req.models.player.find({run_id: run.id});
             return run;
         });
 
@@ -30,25 +30,29 @@ async function list(req, res, next){
 
 async function showCurrent(req, res, next){
     try{
-        const run = await req.models.run.getCurrent();
+        const run = await req.models.run.getCurrent(req.game.id);
         res.redirect('/run/' + run.id);
     } catch(err){
         next(err);
     }
 }
 
-
-
 async function show(req, res, next){
     try{
-        res.locals.run = await req.models.run.get(req.params.id);
-        const players = await req.models.player.listByRunId(req.params.id);
+        const run = await req.models.run.get(req.params.id);
+        if (!run || run.game_id !== req.game.id){
+            throw new Error('Invalid Run');
+        }
+        res.locals.run = run;
+
+
+        const players = await req.models.player.find({run_id: req.params.id});
         let last = (new Date()).getTime();
 
         const users = await async.mapLimit(players, 5, async function(player){
-            const user = await req.models.user.get(player.user_id);
+            const user = await req.models.user.get(player.game_id, player.user_id);
 
-            user.screen = await gameEngine.getScreen(user.id);
+            user.screen = await gameEngine.getScreen(user.id, req.game.id);
 
             if (!user.screen){
                 return user;
@@ -84,14 +88,14 @@ async function show(req, res, next){
         if (res.locals.run.current){
             res.locals.siteSection='gm';
         }
-        res.locals.groups = await req.models.group.list();
+        res.locals.groups = await req.models.group.find({game_id: req.game.id});
         res.locals.users = users
             .filter(user => { return user.type === 'player';})
             .sort((a, b) => {
                 a.name.localeCompare(b.name);
             });
-        res.locals.screens = await req.models.screen.listSpecial();
-        res.locals.triggers = await req.models.trigger.list();
+        res.locals.screens = await req.models.screen.listSpecial(req.game.id);
+        res.locals.triggers = await req.models.trigger.find({game_id: req.game.id});
         res.locals.csrfToken = req.csrfToken();
         res.render('run/show');
 
@@ -109,7 +113,7 @@ function showNew(req, res, next){
     res.locals.run = {
         name: null,
         current: false,
-        data: gameData.getStartData('run'),
+        data: gameData.getStartData('run', req.game.id),
         show_stubs: true,
     };
     res.locals.breadcrumbs = {
@@ -134,6 +138,9 @@ async function showEdit(req, res, next){
 
     try{
         const run = await req.models.run.get(id);
+        if (!run || run.game_id !== req.game.id){
+            throw new Error('Invalid Run');
+        }
         res.locals.run = run;
         if (_.has(req.session, 'runData')){
             res.locals.run = req.session.runData;
@@ -158,9 +165,10 @@ async function create(req, res, next){
 
     req.session.runData = run;
 
+    run.game_id = req.game.id;
     try{
         if (run.current){
-            const current = await req.models.run.getCurrent();
+            const current = await req.models.run.getCurrent(req.game.id);
             current.current = false;
             await req.models.run.update(current.id, current);
         }
@@ -190,11 +198,18 @@ async function update(req, res, next){
     req.session.runData = run;
 
     try {
+        const current = await req.models.run.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not edit record from different game');
+        }
         if (run.current){
-            const current = await req.models.run.getCurrent();
-            if (current.id !== id){
-                current.current = false;
-                await req.models.run.update(current.id, current);
+            const currentRun = await req.models.run.getCurrent(req.game.id);
+            if (currentRun.id !== id){
+                currentRun.current = false;
+                await req.models.run.update(currentRun.id, currentRun);
             }
         }
         if (run.data){
@@ -221,6 +236,13 @@ async function update(req, res, next){
 async function remove(req, res, next){
     const id = req.params.id;
     try {
+        const current = await req.models.run.get(id);
+        if (!current){
+            throw new Error('Invalid Document');
+        }
+        if (current.game_id !== req.game.id){
+            throw new Error('Can not delete record from different game');
+        }
         await req.models.run.delete(id);
         req.flash('success', 'Removed Run');
         res.redirect('/run');
@@ -232,17 +254,17 @@ async function remove(req, res, next){
 async function resetRun(req, res, next){
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         const initialScreen = await req.models.screen.getStart();
         await async.each(players, async player => {
-            await gameEngine.changeScreen(player.user_id, initialScreen.id, 0);
-            return req.app.locals.gameServer.sendScreen(player.user_id);
+            await gameEngine.changeScreen(player.user_id, req.game.id, initialScreen.id, 0);
+            return req.app.locals.gameServer.sendScreen(player.user_id, req.game.id);
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, initialScreen.id);
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         res.json({success:true});
 
     } catch(err){
@@ -253,21 +275,21 @@ async function resetRun(req, res, next){
 async function updateAllPlayers(req, res, next){
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         const screen = await req.models.screen.get(req.body.screen_id);
         let group = false;
         if (!screen) { throw new Error('Screen not found'); }
         await async.each( players, async player => {
             if (req.body.group_id === '0' || _.findWhere(player.groups, {id: Number(req.body.group_id)})){
-                await gameEngine.changeScreen(player.user_id, screen.id, 0, true);
-                return req.app.locals.gameServer.sendScreen(player.user_id);
+                await gameEngine.changeScreen(player.user_id, req.game.id, screen.id, 0, true);
+                return req.app.locals.gameServer.sendScreen(player.user_id, req.game.id);
             }
         });
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, screen.id);
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         res.json({success:true});
 
     } catch(err){
@@ -278,18 +300,18 @@ async function updateAllPlayers(req, res, next){
 async function advanceAll(req, res, next){
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         await async.each(players, async player => {
-            const changed = await gameEngine.nextScreen(player.user_id);
+            const changed = await gameEngine.nextScreen(player.user_id, req.game.id);
             if (changed){
-                await req.app.locals.gameServer.sendScreen(player.user_id);
+                await req.app.locals.gameServer.sendScreen(player.user_id, req.game.id);
             }
             return;
         });
-        await gameEngine.updateAllTriggers();
+        await gameEngine.updateAllTriggers(req.game.id);
         await req.app.locals.gameServer.sendLocationUpdate(run.id, null, null);
         res.json({success:true});
     } catch(err){
@@ -301,10 +323,10 @@ async function toastAll(req, res, next){
 
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         for(const player of players){
             req.app.locals.gameServer.sendToast(req.body.message, {
                 duration: req.body.duration,
@@ -321,22 +343,22 @@ async function toastAll(req, res, next){
 async function runTriggerAll(req, res, next){
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
         const trigger = await req.models.trigger.get(req.params.triggerid);
-        if (!trigger){
+        if (!trigger|| trigger.game_id !== req.game.id){
             throw new Error ('Trigger not found');
         }
         if (!trigger.run){
             throw new Error('Trigger not enabled for all players in a run');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         await async.each(players, async player => {
-            const user = await req.models.user.get(player.user_id);
+            const user = await req.models.user.get(player.game_id, player.user_id);
             return req.app.locals.gameServer.runTrigger(trigger, user);
         });
-        await req.app.locals.gameServer.sendPlayerUpdate();
+        await req.app.locals.gameServer.sendPlayerUpdate(res.run.id);
         res.json({success:true});
     } catch(err){
         res.json({success:false, error: err.message});
@@ -346,10 +368,10 @@ async function runTriggerAll(req, res, next){
 async function resetInkStories(req, res, next){
     try{
         const run = await req.models.run.get(req.params.id);
-        if (!run){
+        if (!run || run.game_id !== req.game.id){
             throw new Error ('Run not found');
         }
-        const players = await req.models.player.listByRunId(req.params.id);
+        const players = await req.models.player.find({run_id: req.params.id});
         await async.each(players, async player => {
             const inkScreens = await req.models.ink_state.find({player_id: player.id});
             await async.each(inkScreens, async (ink_state) => {

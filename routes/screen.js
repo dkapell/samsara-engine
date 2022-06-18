@@ -205,7 +205,7 @@ async function create(req, res, next){
     screen.game_id = req.game.id;
     try{
         if (screen.start){
-            const oldStart = await req.models.screen.getStart();
+            const oldStart = await req.models.screen.getStart(req.game.id);
             if (oldStart){
                 oldStart.start = false;
                 await req.models.screen.update(oldStart.id, oldStart);
@@ -266,7 +266,7 @@ async function update(req, res, next){
         }
 
         if (screen.start){
-            const oldStart = await req.models.screen.getStart();
+            const oldStart = await req.models.screen.getStart(req.game.id);
             if (oldStart && oldStart.id !== screen.id){
                 oldStart.start = false;
                 await req.models.screen.update(oldStart.id, oldStart);

@@ -46,6 +46,7 @@ router.get('/google/callback',
             authConfig.clientID = req.game.google_client_id;
             authConfig.clientSecret = req.game.google_client_secret;
         }
+        console.log(authConfig)
         passport.authenticate('google', authConfig)(req, res, next);
     },
     (req, res) => {

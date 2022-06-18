@@ -134,11 +134,11 @@ app.use(async function(req, res, next){
 
     req.session.gameId = game.id;
     if (req.game.google_client_id && req.game.google_client_secret){
-        if (!passport._strategies[`google-game-${game.id}`]){
+        if (!_.has(passport._strategies, `google-game-${game.id}`)){
             passport.use(`google-game-${game.id}`, new GoogleStrategy({
-                clientID: config.get('auth.google.clientID'),
-                clientSecret: req.game.google_client_id,
-                callbackURL: req.game.google_client_secret,
+                clientID: req.game.google_client_id,,
+                clientSecret: req.game.google_client_secret,
+                callbackURL: config.get('auth.google.callbackURL'),
                 passReqToCallback: true
             }, passportVerifyGoogle));
 

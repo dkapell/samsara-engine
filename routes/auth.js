@@ -128,7 +128,7 @@ function getCallbackUrl(req, type){
     if (req.headers['x-forwarded-proto'] === 'https'){
         proto = 'https';
     }
-    return `${proto}://${req.headers.host}/auth/${type}/callback`
+    return `${proto}://${req.headers.host}/auth/${type}/callback`;
 }
 
 module.exports = router;

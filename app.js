@@ -136,7 +136,7 @@ app.use(async function(req, res, next){
     if (req.game.google_client_id && req.game.google_client_secret){
         if (!_.has(passport._strategies, `google-game-${game.id}`)){
             passport.use(`google-game-${game.id}`, new GoogleStrategy({
-                clientID: req.game.google_client_id,,
+                clientID: req.game.google_client_id,
                 clientSecret: req.game.google_client_secret,
                 callbackURL: config.get('auth.google.callbackURL'),
                 passReqToCallback: true

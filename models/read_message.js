@@ -25,7 +25,6 @@ ReadMessage.upsert = async function upsert(data){
                 read_message[field] = data[field];
             }
         }
-        console.log(read_message);
         return self.update(null, read_message);
     } else {
         return self.create(data);

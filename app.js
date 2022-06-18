@@ -172,8 +172,7 @@ async function(req, accessToken, refreshToken, profile, cb) {
     } catch (err) {
         cb(err);
     }
-})
-);
+}));
 
 if (config.get('auth.intercode.clientID')){
     const intercodeStrategy =  new OAuth2Strategy( config.get('auth.intercode'),

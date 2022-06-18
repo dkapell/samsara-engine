@@ -106,6 +106,7 @@ async function showClone(req, res, next){
                 chat_report: false,
             }
         };
+        res.locals.tables = _.indexBy(gameCloner.tables, 'name')
 
         if (_.has(req.session, 'gameData')){
             res.locals.game = req.session.gameData.game;
@@ -220,7 +221,7 @@ async function clone(req, res, next){
             }
         }
 
-        await gameCloner(id, cloneConfig);
+        await gameCloner.clone(id, cloneConfig);
         delete req.session.gameData;
         req.flash('success', `Cloned Game ${game.name}`);
         res.redirect('/admin/game');

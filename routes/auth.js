@@ -26,7 +26,7 @@ router.get('/login', function(req, res, next){
 router.get('/google',
     (req, res, next) => {
         passport.authenticate('google', {
-            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`,
+            callbackURL: getCallbackUrl(req, 'google'),
             scope: [ 'email', 'profile' ]
         })(req, res, next);
     });
@@ -40,7 +40,7 @@ router.get('/google/callback',
     (req, res, next) => {
         const authConfig = {
             failureRedirect: '/',
-            callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/google/callback`
+            callbackURL: getCallbackUrl(req, 'google'),
         };
         if (req.game.google_client_id && req.game.google_client_secret){
             authConfig.clientID = req.game.google_client_id;
@@ -70,7 +70,7 @@ if (config.get('auth.intercode.clientID')){
         },
         (req, res, next) => {
             passport.authenticate('intercode', {
-                callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/intercode/callback`,
+                callbackURL: getCallbackUrl(req, 'intercode')
             })(req, res, next);
         });
 
@@ -78,7 +78,7 @@ if (config.get('auth.intercode.clientID')){
         (req, res, next) => {
             passport.authenticate('intercode', {
                 failureRedirect: '/login',
-                callbackURL: `http${req.secure?'s':''}://${req.headers.host}/auth/intercode/callback`,
+                callbackURL: getCallbackUrl(req, 'intercode')
             })(req, res, next);
         },
         (req, res) => {
@@ -120,5 +120,13 @@ router.get('/gm', permission('gm'),
         }
         res.redirect('/');
     });
+
+function getCallbackUrl(req, type){
+    let proto = 'http';
+    if (req.headers['x-forwarded-proto'] === 'https'){
+        proto = 'https';
+    }
+    return `${proto}://${req.headers.host}/auth/${type}/callback`
+}
 
 module.exports = router;

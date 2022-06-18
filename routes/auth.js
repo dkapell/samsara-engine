@@ -25,10 +25,17 @@ router.get('/login', function(req, res, next){
 //   will redirect the user back to this application at /auth/google/callback
 router.get('/google',
     (req, res, next) => {
-        passport.authenticate('google', {
+        const authConfig = {
             callbackURL: getCallbackUrl(req, 'google'),
             scope: [ 'email', 'profile' ]
-        })(req, res, next);
+        };
+
+        if (req.game.google_client_id && req.game.google_client_secret){
+            authConfig.clientID = req.game.google_client_id;
+            authConfig.clientSecret = req.game.google_client_secret;
+        }
+
+        passport.authenticate('google', authConfig)(req, res, next);
     });
 
 // GET /auth/google/callback
@@ -46,7 +53,6 @@ router.get('/google/callback',
             authConfig.clientID = req.game.google_client_id;
             authConfig.clientSecret = req.game.google_client_secret;
         }
-        console.log(authConfig)
         passport.authenticate('google', authConfig)(req, res, next);
     },
     (req, res) => {

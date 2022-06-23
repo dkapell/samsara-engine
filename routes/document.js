@@ -136,9 +136,6 @@ async function update(req, res, next){
     const id = req.params.id;
     const document = req.body.document;
     req.session.documentData = document;
-    if (!_.has(document, 'active')){
-        document.active = false;
-    }
 
     try {
         const current = await req.models.document.get(id);

@@ -1,0 +1,18 @@
+extends ../layout
+
+include ../partials/editor
+
+block content
+    .row
+        .col
+            .card
+                .card-header= 'Edit Function: ' + func.name
+                .card-body
+                    form.form.needs-validation(method="POST" action="/function/" + func.id novalidate)
+                        input(type="hidden", name="_method",  value="PUT")
+                        input(type="hidden", name='_csrf',value=csrfToken)
+                        input(type="hidden", name='screen[id]',value=func.id)
+                        include ./_form.pug
+
+append scripts
+    script(src='/javascripts/validator.js')

@@ -3,7 +3,9 @@
 let popupEditor = null;
 $(function(){
     $('.script-editor-btn').on('click', showScriptEditor);
+    $('.script-editor-dropdown').on('change', updateScriptEditor);
     $('#editor-save').on('click', updateField);
+    $('.script-editor-dropdown').each(updateScriptEditor);
 });
 
 function renderEditor(id, type, size){
@@ -62,6 +64,16 @@ function renderEditor(id, type, size){
     }
     editor.refresh();
     return editor;
+}
+
+function updateScriptEditor(e){
+    const $this = $(this);
+    const value = $this.val();
+    if (Number(value) === -2){
+        $this.closest('.script-group').find('.script-custom').show();
+    } else {
+        $this.closest('.script-group').find('.script-custom').hide();
+    }
 }
 
 function showScriptEditor(e){

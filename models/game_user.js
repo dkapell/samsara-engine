@@ -1,7 +1,4 @@
 'use strict';
-const async = require('async');
-const _ = require('underscore');
-const database = require('../lib/database');
 
 const Model = require('../lib/Model');
 
@@ -13,7 +10,3 @@ const GameUser = new Model('game_users', tableFields, {
 });
 
 module.exports = GameUser;
-
-function validate(data){
-    return true;
-}

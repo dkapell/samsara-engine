@@ -1,0 +1,35 @@
+.form-row.my-2
+    .col
+        label.control-label(for="function_name") Name
+        input.form-control(type="text",placeholder="Name",name="function[name]",value=func.name,id='function_name',required)
+        div.invalid-feedback Please choose a valid name
+
+    .col-md-4
+        label.control-label(for="function_type") Function Type
+        select.custom-select.select2#function_type(name="function[type]" data-placeholder='Function Type')
+            option
+            for type in ['action', 'conditional', 'ink']
+                option(value=type selected=func.type === type)= capitalize(type)
+
+.form-row.my-2
+    .col
+        label.control-label(for="function_usage") Usage (Ink functions only)
+        input.form-control(type="text",placeholder="function(params) returns whatever",name="function[usage]",value=func.usage,id='function_usage')
+
+.form-row.my-2
+    .col
+        label.control-label(for="function_description") Description
+        textarea.form-control#function_description(name="function[description]",rows=3)
+            = func.description
+
+.form-row.my-2
+    .col
+        label.control-label(for="function_content") Content
+        +jsEditor('function_content', 'function[content]', 10, 500, func.content)
+
+.form-row.my-2
+    .col
+        button.btn.btn-primary(type="submit")= func.id?'Update':'Create'
+        a.btn.btn-link(href="/function") Cancel
+
+

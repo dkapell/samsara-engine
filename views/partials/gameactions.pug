@@ -93,25 +93,16 @@ mixin area(area, id)
                 span.d-md-none.d-xl-block.mr-1 Condition
                 span.d-none.d-md-block.d-xl-none Cond
 
-            .input-group.area-condition.col-md-5
-                - const conditionContents = area.condition?area.condition:''
-                - const conditionLines = conditionContents.split('\n')
+            .area-condition.col-md-5
+                +conditionInput(
+                    `screen_map-${id}-condition`,
+                    `screen[map][${id}][condition_id]`,
+                    `screen[map][${id}][condition]`,
+                    area.function_id,
+                    area.condition,
+                    id
+                )
 
-                input.form-control.script-display.border-light.script-editor-btn(
-                    type="text"
-                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
-                    readonly
-                )
-                input.form-control.script-input.area-input.area-condition-data(
-                    type="hidden"
-                    name=`screen[map][${id}][condition]`,
-                    id=`screen_map-${id}-condition`,
-                    value=area.condition
-                    data-fieldtype='condition'
-                )
-                .input-group-append
-                    button.btn.btn-outline-light.script-editor-btn
-                        i.fas.fa-edit
 
         if _.isArray(area.actions)
             - let actionId = 0;
@@ -195,26 +186,14 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
             )
                 span.d-md-none.d-xl-block.mr-1 Condition
                 span.d-none.d-md-block.d-xl-none Cond
-
-            .input-group.action-condition.col-md-4.action-criteria
-                - const conditionContents = action.condition?action.condition:''
-                - const conditionLines = conditionContents.split('\n')
-
-                input.form-control.script-display.border-light.script-editor-btn(
-                    type="text"
-                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
-                    readonly
+            .col-md-4.action-criteria
+                +conditionInput(`${prefix}-${areaId}-action-${actionId}-condition`,
+                    `${namePrefix}[actions][${actionId}][condition_id]`,
+                    `${namePrefix}[actions][${actionId}][condition]`,
+                    action.function_id,
+                    action.condition,
+                    actionId
                 )
-                input.form-control.script-input.action-input.action-condition-data(
-                    type="hidden"
-                    name=`${namePrefix}[actions][${actionId}][condition]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-condition`,
-                    value=action.condition
-                    data-fieldtype='condition'
-                )
-                .input-group-append
-                    button.btn.btn-outline-light.script-editor-btn
-                        i.fas.fa-edit
 
             // Remove Button
             .col-md.text-right.d-none.d-md-block
@@ -395,27 +374,42 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 data-fieldtype='script'
             ) Script
 
-            .input-group.action-script.col-md-8
-                - const scriptContents = action.script?action.script:''
-                - const lines = scriptContents.split('\n')
+            .script-group.action-script.col-md-8
 
-                input.form-control.script-display.border-light.action-input.script-editor-btn(
-                    type="text"
-                    value=lines[0] + (lines.length > 1?`...(+${lines.length-1} more lines)`:''),
-                    readonly
+                select.custom-select.script-editor-dropdown.action-input(
+                    data-placeholder='Function'
+                    id=`${prefix}-${areaId}-action-${actionId}-function_id`
+                    name=`${namePrefix}[actions][${actionId}][function_id]`,
+                    data-fieldtype='function_id'
+                    class=actionId!=='new'?'select2':'',
                 )
-                input.form-control.script-input(
-                    type="hidden"
-                    placeholder="Script",
-                    name=`${namePrefix}[actions][${actionId}][script]`,
-                    id=`${prefix}-${areaId}-action-${actionId}-script`,
-                    value=action.script
-                    data-fieldtype='script'
-                )
-                .input-group-append
-                    button.btn.btn-outline-light.script-editor-btn
-                        i.fas.fa-edit.mr-2
-                        | Edit
+                    option
+                    option(value=-2 selected=(-2 === action.function_id)|| (!action.function_id && !_.isUndefined(action.script) && action.script !== '')) Custom
+                    for func in _.where(functions, {type: 'action'})
+                        option(value=func.id selected=func.id === action.function_id)= capitalize(func.name)
+
+
+                .input-group.mt-2.input-group-sm.script-custom
+                    - const scriptContents = action.script?action.script:''
+                    - const lines = scriptContents.split('\n')
+
+                    input.form-control.script-display.border-light.action-input.script-editor-btn(
+                        type="text"
+                        value=lines[0] + (lines.length > 1?`...(+${lines.length-1} more lines)`:''),
+                        readonly
+                    )
+                    input.form-control.script-input(
+                        type="hidden"
+                        placeholder="Script",
+                        name=`${namePrefix}[actions][${actionId}][script]`,
+                        id=`${prefix}-${areaId}-action-${actionId}-script`,
+                        value=action.script
+                        data-fieldtype='script'
+                    )
+                    .input-group-append
+                        button.btn.btn-outline-light.script-editor-btn
+                            i.fas.fa-edit.mr-2
+                            | Edit
 
         // Meeting Row
         .form-row.my-1.action-ink
@@ -493,10 +487,15 @@ mixin actionsCard(areaId, area)
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
         if area.name
             .card-header #{area.name}
-                if area.condition
+                if area.condition_id || area.condition
                     br
                     strong.mr-1 On Condition
-                    span.text-monospace #{area.condition}
+                    if area.condition_id === -2 || (_.isUndefined(area.condition_id) && area.condition)
+                        span.text-monospace #{area.condition}
+                    else
+                        - const func = _.findWhere(functions, {id: area.condition_id});
+                        i= func.name
+                        span.text-monospace #{func.content}
 
                 if area.group_id
                     br
@@ -546,7 +545,12 @@ mixin actionsCard(areaId, area)
                             i.mr-1 #{image.display_name?image.display_name:image.name}
                         when 'script'
                             strong.mr-1 Run Script
-                            pre.mt-2 #{action.script}
+                            if action.function_id === -2 || (_.isUndefined(action.function_id) && action.script)
+                                pre.mt-2 #{action.script}
+                            else
+                                - const func = _.findWhere(functions, {id: action.function_id});
+                                i= func.name
+                                pre.mt-2 #{func.content}
                         when 'ink'
                             strong.mr-1 Run Ink Story
                             i #{_.findWhere(inks, {id: action.ink_id}).name}
@@ -566,10 +570,52 @@ mixin actionsCard(areaId, area)
                     if action.condition
                         br
                         strong.mr-1 On Condition
+                        if action.condition_id === -2 || (_.isUndefined(action.condition_id) && action.condition)
+                            span.text-monospace #{action.condition}
+                        else
+                            - const func = _.findWhere(functions, {id: action.condition_id});
+                            i= func.name
+                            span.text-monospace #{func.content}
+
                         span.text-monospace #{action.condition}
 
                     if action.group_id
                         br
                         | For Group
                         i.mx-1 #{_.findWhere(groups, {id: Number(action.group_id)}).name}
+
+mixin conditionInput(id, name, nameScript, functionId, value, parentId)
+    .script-group.condition
+        select.custom-select.script-editor-dropdown.action-input(
+            data-placeholder='Function'
+            id=`${id}-dropdown`
+            name=name
+            data-fieldtype='condition_id'
+            class=parentId!=='new'?'select2':'',
+        )
+            option
+            option(value=-2 selected=(-2 === functionId)|| (!functionId && !_.isUndefined(value) && value !== '')) Custom
+            for func in _.where(functions, {type: 'conditional'})
+                option(value=func.id selected=func.id === functionId)= capitalize(func.name)
+
+        .input-group.mt-1.input-group-sm.script-custom
+
+            - const conditionContents = value?value:''
+            - const conditionLines = conditionContents.split('\n')
+
+            input.form-control.script-display.border-light.script-editor-btn(
+                type="text"
+                value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
+                readonly
+            )
+            input.form-control.script-input.area-input.area-condition-data.action-input(
+                type="hidden"
+                name=nameScript,
+                id=id,
+                value=value
+                data-fieldtype='condition'
+            )
+            .input-group-append
+                button.btn.btn-outline-light.script-editor-btn.btn-sm
+                    i.fas.fa-edit
 

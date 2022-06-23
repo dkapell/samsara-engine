@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+    .row.my-3
+        h2.d-inline-block #{capitalize(func.type)} Function
+            i.ml-2 #{func.name}
+
+
+    if checkPermission('creator')
+        a.btn.btn-outline-info.mr-2(role="button" href='/function/' + func.id + '/edit')
+            i.fas.fa-edit
+            |  Edit Function
+
+
+    if func.usage && func.type === 'ink'
+        .row.my-3
+            .col
+                h4 Usage
+                p= marked.parseInline(func.usage)
+
+    if func.description
+        .row.my-3
+            .col
+                h4 Description
+                p= func.description
+
+    .row.my-3
+        .col
+            h4 Script
+            .card
+                .card-body.p-2.pre=func.content

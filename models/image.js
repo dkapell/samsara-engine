@@ -1,6 +1,4 @@
 'use strict';
-const async = require('async');
-const config = require('config');
 const _ = require('underscore');
 const validator = require('validator');
 

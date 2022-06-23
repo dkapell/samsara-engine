@@ -5,7 +5,7 @@ const async = require('async');
 const permission = require('../lib/permission');
 const gameEngine = require('../lib/gameEngine');
 const gameValidator = require('../lib/gameValidator');
-const script = require('../lib/script');
+const scriptRunner = require('../lib/scriptRunner');
 const stripAnsi = require('strip-ansi');
 
 
@@ -46,7 +46,7 @@ async function getGraphData(req, res, next){
 async function verifyScript(req, res, next){
     try {
         const inputScript = req.body.script;
-        const verified = await script.verify(inputScript, 'stylish');
+        const verified = await scriptRunner.verify(inputScript, 'stylish');
         if (!verified.verified){
             verified.errors = stripAnsi(verified.errors).trim();
         }

@@ -43,6 +43,7 @@ const triggerRouter = require('./routes/trigger');
 const meetingRouter = require('./routes/meeting');
 const characterRouter = require('./routes/character');
 const inkRouter = require('./routes/ink');
+const functionRouter = require('./routes/function');
 
 
 const adminGameRouter = require('./routes/admin/game');
@@ -271,6 +272,7 @@ app.use('/trigger', triggerRouter);
 app.use('/meeting', meetingRouter);
 app.use('/character', characterRouter);
 app.use('/ink', inkRouter);
+app.use('/function', functionRouter);
 
 app.use('/admin/game', adminGameRouter);
 

@@ -3,20 +3,20 @@ const validator = require('validator');
 
 const Model = require('../lib/Model');
 
-const tableFields = ['id', 'game_id', 'name', 'description', 'url', 'gm', 'active'];
+const tableFields = ['id', 'game_id', 'name', 'description', 'usage', 'type', 'content'];
 
-const Link = new Model('links', tableFields, {
+const Function = new Model('functions', tableFields, {
     order: ['name'],
     validator: validate
 });
 
-module.exports = Link;
+module.exports = Function;
 
 function validate(data){
     if (! validator.isLength(data.name, 2, 80)){
         return false;
     }
-    if (data.url !== 'stub' && !validator.isURL(data.url)){
+    if (! data.type.match(/^(conditional|action|ink)$/)){
         return false;
     }
 

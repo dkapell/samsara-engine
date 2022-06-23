@@ -1,4 +1,4 @@
-/* global _ showScriptEditor */
+/* global _ showScriptEditor updateScriptEditor */
 let nextIndex = 0;
 const nextActions = {};
 
@@ -96,6 +96,7 @@ function addArea(e){
         width:'resolve'
     });
     showAreaCriteria($new);
+
     $new.appendTo('#screen_map');
     $new.show();
 
@@ -149,9 +150,12 @@ function showAction($row) {
         case 'image':
             $row.find('.action-image').show();
             break;
-        case 'script':
-            $row.find('.action-script').show();
+        case 'script':{
+            const $action = $row.find('.action-script');
+            $action.show();
+            $action.find('.script-editor-dropdown').each(updateScriptEditor);
             break;
+        }
         case 'ink':
             $row.find('.action-ink').show();
             break;
@@ -177,18 +181,19 @@ function showText($row) {
 }
 
 function showActionCriteria($row){
-    const $criteraBtn = $row.find('.show-action-criteria-btn');
+    const $showCriteraBtn = $row.find('.show-action-criteria-btn');
     const $group = $row.find('.action-group');
     const $condition = $row.find('.action-condition-data');
     if($group.val() !== '-1' || $condition.val()){
-        $criteraBtn.hide();
+        $showCriteraBtn.hide();
     } else {
         $row.find('.action-criteria').hide();
     }
-    $criteraBtn.on('click', function(e){
+    $showCriteraBtn.on('click', function(e){
         e.preventDefault();
         $(this).hide();
         $row.find('.action-criteria').show();
+        $row.find('.script-editor-dropdown').each(updateScriptEditor);
     });
 }
 
@@ -243,6 +248,7 @@ function addAction(e){
     });
 
     $new.find('.script-editor-btn').on('click', showScriptEditor);
+    $new.find('.script-editor-dropdown').on('change', updateScriptEditor);
     $new.find('.remove-action-btn').confirmation({
         title: 'Delete this Action'
     }).on('click', removeAction);

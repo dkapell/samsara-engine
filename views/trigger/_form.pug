@@ -39,25 +39,14 @@ fieldset.mb-2.border-secondary.border.p-2.rounded
                     option( value=group.id selected=trigger.group_id && Number(trigger.group_id)===group.id)= group.name
         .col
             label.control-label(for="trigger_condition") On Condition
-            .input-group.trigger-condition
-                - const conditionContents = trigger.condition?trigger.condition:''
-                - const conditionLines = conditionContents.split('\n')
-
-                input.form-control.script-display.border-light.script-editor-btn(
-                    type="text"
-                    value=conditionLines[0] + (conditionLines.length > 1?`...(+${conditionLines.length-1} more lines)`:''),
-                    readonly
-                )
-                input.form-control.script-input.area-input.area-condition-data(
-                    type="hidden"
-                    name=`trigger[condition]`,
-                    id='trigger_condition',
-                    value=trigger.condition
-                    data-fieldtype='condition'
-                )
-                .input-group-append
-                    button.btn.btn-outline-light.script-editor-btn
-                        i.fas.fa-edit
+            +conditionInput(
+                'trigger_condition',
+                'trigger[condition_id]',
+                'trigger[condition]',
+                trigger.function_id,
+                trigger.condition,
+                'trigger'
+            )
 
 
 .form-group#map-group

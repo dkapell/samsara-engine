@@ -1,9 +1,6 @@
 'use strict';
-const async = require('async');
 const _ = require('underscore');
-const database = require('../lib/database');
 const validator = require('validator');
-const cache = require('../lib/cache');
 
 const Model = require('../lib/Model');
 

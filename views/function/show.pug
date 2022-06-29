@@ -12,11 +12,15 @@ block content
             |  Edit Function
 
 
-    if func.usage && func.type === 'ink'
+    if func.type === 'ink'
         .row.my-3
             .col
                 h4 Usage
-                p= marked.parseInline(func.usage)
+                p
+                    i.mr-1 #{func.returns}
+                    | = #{func.name}(
+                    i.mx-1 #{func.args}
+                    | )
 
     if func.description
         .row.my-3
@@ -28,4 +32,4 @@ block content
         .col
             h4 Script
             .card
-                .card-body.p-2.pre=func.content
+                pre.card-body.p-2=func.content

@@ -5,7 +5,7 @@ mixin area(area, id)
             .lead.col
                 strong Area
                 .float-right.d-md-none
-                    button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Criteria')
+                    button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Condition')
                         i.fas.fa-clipboard-check.fa-fw
                     button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
                         i.fas.fa-plus.fa-fw
@@ -42,7 +42,7 @@ mixin area(area, id)
                     for shape in ['rect', 'circle', 'poly']
                         option(value=shape selected=area.shape===shape)= shape
             .col-md-2.text-right.d-none.d-md-block
-                button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Criteria')
+                button.btn.btn-sm.btn-outline-info.show-area-criteria-btn.mr-1(data-toggle="tooltip" title='Add Condition')
                     i.fas.fa-clipboard-check.fa-fw
                 button.btn.btn-sm.btn-outline-success.add-action-btn.mr-1(data-toggle="tooltip" title='Add Action' data-area=id)
                     i.fas.fa-plus.fa-fw
@@ -96,11 +96,12 @@ mixin area(area, id)
             .area-condition.col-md-5
                 +conditionInput(
                     `screen_map-${id}-condition`,
-                    `screen[map][${id}][condition_id]`,
-                    `screen[map][${id}][condition]`,
-                    area.function_id,
+                    `screen[map][${id}]`,
+                    area.condition_id,
                     area.condition,
-                    id
+                    id,
+                    '.area-config',
+                    true
                 )
 
 
@@ -125,7 +126,7 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 strong.d-none.d-xl-block.ml-2 Action
                 strong.d-xl-none Action
                 .text-right.float-right.d-md-none
-                    button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Criteria')
+                    button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Condition')
                         i.fas.fa-clipboard-check.mr-1
                         | Add Criteria
 
@@ -188,18 +189,19 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                 span.d-none.d-md-block.d-xl-none Cond
             .col-md-4.action-criteria
                 +conditionInput(`${prefix}-${areaId}-action-${actionId}-condition`,
-                    `${namePrefix}[actions][${actionId}][condition_id]`,
-                    `${namePrefix}[actions][${actionId}][condition]`,
-                    action.function_id,
+                    `${namePrefix}[actions][${actionId}]`,
+                    action.condition_id,
                     action.condition,
-                    actionId
+                    actionId,
+                    '.action-row',
+                    true
                 )
 
             // Remove Button
             .col-md.text-right.d-none.d-md-block
-                button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Criteria')
+                button.btn.btn-sm.btn-outline-info.mr-2.show-action-criteria-btn(data-toggle="tooltip" title='Add Condition')
                     i.fas.fa-clipboard-check.fa-fw.mr-1
-                    | Add Criteria
+                    | Add Condition
                 button.btn.btn-sm.btn-outline-danger.remove-action-btn(data-toggle="tooltip" data-placement="right" title='Remove Action')
                     i.fa.fa-trash.fa-fw
 
@@ -477,11 +479,6 @@ mixin action(prefix, namePrefix, action, areaId, actionId)
                     ) Fullscreen
 
 
-
-
-
-
-
 mixin actionsCard(areaId, area)
     - moment.relativeTimeThreshold('ss', 0);
     .card.area-detail-card.my-2(id=`area-detail-${areaId}`)
@@ -489,10 +486,12 @@ mixin actionsCard(areaId, area)
             .card-header #{area.name}
                 if area.condition_id || area.condition
                     br
-                    strong.mr-1 On Condition
-                    if area.condition_id === -2 || (_.isUndefined(area.condition_id) && area.condition)
+                    if area.condition && (Number(area.condition_id) === -2 || _.isUndefined(area.condition_id))
+                        strong.mr-1 On Condition
                         span.text-monospace #{area.condition}
-                    else
+                    else if Number(area.condition_id) !== -2
+                        strong.mr-1 On Condition
+                        -console.log(area.condition_id)
                         - const func = _.findWhere(functions, {id: area.condition_id});
                         i= func.name
                         span.text-monospace #{func.content}
@@ -567,12 +566,13 @@ mixin actionsCard(areaId, area)
                         default
                             | None
 
-                    if action.condition
+                    if action.has_condition
                         br
                         strong.mr-1 On Condition
-                        if action.condition_id === -2 || (_.isUndefined(action.condition_id) && action.condition)
+                        if action.condition && (Number(action.condition_id) === -2 || _.isUndefined(action.condition_id))
                             span.text-monospace #{action.condition}
-                        else
+
+                        else if Number(action.condition_id) !== -2
                             - const func = _.findWhere(functions, {id: action.condition_id});
                             i= func.name
                             span.text-monospace #{func.content}
@@ -584,19 +584,29 @@ mixin actionsCard(areaId, area)
                         | For Group
                         i.mx-1 #{_.findWhere(groups, {id: Number(action.group_id)}).name}
 
-mixin conditionInput(id, name, nameScript, functionId, value, parentId)
+mixin conditionInput(id, name, functionId, value, parentId)
     .script-group.condition
-        select.custom-select.script-editor-dropdown.action-input(
-            data-placeholder='Function'
-            id=`${id}-dropdown`
-            name=name
-            data-fieldtype='condition_id'
-            class=parentId!=='new'?'select2':'',
-        )
-            option
-            option(value=-2 selected=(-2 === functionId)|| (!functionId && !_.isUndefined(value) && value !== '')) Custom
-            for func in _.where(functions, {type: 'conditional'})
-                option(value=func.id selected=func.id === functionId)= capitalize(func.name)
+        input(type="hidden" name=`${name}[has_condition]` value=(!_.isNull(value) || functionId > 0))
+        .input-group
+            select.custom-select.script-editor-dropdown.action-input(
+                data-placeholder='Function'
+                id=`${id}-dropdown`
+                name=`${name}[condition_id]`
+                data-fieldtype='condition_id'
+                class=parentId!=='new'?'select2':'',
+            )
+                option
+
+                option(value=-2 selected=(-2 === Number(functionId))|| (!functionId && !_.isUndefined(value) && value !== '')) Custom
+                for func in _.where(functions, {type: 'conditional'})
+                    option(value=func.id selected=func.id === functionId)= capitalize(func.name)
+
+            .input-group-append
+                button.btn.btn-outline-danger.clear-condition-btn.btn-sm(
+                    title='Clear Condition'
+                    data-toggle="tooltip"
+                )
+                    i.fas.fa-times-circle.fa-fw
 
         .input-group.mt-1.input-group-sm.script-custom
 
@@ -610,12 +620,12 @@ mixin conditionInput(id, name, nameScript, functionId, value, parentId)
             )
             input.form-control.script-input.area-input.area-condition-data.action-input(
                 type="hidden"
-                name=nameScript,
+                name=`${name}[condition]`,
                 id=id,
                 value=value
                 data-fieldtype='condition'
             )
             .input-group-append
                 button.btn.btn-outline-light.script-editor-btn.btn-sm
-                    i.fas.fa-edit
+                    i.fas.fa-edit.fa-fw
 

@@ -3,7 +3,7 @@ const validator = require('validator');
 
 const Model = require('../lib/Model');
 
-const tableFields = ['id', 'game_id', 'name', 'description', 'usage', 'type', 'content'];
+const tableFields = ['id', 'game_id', 'name', 'description', 'type', 'content', 'args', 'returns'];
 
 const Function = new Model('functions', tableFields, {
     order: ['name'],

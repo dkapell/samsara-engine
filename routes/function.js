@@ -4,6 +4,8 @@ const _ = require('underscore');
 const permission = require('../lib/permission');
 const validator = require('validator');
 const liquid = require('../lib/liquid');
+const scriptRunner = require('../lib/scriptRunner');
+const stripAnsi = require('strip-ansi');
 
 /* GET functions listing. */
 async function list(req, res, next){
@@ -49,6 +51,8 @@ async function showNew(req, res, next){
     res.locals.func = {
         name: null,
         usage: null,
+        args: null,
+        returns: null,
         description: null,
         type: null,
         content: null
@@ -110,6 +114,17 @@ async function create(req, res, next){
     func.game_id = req.game.id;
 
     try{
+
+        const verified = await scriptRunner.verify(func.content, func.type, 'stylish');
+        if (!verified.verified){
+            verified.errors = stripAnsi(verified.errors).trim();
+            req.flash('error', 'Script Verification Failed: ' + verified.errors);
+            console.log(`/function/${id}/edit`);
+            return res.redirect(`/function/${id}/edit`);
+        }
+
+        func.content = verified.script;
+
         const id = await req.models.function.create(func);
         delete req.session.functionData;
         req.flash('success', 'Created Function ' + func.name);
@@ -126,6 +141,17 @@ async function update(req, res, next){
     req.session.functionData = func;
 
     try {
+
+        const verified = await scriptRunner.verify(func.content, func.type, 'stylish');
+        if (!verified.verified){
+            verified.errors = stripAnsi(verified.errors).trim();
+            req.flash('error', 'Script Verification Failed: ' + verified.errors);
+            console.log(`/function/${id}/edit`);
+            return res.redirect(`/function/${id}/edit`);
+        }
+
+        func.content = verified.script;
+
         const current = await req.models.function.get(id);
         if (!current){
             throw new Error('Invalid Function');

@@ -11,8 +11,9 @@ block content
                     form.form.needs-validation(method="POST" action="/function/" + func.id novalidate)
                         input(type="hidden", name="_method",  value="PUT")
                         input(type="hidden", name='_csrf',value=csrfToken)
-                        input(type="hidden", name='screen[id]',value=func.id)
+                        input(type="hidden", name='function[id]',value=func.id)
                         include ./_form.pug
 
 append scripts
     script(src='/javascripts/validator.js')
+    script(src='/javascripts/function.js')

@@ -40,6 +40,7 @@ $(function(){
     $('.link-select').on('change', updateAreaName);
 
     $('#action-new-new').find('.editor').Code;
+    $('.clear-condition-btn').on('click', clearCriteria);
 });
 
 function removeArea(e){
@@ -96,6 +97,7 @@ function addArea(e){
         width:'resolve'
     });
     showAreaCriteria($new);
+    $('.clear-condition-btn').on('click', clearCriteria);
 
     $new.appendTo('#screen_map');
     $new.show();
@@ -202,6 +204,7 @@ function showAreaCriteria($row){
     const $group = $row.find('.area-group');
     const $condition = $row.find('.area-condition-data');
 
+    //todo update
     if($group.val() !== '-1' || $condition.val()){
         $criteraBtn.hide();
     } else {
@@ -212,6 +215,13 @@ function showAreaCriteria($row){
         $(this).hide();
         $row.find('.area-criteria').show();
     });
+}
+
+function clearCriteria(e){
+    const $this = $(this);
+    e.preventDefault();
+    const $select = $this.closest('.input-group').find('select');
+    $select.val(null).trigger('change');
 }
 
 function addAction(e){
@@ -280,6 +290,7 @@ function addAction(e){
     showAction($new);
     showText($new);
     showActionCriteria($new);
+    $('.clear-condition-btn').on('click', clearCriteria);
 }
 
 function getOldLinkName(e){

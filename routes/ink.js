@@ -41,6 +41,7 @@ async function showNew(req, res, next){
 
     try{
         const variables = await req.models.variable.listInk(req.game.id);
+        const functions= await req.models.function.find({game_id: req.game.id, type:'ink'});
         for (const variable of variables){
             if (variable.type === 'integer'){
                 res.locals.ink.content += `VAR ${variable.ink_name} = ${variable.base_value}\n`;
@@ -48,7 +49,11 @@ async function showNew(req, res, next){
                 res.locals.ink.content += `VAR ${variable.ink_name} = "${variable.base_value}"\n`;
             }
         }
+        for (const func of functions){
+            res.locals.ink.content += `EXTERNAL ${func.name}( ${func.args} )\n`;
+        }
         res.locals.variables= variables;
+        res.locals.functions= functions;
         if (_.has(req.session, 'inkData')){
             res.locals.ink = req.session.inkData;
             delete req.session.inkData;
@@ -75,6 +80,7 @@ async function showEdit(req, res, next){
             delete req.session.inkData;
         }
         res.locals.variables= await req.models.variable.listInk(req.game.id);
+        res.locals.functions= await req.models.function.find({game_id: req.game.id, type:'ink'});
         res.locals.breadcrumbs = {
             path: [
                 { url: '/', name: 'Home'},

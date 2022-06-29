@@ -46,7 +46,7 @@ async function getGraphData(req, res, next){
 async function verifyScript(req, res, next){
     try {
         const inputScript = req.body.script;
-        const verified = await scriptRunner.verify(inputScript, 'stylish');
+        const verified = await scriptRunner.verify(inputScript, 'generic', 'stylish');
         if (!verified.verified){
             verified.errors = stripAnsi(verified.errors).trim();
         }

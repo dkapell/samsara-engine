@@ -214,11 +214,16 @@ mixin inkEditor(id, name, rows, size, contents)
                                 th.col-sm-2 Function
                                 th Usage
                         tbody
-                            tr
-                                td
-                                    i Function Name
-                                td
-                                    i Function Description
+                            for func in functions
+                                tr
+                                    td=func.name
+                                    td
+                                        i.mr-1 #{func.returns}
+                                        | = #{func.name}(
+                                        i.mx-1 #{func.args}
+                                        | )
+                                        p=func.description
+
 
 
 mixin jsEditor(id, name, rows, size, contents)
@@ -321,51 +326,63 @@ mixin jsEditor(id, name, rows, size, contents)
                         thead
                             tr
                                 th Variable
+                                th In Ink
                                 th Writable
                                 th Usage
                         tbody
                             tr
                                 td public
                                 td Yes
+                                td Yes
                                 td Object which contains the player-visible player variables/data.
                             tr
                                 td private
+                                td Yes
                                 td Yes
                                 td Object which contains the non-player-visible player variables/data.
                             tr
                                 td run.public
                                 td Yes
+                                td Yes
                                 td Object which contains the player-visible run variables/data
                             tr
                                 td run.private
+                                td Yes
                                 td Yes
                                 td Object which contains the non-player-visible run variables/data
                             tr
                                 td output
                                 td Yes
+                                td Yes
                                 td Object with output.to_screen_id, output.delay. Set these to change the player screen.
                             tr
-                                td player
+                                td user
                                 td No
-                                td Contains the current player name.
+                                td No
+                                td Contains the current user's name.
                             tr
                                 td character
+                                td Yes
                                 td No
                                 td Contains the current character name.
                             tr
                                 td groups
+                                td Yes
                                 td No
                                 td Array of groups for the current player.
                             tr
                                 td screen_id
+                                td Yes
                                 td No
                                 td Current screen id.
                             tr
                                 td screens
                                 td No
+                                td No
                                 td Array of all screen objects.
                             tr
                                 td jitsiActive
+                                td No
                                 td No
                                 td Boolean for if Jisti Server is available
 
@@ -384,6 +401,7 @@ mixin jsEditor(id, name, rows, size, contents)
                                 th Type
                                 th Scope
                                 th Public
+                                th Ink Name
                         tbody
                             for variable in variables
                                 tr
@@ -391,6 +409,7 @@ mixin jsEditor(id, name, rows, size, contents)
                                     td #{variable.type}
                                     td #{variable.player?'Player':'Run'}
                                     td #{variable.public?'Yes':'No'}
+                                    td #{variable.ink_name}
 
         .tab-pane.fade.variables-help(
             id=`${id}-engine-functions`
@@ -403,43 +422,58 @@ mixin jsEditor(id, name, rows, size, contents)
                         thead
                             tr
                                 th.col-sm-2 Function
+                                th In Ink
                                 th Usage
                         tbody
                             tr
                                 td output.log("text")
+                                td Yes
                                 td Log text to the server console.
                             tr
-                                td output.text("text", options)
+                                td output.ink("text")
+                                td Yes
+                                td Return text to a Ink story.
+                            tr
+                                td action.text("text", options)
+                                td No
                                 td Display text to the user.
                                     i.mx-1 options
                                     | has location (inline/popup/popout), duration (for inline), name, documentId (for documents)
                             tr
-                                td output.link(id)
+                                td action.link(id)
+                                td No
                                 td Open a link by ID
                             tr
-                                td output.meeting(id)
+                                td action.meeting(id)
+                                td No
                                 td Open a meeting by ID
                             tr
-                                td output.closemeeting()
+                                td action.closemeeting()
+                                td No
                                 td Close the current meeting
 
                             tr
-                                td output.image(id)
+                                td action.image(id)
+                                td No
                                 td Open an image popup by ID
                             tr
-                                td output.ink(id, options)
+                                td action.ink(id, options)
+                                td No
                                 td Start an Ink Story by ID.
                                     i.mx-1 options
                                     | has fullscreen(boolean), startPoint(string), restart(boolean)
                             tr
-                                td output.closeink()
+                                td action.closeink()
+                                td No
                                 td Close the current Ink Story
 
                             tr
-                                td output.forceupdate()
+                                td action.forceupdate()
+                                td No
                                 td Force the player to refresh the current screen, use after updating a variable, if needed.
                             tr
                                 td _
+                                td Yes
                                 td
                                     a(href='http://underscorejs.org/' target='_blank') UnderscoreJS
                                     |  object for assorted helper functions

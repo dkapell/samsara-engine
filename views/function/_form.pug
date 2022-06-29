@@ -3,18 +3,19 @@
         label.control-label(for="function_name") Name
         input.form-control(type="text",placeholder="Name",name="function[name]",value=func.name,id='function_name',required)
         div.invalid-feedback Please choose a valid name
+    .col.ink-function-details(style='display:none')
+        label.control-label(for="function_args") Arguments
+        input.form-control(type="text",placeholder="string, integer",name="function[args]",value=func.args,id='function_usage')
+    .col.ink-function-details(style='display:none')
+        label.control-label(for="function_returns") Returns
+        input.form-control(type="text",placeholder="string",name="function[returns]",value=func.returns,id='function_returns')
 
-    .col-md-4
+    .col-auto
         label.control-label(for="function_type") Function Type
         select.custom-select.select2#function_type(name="function[type]" data-placeholder='Function Type')
             option
             for type in ['action', 'conditional', 'ink']
                 option(value=type selected=func.type === type)= capitalize(type)
-
-.form-row.my-2
-    .col
-        label.control-label(for="function_usage") Usage (Ink functions only)
-        input.form-control(type="text",placeholder="function(params) returns whatever",name="function[usage]",value=func.usage,id='function_usage')
 
 .form-row.my-2
     .col

@@ -6,24 +6,32 @@ block content
             span(class="fa fa-plus")
             |  New Image
 
-    .row.row-cols-1.row-cols-md-4.pt-3
+
+    .border.rounded.p-2.my-3
+        .row
+            .col
+                h5.my-0 Filter:
+
+            for type in ['screen', 'popup', 'inventory', 'item']
+                .col
+                     .custom-control.custom-switch
+                        input.custom-control-input.image-filter(type="checkbox", id=`image-type-filter-${type}` checked=true data-type=type)
+                        label.custom-control-label(for=`image-type-filter-${type}`)= capitalize(type)
+
+    .row.row-cols-1.row-cols-md-4.pt-2
         for image in images
-            .col.mb-4
+            .col.mb-4(class=`image-type-${image.type}`)
                 .card
                     .card-header
-                        .badge.badge-primary.float-right=image.status
+                        .badge.badge-info.float-right=capitalize(image.type)
+
                         .card-title
                             h5= image.display_name?image.display_name:image.name
+                            .badge.badge-primary.float-right=image.status
                             .small= image.display_name?image.name:''
+
                     img.card-img-top(src=image.url alt=image.display_name?image.display_name:image.name)
                     .card-body
-                        div
-                            if image.is_popup
-                                .badge.badge-info.mr-2 Popup
-                            if image.is_inventory
-                                .badge.badge-info.mr-2 Inventory
-                            if image.is_screen
-                                .badge.badge-info.mr-2 Screen
                         if image.description
                             p.mt-2.card-text=image.description
 
@@ -47,3 +55,7 @@ block content
                                     title="Delete image"
                                 )
                                     i.fas.fa-trash.fa-fw
+
+append scripts
+    script(src='/javascripts/image.js')
+

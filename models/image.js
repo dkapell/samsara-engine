@@ -5,7 +5,7 @@ const validator = require('validator');
 const Model = require('../lib/Model');
 const imageManager = require('../lib/imageManager');
 
-const tableFields = ['id', 'game_id', 'name', 'display_name', 'description', 'status', 'is_screen', 'is_popup', 'is_inventory'];
+const tableFields = ['id', 'game_id', 'name', 'display_name', 'description', 'status', 'type'];
 
 const Image = new Model('images', tableFields, {
     order: ['name'],

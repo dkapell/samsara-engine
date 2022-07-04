@@ -110,14 +110,19 @@ create table groups (
         ON UPDATE NO ACTION ON DELETE CASCADE
 );
 
+create type image_type as ENUM(
+    'screen',
+    'popup',
+    'inventory',
+    'item'
+);
+
 create table images (
     id              serial,
     game_id         int not null,
     name            varchar(255) not null,
     display_name    varchar(255),
-    is_screen       boolean default true,
-    is_popup        boolean default false,
-    is_inventory    boolean default false,
+    type            image_type default 'screen' not null,
     description     text,
     status          varchar(20) default 'new' not null,
     primary key (id),
@@ -497,4 +502,25 @@ create table functions(
     CONSTRAINT functions_game_fk FOREIGN KEY (game_id)
         REFERENCES "games" (id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+create table items(
+    id serial,
+    game_id int not null,
+    name varchar(80) not null,
+    description text,
+    quantity int default 1,
+    inventory_image_id int,
+    item_image_id int,
+    primary key (id),
+    unique(game_id, name),
+    CONSTRAINT items_game_fk FOREIGN KEY (game_id)
+        REFERENCES "games" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+    CONSTRAINT inventory_image_fk FOREIGN KEY (image_id)
+        REFERENCES "images" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL,
+    CONSTRAINT item_image_fk FOREIGN KEY (image_id)
+        REFERENCES "images" (id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE SET NULL
 );

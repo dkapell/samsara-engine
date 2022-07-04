@@ -1,8 +1,11 @@
-/* global bsCustomFileInput */
+/* global bsCustomFileInput _ */
 $(document).ready(function () {
     bsCustomFileInput.init();
     $('#imagePicker').on('change', updateImage);
     $('#new-image-form').on('submit', submitImageForm);
+    $('.image-filter').on('change', updateImageFilter);
+    loadImageFilter();
+
 });
 
 function updateImage(e){
@@ -90,4 +93,39 @@ function prettyPrintSize(value, type) {
         value += type;
 
     return value;
+}
+
+function loadImageFilter(){
+    const types = JSON.parse(localStorage.getItem('samsara-image-type-filter'));
+    if (types){
+        for (const type in types){
+            if (types[type]){
+                $(`.image-type-${type}`).show();
+                $(`#image-type-filter-${type}`).prop('checked', true);
+            } else {
+                $(`.image-type-${type}`).hide();
+                $(`#image-type-filter-${type}`).prop('checked', false);
+            }
+        }
+    }
+    updateImageFilter();
+}
+
+function updateImageFilter(){
+    const types = {};
+    $('.image-filter').each(function(e){
+        const $this = $(this);
+        const val = $this.is(':checked');
+        const type = $this.data('type');
+        if (val){
+            $(`.image-type-${type}`).show();
+
+        } else {
+            $(`.image-type-${type}`).hide();
+        }
+        types[type] = val;
+    });
+    if (_.keys(types).length){
+        localStorage.setItem('samsara-image-type-filter', JSON.stringify(types));
+    }
 }

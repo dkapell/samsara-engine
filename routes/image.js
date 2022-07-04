@@ -25,9 +25,7 @@ function showNew(req, res, next){
     res.locals.image = {
         display_name: null,
         description:null,
-        is_screen:true,
-        is_popup:false,
-        is_inventory:false
+        type: 'screen'
     };
     res.locals.breadcrumbs = {
         path: [
@@ -76,15 +74,6 @@ async function update(req, res, next){
     const id = req.params.id;
     const image = req.body.image;
     req.session.imageData = image;
-    if (!_.has(image, 'is_screen')){
-        image.is_screen = false;
-    }
-    if (!_.has(image, 'is_popup')){
-        image.is_popup = false;
-    }
-    if (!_.has(image, 'is_inventory')){
-        image.is_inventory = false;
-    }
 
     try {
         const current = await req.models.image.get(id);

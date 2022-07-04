@@ -27,26 +27,15 @@ block content
                             label.control-label(for="image_display_name") Display Name
                             input.form-control(type="text",placeholder="Name",name="image[display_name]",value=image.display_name,id='image_display_name')
 
-                        fieldset.mb-2
-                            label Image Usage
-                            .row.mb-2
-                                .col
-                                    .custom-control.custom-switch
-                                        input.custom-control-input#image_is_screen(type="checkbox", name="image[is_screen]", checked=image.is_screen)
-                                        label.custom-control-label(for="image_is_screen") Screen Image
-
-                                .col
-                                    .custom-control.custom-switch
-                                        input.custom-control-input#image_is_inventory(type="checkbox", name="image[is_inventory]", checked=image.is_inventory)
-                                        label.custom-control-label(for="image_is_inventory") Inventory Image
-
-                                .col
-                                    .custom-control.custom-switch
-                                        input.custom-control-input#image_is_popup(type="checkbox", name="image[is_popup]", checked=image.is_popup)
-                                        label.custom-control-label(for="image_is_popup") Pop Up Image
+                        .form-group
+                            label.control-label(for="image_type") Image Type
+                                select.custom-select.select2#image_type(name="image[type]" data-placeholder='Image Type')
+                                    option
+                                    for type in ['screen', 'popup', 'inventory', 'item']
+                                        option(value=type selected=image.type === type)= capitalize(type)
 
                         .form-group
-                            label.control-label(for="image_description") Description (Player-visible for Inventory / Popup)
+                            label.control-label(for="image_description") Description (Player-visible for Inventory / Popup / Item)
                             textarea.form-control(name="image[description]",id="image_description",rows=3) #{image.description}
 
 

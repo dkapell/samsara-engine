@@ -16,7 +16,7 @@ include ../partials/gameactions
                         data-placeholder="Select Image, if any"
                     )
                         option(selected=!screen.image_id value="-1") None
-                        for image in images.filter(i=>{return i.is_screen})
+                        for image in _where(images, {type:'screen'})
                             option(value=image.id selected=screen.image_id===image.id, data-url=image.url)= image.display_name?image.display_name:image.name
     .col-md-3
         img.img-fluid#screen-image(src=screen.image_id?_.findWhere(images, {id: screen.image_id}).url:'')

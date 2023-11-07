@@ -26,9 +26,9 @@ block content
                 for transition in transitions
                     tr(class=checkPermission('creator')?'clickable-row':'', data-click-object='transition' data-click-id=transition.id)
                         td
-                            .badge.badge-light.badge-screen #{transition.from_screen}
+                            .badge.badge-light.badge-screen #{transition.from_screen.name}
                         td
-                            .badge.badge-light.badge-screen #{transition.to_screen}
+                            .badge.badge-light.badge-screen #{transition.to_screen.name}
                         td
                             if transition.group_id
                                 = transition.group.name

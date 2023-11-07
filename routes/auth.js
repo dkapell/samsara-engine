@@ -128,6 +128,10 @@ function getCallbackUrl(req, type){
     if (req.headers['x-forwarded-proto'] === 'https'){
         proto = 'https';
     }
+    if (config.get('auth.httpsAlways')){
+        proto = 'https';
+    }
+
     return `${proto}://${req.headers.host}/auth/${type}/callback`;
 }
 

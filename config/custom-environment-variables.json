@@ -29,7 +29,8 @@
         },
         "local":{
             "key": "LOCAL_KEY"
-        }
+        },
+        "httpsAlways": "OAUTH_HTTPS_ALWAYS"
     },
     "game": {
         "defaultToPlayer": "DEFAULT_TO_PLAYER",

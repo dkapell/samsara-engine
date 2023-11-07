@@ -15,11 +15,11 @@ async function list(req, res, next){
     try {
         const transitions = await req.models.transition.find({game_id: req.game.id});
         res.locals.transitions = await async.map( transitions, async transition => {
-            transition.from_screen = (await req.models.screen.get(transition.from_screen_id)).name;
+            transition.from_screen = await req.models.screen.get(transition.from_screen_id);
             if (transition.from_screen.game_id !== req.game.id){
                 throw new Error('Invalid Transition');
             }
-            transition.to_screen = (await req.models.screen.get(transition.to_screen_id)).name;
+            transition.to_screen = await req.models.screen.get(transition.to_screen_id);
             if (transition.to_screen.game_id !== req.game.id){
                 throw new Error('Invalid Transition');
             }

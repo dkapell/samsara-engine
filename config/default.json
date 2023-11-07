@@ -34,7 +34,8 @@
         },
         "local": {
             "key": null
-        }
+        },
+        "httpsAlways": false
     },
     "aws": {
         "accessKeyId": "accessKeyId",

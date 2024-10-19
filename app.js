@@ -90,11 +90,14 @@ if (config.get('app.sessionType') === 'redis'){
     const RedisStore = require('connect-redis')(session);
     let redisClient = null;
     if (config.get('app.redis.url')){
+        const url = config.get('app.redis.url')
         const options = {};
-        if (config.get('app.redis.tls')){
-            options.tls = {rejectUnauthorized: false};
+        if (url.match(/^rediss:\/\//) || config.get('app.redis.tls')){
+            options.tls = {
+                rejectUnauthorized:false
+            }
         }
-        redisClient = redis.createClient(config.get('app.redis.url'), options);
+        redisClient = redis.createClient(url, options);
     } else {
         redisClient = redis.createClient();
     }

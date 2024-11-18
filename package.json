@@ -28,7 +28,7 @@
     "inkjs": "^2.1.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
-    "liquidjs": "^9.28.5",
+    "liquidjs": "^10.19.0",
     "marked": "^4.0.16",
     "method-override": "^3.0.0",
     "moment": "^2.29.3",
